@@ -149,11 +149,14 @@ class Ergo_Routing_RouteMapEntry
 	 */
 	private function _getParameterPattern($template)
 	{
+		// support star matches
+		$template = preg_replace('/\*/','.+?',$template);
+
 		return sprintf('#^%s$#',
 			preg_replace_callback(
 				self::REGEX_PARAM,
 				array($this, '_typePatternCallback'),
-				$this->_template
+				$template
 			)
 		);
 	}

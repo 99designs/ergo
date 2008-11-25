@@ -142,6 +142,29 @@ class Ergo_Routing_RouteTest extends UnitTestCase
 		$this->_assertNoRoute($routeMap,'/fruits/llama');
 	}
 
+	public function testSimpleStarRoutes()
+	{
+		$routeMap = new Ergo_Routing_RouteMap();
+		$routeMap->map(array(
+			'/fruits/*' => 'fruit',
+			));
+
+		$this->_assertRoute($routeMap,'/fruits/this/is/a/test','fruit');
+		$this->_assertNoRoute($routeMap,'/blargh');
+	}
+
+	public function testStarRoutesWithParameters()
+	{
+		$routeMap = new Ergo_Routing_RouteMap();
+		$routeMap->map(array(
+			'/fruits/{fruitid}/*' => 'fruit',
+			));
+
+		$this->_assertRoute($routeMap,'/fruits/5/this/is/a/test','fruit',array(
+			'fruitid'=>5
+			));
+		$this->_assertNoRoute($routeMap,'/blargh');
+	}
 
 	// ----------------------------------------
 
