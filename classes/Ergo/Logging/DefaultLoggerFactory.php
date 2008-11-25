@@ -1,28 +1,43 @@
 <?php
 
 /**
- * A default logger factory that returns a basic console logger that
- * will show >= INFO messages.
+ * A default logger factory that returns a logger multiplexer with no loggers
  */
 class Ergo_Logging_DefaultLoggerFactory implements Ergo_Logging_LoggerFactory
 {
-	private $_ansiColor;
-	private $_level;
-	
+	private $_logger;
+
 	/**
 	 * Constructor
 	 */
-	function __construct($ansiColor=false, $level=Ergo_Logger::INFO)
+	function __construct()
 	{
-		$this->_ansiColor = $ansiColor;
-		$this->_level = $level;
+		$this->_logger = new Ergo_Logging_LoggerMultiplexer();
 	}
-	
+
 	/* (non-phpdoc)
 	 * @see Ergo_LoggerFactory::createLogger
 	 */
-	function createLogger($class)
+	public function createLogger($class)
 	{
-		return new Ergo_Logging_ConsoleLogger($this->_ansiColor, $this->_level);
+		return $this->_logger;
+	}
+
+	/**
+	 * Adds a logger to the internal logger multiplexer
+	 */
+	public function addLogger($logger)
+	{
+		$this->_logger->addLogger($logger);
+		return $this;
+	}
+
+	/**
+	 * Clears all loggers
+	 */
+	public function clear()
+	{
+		$this->_logger->clear();
+		return $this;
 	}
 }

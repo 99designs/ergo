@@ -7,6 +7,8 @@
 class Ergo_Application implements Ergo_Plugin
 {
 	protected $_registry;
+	protected $_loggerFactory;
+
 	private $_plugins=array();
 	private $_callmap=array();
 	private $_started=false;
@@ -90,12 +92,28 @@ class Ergo_Application implements Ergo_Plugin
 	}
 
 	/**
-	 * Looks up a logger for a class or filename, requires a 'loggerfactory'
-	 * to be in the registry
+	 * Creates or sets the logger factory used to create loggers
+	 */
+	public function loggerFactory(Ergo_Logging_LoggerFactory $factory=null)
+	{
+		if(!is_null($factory))
+		{
+			$this->_loggerFactory = $factory;
+		}
+		else if(!isset($this->_loggerFactory))
+		{
+			$this->_loggerFactory = new Ergo_Logging_DefaultLoggerFactory();
+		}
+
+		return $this->_loggerFactory;
+	}
+
+	/**
+	 * Looks up a logger for a class or filename from the logger factory
 	 */
 	public function loggerFor($class)
 	{
-		return $this->lookup('loggerfactory')->createLogger($class);
+		return $this->loggerFactory()->createLogger($class);
 	}
 
 	/**

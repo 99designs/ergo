@@ -50,4 +50,12 @@ class Ergo_Logging_LoggerMultiplexer extends Ergo_Logging_AbstractLogger
 			$logger->setLogLevel($level);
 		}
 	}
+
+	/**
+	 * Clears all loggers added
+	 */
+	function clear()
+	{
+		$this->_loggers = array();
+	}
 }
