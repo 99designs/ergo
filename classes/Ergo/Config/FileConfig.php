@@ -7,6 +7,11 @@ class Ergo_Config_FileConfig implements Ergo_Config
 {
 	protected $_data=array();
 
+	function __construct($files=array())
+	{
+		foreach((array)$files as $file) $this->loadFile($file);
+	}
+
 	/* (non-phpdoc)
 	 * @see Ergo_Configuration::get
 	 */
