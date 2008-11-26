@@ -8,6 +8,7 @@ class Ergo_Http_ResponseBuilder
 	private $_status;
 	private $_headerFields = array();
 	private $_body = '';
+	private $_view;
 	private $_cacheControl;
 
 	/**
@@ -43,10 +44,23 @@ class Ergo_Http_ResponseBuilder
 	}
 
 	/**
+	 * Uses a view to populate the body of the response
+	 * @param string $view
+	 * @chainable
+	 */
+	public function view(Ergo_View $view)
+	{
+		$this->_view = $view;
+		return $this;
+	}
+
+	/**
 	 * @return Ergo_Http_Response
 	 */
 	public function build()
 	{
+		if (isset($this->_view)) $this->setBody($this->_view->output());
+
 		if (!$this->_status) $this->setStatusCode(200);
 
 		if (isset($this->_location))
