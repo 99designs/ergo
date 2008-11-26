@@ -24,9 +24,6 @@ class Ergo_Registry
 
 		if(!isset($this->_instances[$key]))
 		{
-			debug_print_backtrace();
-			die(__FILE__.':'.__LINE__."\n");
-
 			throw new Ergo_RegistryException("No entry for key '$key'");
 		}
 
