@@ -4,13 +4,12 @@
  * The foundation and central lookup mechanism for a web application, reference
  * by the static {@link Ergo} object
  */
-class Ergo_Application implements Ergo_Plugin
+class Ergo_Application extends Ergo_Mixin implements Ergo_Plugin
 {
 	protected $_registry;
 	protected $_loggerFactory;
 
-	private $_plugins=array();
-	private $_callmap=array();
+	private $_mixin;
 	private $_started=false;
 	private $_errorHandler;
 
@@ -57,15 +56,12 @@ class Ergo_Application implements Ergo_Plugin
 	/**
 	 * Resets all internal state
 	 */
-	public function reset($event)
+	public function reset()
 	{
-		if(!isset($this->_registry))
-		{
-			unset($this->_registry);
-		}
-
-		$this->_plugins = array();
-		$this->_callmap = array();
+		unset($this->_loggerFactory);
+		unset($this->_registry);
+		unset($this->_mixin);
+		unset($this->_errorHandler);
 		return $this;
 	}
 
@@ -133,11 +129,24 @@ class Ergo_Application implements Ergo_Plugin
 	}
 
 	/**
+	 * Returns the {@link Ergo_Mixin} instance used for plugins
+	 */
+	protected function mixin()
+	{
+		if(!isset($this->_mixin))
+		{
+			$this->_mixin = new Ergo_Mixin();
+		}
+
+		return $this->_mixin;
+	}
+
+	/**
 	 * Returns the plugins plugged into the application
 	 */
 	public function plugins()
 	{
-		return $this->_plugins;
+		return $this->mixin()->delegates();
 	}
 
 	/**
@@ -145,8 +154,7 @@ class Ergo_Application implements Ergo_Plugin
 	 */
 	public function plug(Ergo_Plugin $plugin)
 	{
-		$this->_callmap = array();
-		$this->_plugins[] = $plugin;
+		$this->mixin()->addDelegate($plugin);
 		return $this;
 	}
 
@@ -177,28 +185,6 @@ class Ergo_Application implements Ergo_Plugin
 	 */
 	public function __call($method, $parameters)
 	{
-		// first check the call map
-		if(!isset($this->_callmap[$method]))
-		{
-			foreach($this->plugins() as $plugin)
-			{
-				if(method_exists($plugin,$method))
-				{
-					$this->_callmap[$method] = $plugin;
-					break;
-				}
-			}
-		}
-
-		// if it wasn't found in a plugin, fail
-		if(!isset($this->_callmap[$method]))
-		{
-			throw new BadMethodCallException("No plugins with a $method method");
-		}
-
-		return call_user_func_array(array(
-			$this->_callmap[$method],
-			$method
-			), $parameters);
+		return $this->mixin()->__call($method, $parameters);
 	}
 }
