@@ -33,6 +33,18 @@ class Ergo_Logging_DefaultLoggerFactory implements Ergo_Logging_LoggerFactory
 	}
 
 	/**
+	 * Adds a logger to the internal logger multiplexer
+	 */
+	public function addLoggers($loggers)
+	{
+		if(!is_array($loggers)) $loggers = func_get_args();
+
+		foreach($loggers as $logger) $this->addLogger($logger);
+
+		return $this;
+	}
+
+	/**
 	 * Clears all loggers
 	 */
 	public function clear()
