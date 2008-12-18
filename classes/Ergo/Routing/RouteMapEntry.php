@@ -67,6 +67,13 @@ class Ergo_Routing_RouteMapEntry
 	 */
 	public function interpolate($parameters)
 	{
+		// fail fast if the pattern has a star match
+		if(preg_match('/\*/',$this->_pattern))
+		{
+			throw new Ergo_Routing_BuildException(
+				'Can\'t build a url for a pattern with star');
+		}
+
 		// pass parameters to callback via private instance variable
 		$this->_interpolate = $parameters;
 
@@ -150,7 +157,7 @@ class Ergo_Routing_RouteMapEntry
 	private function _getParameterPattern($template)
 	{
 		// support star matches
-		$template = preg_replace('/\*/','.+?',$template);
+		$template = preg_replace('/\*/','.*?',$template);
 
 		return sprintf('#^%s$#',
 			preg_replace_callback(
