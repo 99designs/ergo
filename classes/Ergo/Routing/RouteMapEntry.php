@@ -105,7 +105,12 @@ class Ergo_Routing_RouteMapEntry
 
 		if (!isset($this->_interpolate[$key]))
 		{
-			throw new Ergo_Routing_Exception("No parameter assigned to '$key'");
+			throw new Ergo_Routing_Exception(sprintf(
+				"%s route needs '%s' value for '%s'",
+				$this->_name,
+				$key,
+				$this->_template
+			));
 		}
 
 		// percent encoding as per section 3.2 of URI Templates draft 9 July 2007,
