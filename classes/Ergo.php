@@ -26,6 +26,14 @@ class Ergo
 	}
 
 	/**
+	 * Whether the application instance is started.
+	 */
+	public static function isStarted()
+	{
+		return !is_null(self::$_application);
+	}
+
+	/**
 	 * Gets the current application instance
 	 */
 	public static function application()
