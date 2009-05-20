@@ -43,6 +43,7 @@ class Ergo_Config_FileConfig implements Ergo_Config
 
 	/**
 	 * Loads a config file and merges its contents with the previously loaded settings
+	 * @chainable
 	 */
 	function loadFile($file, $optional=false)
 	{
@@ -53,6 +54,8 @@ class Ergo_Config_FileConfig implements Ergo_Config
 
 		$config = include($file);
 		$this->_data = array_merge($this->_data,$config);
+
+		return $this;
 	}
 }
 
