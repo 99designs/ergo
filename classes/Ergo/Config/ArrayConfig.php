@@ -10,7 +10,7 @@ class Ergo_Config_ArrayConfig implements Ergo_Config
 	/* (non-phpdoc)
 	 * @see Ergo_Configuration::get
 	 */
-	function get($key)
+	public function get($key)
 	{
 		if(!$this->exists($key))
 		{
@@ -20,10 +20,21 @@ class Ergo_Config_ArrayConfig implements Ergo_Config
 		return $this->_data[$key];
 	}
 
+	/**
+	 * @param string $key
+	 * @param mixed $value
+	 * @chainable
+	 */
+	public function set($key, $value)
+	{
+		$this->_data[$key] = $value;
+		return $this;
+	}
+
 	/* (non-phpdoc)
 	 * @see Ergo_Configuration::exists
 	 */
-	function exists($key)
+	public function exists($key)
 	{
 		return array_key_exists($key, $this->_data);
 	}
@@ -31,7 +42,7 @@ class Ergo_Config_ArrayConfig implements Ergo_Config
 	/* (non-phpdoc)
 	 * @see Ergo_Configuration::getKeys
 	 */
-	function keys()
+	public function keys()
 	{
 		return array_keys($this->_data);
 	}
