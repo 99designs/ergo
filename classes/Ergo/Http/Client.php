@@ -55,7 +55,7 @@ class Ergo_Http_Client
 
 	/**
 	 * Sends a POST request
-	 * @return Rest_Http_Response
+	 * @return Ergo_Http_Response
 	 */
 	function post($path, $body)
 	{
@@ -64,7 +64,7 @@ class Ergo_Http_Client
 
 	/**
 	 * Sends a PUT request
-	 * @return Rest_Http_Response
+	 * @return Ergo_Http_Response
 	 */
 	function put($path, $body)
 	{
@@ -73,7 +73,7 @@ class Ergo_Http_Client
 
 	/**
 	 * Sends a GET request
-	 * @return Rest_Http_Response
+	 * @return Ergo_Http_Response
 	 */
 	function get($path)
 	{
@@ -82,7 +82,7 @@ class Ergo_Http_Client
 
 	/**
 	 * Sends a DELETE request
-	 * @return Rest_Http_Response
+	 * @return Ergo_Http_Response
 	 */
 	function delete($path)
 	{
@@ -120,7 +120,7 @@ class Ergo_Http_Client
 	}
 
 	/**
-	 * Builds an Rest_Http_Request object
+	 * Builds an Ergo_Http_Request object
 	 */
 	private function _buildRequest($method,$path,$body=null)
 	{
