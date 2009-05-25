@@ -120,8 +120,10 @@ class Ergo_ErrorHandler
 	 */
 	public function handleError($errno, $errstr, $errfile, $errline, $context)
 	{
-		// ignore suppressed errors
-		if (error_reporting() === 0) return;
+		$masked = $errno & error_reporting();
+
+		// ignore suppressed and unreportable "errors"
+		if ($masked === 0) return;
 
 		try
 		{
