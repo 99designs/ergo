@@ -3,20 +3,35 @@
 /**
  * Creates a Ergo_Http_Request from environment data.
  */
-class Ergo_Http_RequestFactory implements Ergo_Factory
+class Ergo_Http_RequestFactory implements Ergo_SingletonFactory
 {
+	private $_instance;
 
 	/**
 	 * @return Ergo_Http_Request
 	 */
 	public function create()
 	{
-		return new Ergo_Http_Request(
-			$this->_getRequestMethod(),
-			$this->_getUrl(),
-			$this->_getHeaders(),
-			$this->_getBody()
-		);
+		if(!isset($this->_instance))
+		{
+			$this->_instance = new Ergo_Http_Request(
+				$this->_getRequestMethod(),
+				$this->_getUrl(),
+				$this->_getHeaders(),
+				$this->_getBody()
+			);
+		}
+
+		return $this->_instance;
+	}
+
+	/* (non-phpdoc)
+	 * @return
+	 */
+	public function clear()
+	{
+		unset($this->_instance);
+		return $this;
 	}
 
 	// ----------------------------------------
@@ -59,7 +74,4 @@ class Ergo_Http_RequestFactory implements Ergo_Factory
 	{
 		return file_get_contents('php://input');
 	}
-
 }
-
-?>

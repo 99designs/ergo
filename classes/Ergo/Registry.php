@@ -51,6 +51,14 @@ class Ergo_Registry
 	}
 
 	/**
+	 * Creates a handle to a particular registry key
+	 */
+	public function handle($key)
+	{
+		return new Ergo_RegistryHandle($this, $key);
+	}
+
+	/**
 	 * @param string
 	 * @return bool
 	 */

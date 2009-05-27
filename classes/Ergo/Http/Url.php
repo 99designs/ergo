@@ -250,6 +250,32 @@ class Ergo_Http_Url
 	}
 
 	/**
+	 * Builds a URL with a different host
+	 * @return Ergo_Http_Url
+	 */
+	public function getUrlForHost($host)
+	{
+		$newUrl = clone $this;
+		$newUrl->_fragments['host'] = $host;
+		$newUrl->_inputString = $newUrl->__toString();
+
+		return $newUrl;
+	}
+
+	/**
+	 * Builds a URL with a different scheme
+	 * @return Ergo_Http_Url
+	 */
+	public function getUrlForScheme($scheme)
+	{
+		$newUrl = clone $this;
+		$newUrl->_fragments['scheme'] = $scheme;
+		$newUrl->_inputString = $newUrl->__toString();
+
+		return $newUrl;
+	}
+
+	/**
 	 * Join path/querystring/fragment components together
 	 */
 	private function _joinPathComponents($path)
@@ -276,6 +302,14 @@ class Ergo_Http_Url
 	{
 		return $this->getUrlForPath(
 			$this->_joinPathComponents($this->getPath(),ltrim($path,'/')));
+	}
+
+	/**
+	 * @see getUrlForRelativePath($path)
+	 */
+	public function relative($path)
+	{
+		return $this->getUrlForRelativePath($path);
 	}
 
 	/**

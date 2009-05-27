@@ -4,14 +4,14 @@
  * The foundation and central lookup mechanism for a web application, reference
  * by the static {@link Ergo} object
  */
-class Ergo_Application extends Ergo_Mixin implements Ergo_Plugin
+class Ergo_Application implements Ergo_Plugin
 {
-	protected $_registry;
-	protected $_loggerFactory;
+	const REQUEST_FACTORY='request_factory';
+	const LOGGER_FACTORY='logger_factory';
 
-	private $_mixin;
+	protected $_registry;
+	private $_mixin, $_errorHandler;
 	private $_started=false;
-	private $_errorHandler;
 
 	/**
 	 * Template method, called when the application starts
@@ -58,7 +58,6 @@ class Ergo_Application extends Ergo_Mixin implements Ergo_Plugin
 	 */
 	public function reset()
 	{
-		unset($this->_loggerFactory);
 		unset($this->_registry);
 		unset($this->_mixin);
 		unset($this->_errorHandler);
@@ -92,16 +91,11 @@ class Ergo_Application extends Ergo_Mixin implements Ergo_Plugin
 	 */
 	public function loggerFactory(Ergo_Logging_LoggerFactory $factory=null)
 	{
-		if(!is_null($factory))
-		{
-			$this->_loggerFactory = $factory;
-		}
-		else if(!isset($this->_loggerFactory))
-		{
-			$this->_loggerFactory = new Ergo_Logging_DefaultLoggerFactory();
-		}
-
-		return $this->_loggerFactory;
+		return $this->genericFactory(
+			self::LOGGER_FACTORY,
+			new Ergo_Logging_DefaultLoggerFactory(),
+			$factory
+			);
 	}
 
 	/**
@@ -126,6 +120,24 @@ class Ergo_Application extends Ergo_Mixin implements Ergo_Plugin
 	public function controller()
 	{
 		return new Ergo_Routing_RoutedController();
+	}
+
+	/**
+	 * Returns a request object for the current http request
+	 */
+	public function request()
+	{
+		return $this->requestFactory()->create();
+	}
+
+	/**
+	 * Creates or sets the logger factory used to create loggers
+	 */
+	public function requestFactory(Ergo_Factory $factory=null)
+	{
+		return $this->genericFactory(self::REQUEST_FACTORY,
+			new Ergo_Http_RequestFactory()
+			);
 	}
 
 	/**
@@ -186,5 +198,18 @@ class Ergo_Application extends Ergo_Mixin implements Ergo_Plugin
 	public function __call($method, $parameters)
 	{
 		return $this->mixin()->__call($method, $parameters);
+	}
+
+	/**
+	 * Provides a generic factory method that has a default, an optional
+	 * provided instance to use instead. Objects are stored in the registry.
+	 */
+	protected function genericFactory($key, $default, $provided=null)
+	{
+		$handle = $this->registry()->handle($key);
+
+		if(isset($setter)) $handle->set($provided);
+
+		return $handle->exists() ? $handle->get() : $handle->set($default);
 	}
 }

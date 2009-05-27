@@ -86,4 +86,11 @@ class Ergo
 		return self::application()->controller();
 	}
 
+	/**
+	 * Looks up the front controller object for an application
+	 */
+	public static function request()
+	{
+		return self::application()->request();
+	}
 }
