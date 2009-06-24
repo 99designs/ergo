@@ -233,13 +233,20 @@ class Ergo_Http_Url
 	 */
 	public function getUrlForPath($path)
 	{
-		$newUrl = clone $this;
-		$newUrl->_fragments['path'] = $path;
+		$fragments = parse_url($path);
 
-		// trim RHS components
+		if (!isset($fragments['path']))
+			throw new Ergo_Http_UrlException("URL is not a valid path: '$path'");
+
+		$newUrl = clone $this;
+		$newUrl->_fragments['path'] = $fragments['path'];
+
+		// overwrite RHS components
 		foreach(array('query','fragment') as $component)
 		{
-			if(isset($newUrl->_fragments[$component]))
+			if (isset($fragments[$component]))
+				$newUrl->_fragments[$component] = $fragments[$component];
+			elseif(isset($newUrl->_fragments[$component]))
 				unset($newUrl->_fragments[$component]);
 		}
 
