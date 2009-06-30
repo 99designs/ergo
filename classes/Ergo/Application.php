@@ -10,8 +10,10 @@ class Ergo_Application implements Ergo_Plugin
 	const LOGGER_FACTORY='logger_factory';
 
 	protected $_registry;
-	private $_mixin, $_errorHandler;
+	private $_mixin;
 	private $_started=false;
+	private $_errorHandler;
+	private $_errorProxy;
 
 	/**
 	 * Template method, called when the application starts
