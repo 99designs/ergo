@@ -87,15 +87,26 @@ class Ergo_Application implements Ergo_Plugin
 	}
 
 	/**
-	 * Creates or sets the logger factory used to create loggers
+	 * Gets the logger factory used to create loggers
 	 */
-	public function loggerFactory(Ergo_Logging_LoggerFactory $factory=null)
+	public function loggerFactory()
 	{
-		return $this->genericFactory(
-			self::LOGGER_FACTORY,
-			new Ergo_Logging_DefaultLoggerFactory(),
-			$factory
-			);
+		if(!isset($this->_loggerFactory))
+		{
+			$this->_loggerFactory = new Ergo_Logging_DefaultLoggerFactory();
+		}
+
+		return $this->_loggerFactory;
+	}
+
+	/**
+	 * Creates or sets the logger factory used to create loggers
+	 * @chainable
+	 */
+	public function setLoggerFactory(Ergo_Logging_LoggerFactory $factory)
+	{
+		$this->_loggerFactory = $factory;
+		return $this;
 	}
 
 	/**
@@ -133,10 +144,21 @@ class Ergo_Application implements Ergo_Plugin
 	/**
 	 * Creates or sets the logger factory used to create loggers
 	 */
-	public function requestFactory(Ergo_Factory $factory=null)
+	public function requestFactory()
 	{
 		return $this->genericFactory(self::REQUEST_FACTORY,
 			new Ergo_Http_RequestFactory()
+			);
+	}
+
+	/**
+	 * Creates or sets the logger factory used to create loggers
+	 */
+	public function setRequestFactory(Ergo_Factory $factory)
+	{
+		return $this->genericFactory(self::REQUEST_FACTORY,
+			new Ergo_Http_RequestFactory(),
+			$factory
 			);
 	}
 
@@ -180,16 +202,22 @@ class Ergo_Application implements Ergo_Plugin
 	}
 
 	/**
-	 * Gets the error handler for the application, or sets one if provided
+	 * Gets the error handler for the application
 	 * @return object
 	 */
-	public function errorHandler($errorHandler=false)
+	public function errorHandler()
 	{
-		if($errorHandler !== false)
-		{
-			$this->_errorHandler = $errorHandler;
-		}
 		return $this->_errorHandler;
+	}
+
+	/**
+	 * Sets the error handler for the application
+	 * @chainable
+	 */
+	public function setErrorHandler($errorHandler)
+	{
+		$this->_errorHandler = $errorHandler;
+		return $this;
 	}
 
 	/* (non-phpdoc)
