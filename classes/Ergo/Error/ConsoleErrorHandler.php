@@ -30,9 +30,10 @@ class Ergo_Error_ConsoleErrorHandler extends Ergo_Error_AbstractErrorHandler
 	 */
 	public function handle($e)
 	{
-		$this->logger()->logExeception($e);
+		$logger = $this->logger();
+		$logger->logException($e);
 
-		echo "\n".$exception->__toString()."\n\n";
+		echo "\n".$e->__toString()."\n\n";
 		exit(self::EXIT_CODE);
 	}
 }
