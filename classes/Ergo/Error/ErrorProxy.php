@@ -64,19 +64,19 @@ class Ergo_Error_ErrorProxy
 	 */
 	public function _handleError($errno, $errstr, $errfile, $errline, $context=null)
 	{
-		// ignore suppressed errors
-		if (error_reporting() === 0) return;
-
-		try
+		// process errors based on the error reporting settings
+		if (error_reporting() & $errno)
 		{
-			// bit of a hack to get a decent stack trace
-			throw new ErrorException(
-				$this->_errorNumberString($errno).': '.$errstr,
-				0,$errno,$errfile,$errline);
-		}
-		catch(ErrorException $e)
-		{
-			$this->_handleException($e);
+			try
+			{
+				// bit of a hack to consolidate errors to exceptions
+				$message = $this->_errorNumberString($errno).': '.$errstr;
+				throw new ErrorException($message,0,$errno,$errfile,$errline);
+			}
+			catch(ErrorException $e)
+			{
+				$this->_handleException($e);
+			}
 		}
 	}
 
@@ -114,19 +114,25 @@ class Ergo_Error_ErrorProxy
 	{
 		if ($error = error_get_last())
 		{
-			// clear the output buffer if we can
-			if(ob_get_level()>=1) ob_end_clean();
-
-			// build an error exception
-			if (isset($error['type']) && in_array($error['type'],
-				array(E_ERROR, E_PARSE, E_COMPILE_ERROR)))
+			try
 			{
-				$this->_handleError(
-					$error['type'],
-					$error['message'],
-					$error['file'],
-					$error['line']
-					);
+				// clear the output buffer if we can
+				if(ob_get_level()>=1) ob_end_clean();
+
+				// build an error exception
+				if (isset($error['type']) && in_array($error['type'],
+					array(E_ERROR, E_PARSE, E_COMPILE_ERROR)))
+				{
+					$this->_handleError(
+						$error['type'],
+						$error['message'],
+						$error['file'],
+						$error['line']
+						);
+				}
+			}
+			catch(Exception $e)
+			{
 			}
 		}
 	}
