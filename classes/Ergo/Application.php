@@ -238,7 +238,7 @@ class Ergo_Application implements Ergo_Plugin
 	{
 		$handle = $this->registry()->handle($key);
 
-		if(isset($setter)) $handle->set($provided);
+		if(isset($provided)) $handle->set($provided);
 
 		return $handle->exists() ? $handle->get() : $handle->set($default);
 	}
