@@ -24,35 +24,9 @@ abstract class Ergo_Error_AbstractErrorHandler
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Error_ErrorHandler::register()
+	 * @see Ergo_Error_ErrorHandler::logger()
 	 */
-	function register()
-	{
-		if(!isset($this->_proxy))
-		{
-			$this->_proxy = new Ergo_Error_ErrorProxy($this);
-		}
-
-		$this->_proxy->register();
-		return $this;
-	}
-
-	/* (non-phpdoc)
-	 * @see Ergo_Error_ErrorHandler::unregister()
-	 */
-	function unregister()
-	{
-		if(!isset($this->_proxy))
-		{
-			$this->_proxy->unregister();
-		}
-		return $this;
-	}
-
-	/* (non-phpdoc)
-	 * @see Ergo_Error_ErrorHandler::unregister()
-	 */
-	function logger()
+	public function logger()
 	{
 		if(!isset($this->_logger))
 		{
@@ -65,7 +39,7 @@ abstract class Ergo_Error_AbstractErrorHandler
 	/* (non-phpdoc)
 	 * @see Ergo_Error_ErrorHandler::context()
 	 */
-	function context()
+	public function context()
 	{
 		return array();
 	}

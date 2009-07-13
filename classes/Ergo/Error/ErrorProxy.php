@@ -6,16 +6,16 @@
  */
 class Ergo_Error_ErrorProxy
 {
-	private $_errorHandler;
+	private $_application;
 	private $_inError=false;
 
 	/**
 	 * Constructor
 	 * @param object Ergo_Error_ErrorHandler
 	 */
-	public function __construct($errorHandler)
+	public function __construct($application)
 	{
-		$this->_errorHandler = $errorHandler;
+		$this->_application = $application;
 	}
 
 	/**
@@ -53,7 +53,7 @@ class Ergo_Error_ErrorProxy
 		else
 		{
 			$this->_inError = true;
-			$this->_errorHandler->handle($e);
+			$this->_application->errorHandler()->handle($e);
 			$this->_inError = false;
 		}
 	}

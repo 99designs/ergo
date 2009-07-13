@@ -37,6 +37,7 @@ class Ergo_Application implements Ergo_Plugin
 	{
 		if($this->_started==false)
 		{
+			$this->_errorProxy = new Ergo_Error_ErrorProxy($this);
 			$this->onStart();
 			foreach($this->plugins() as $plugin) $plugin->start();
 			$this->_started = true;
@@ -162,6 +163,14 @@ class Ergo_Application implements Ergo_Plugin
 			new Ergo_Http_RequestFactory(),
 			$factory
 			);
+	}
+
+	/**
+	 * Returns the Ergo_Error_ErrorProxy for the application
+	 */
+	protected function errorProxy()
+	{
+		return $this->_errorProxy;
 	}
 
 	/**

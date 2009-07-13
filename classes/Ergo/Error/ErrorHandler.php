@@ -1,23 +1,10 @@
 <?php
 
 /**
- * A basic handler for PHP errors and exceptions which consolidates errors
- * into error exceptions provides for simple logging and error formatting.
+ * A basic handler for exceptions with simple logging and error formatting.
  */
 interface Ergo_Error_ErrorHandler
 {
-	/**
-	 * Registers the error handler
-	 * @chainable
-	 */
-	function register();
-
-	/**
-	 * Attempts to unregister the error handler
-	 * @chainable
-	 */
-	function unregister();
-
 	/**
 	 * Handles an exception or error
 	 */
