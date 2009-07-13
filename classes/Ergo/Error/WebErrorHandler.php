@@ -5,6 +5,8 @@
  */
 class Ergo_Error_WebErrorHandler extends Ergo_Error_AbstractErrorHandler
 {
+	const EXIT_CODE = 2;
+
 	/* (non-phpdoc)
 	 * @see Ergo_Error_ErrorHandler::context()
 	 */
@@ -68,9 +70,12 @@ class Ergo_Error_WebErrorHandler extends Ergo_Error_AbstractErrorHandler
 		$logger = $this->logger();
 		$logger->logException($e);
 
-		// send it off
-		$sender = new Ergo_Http_ResponseSender($this->buildResponse($e));
-		$sender->send();
-		exit(0);
+		if ($this->isExceptionHalting($e))
+		{
+			// send it off
+			$sender = new Ergo_Http_ResponseSender($this->buildResponse($e));
+			$sender->send();
+			exit(self::EXIT_CODE);
+		}
 	}
 }

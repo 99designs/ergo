@@ -69,6 +69,19 @@ abstract class Ergo_Error_AbstractErrorHandler
 	{
 		return array();
 	}
+
+	/**
+	* Determines whether the exception should halt execution
+	* @return bool
+	*/
+	protected function isExceptionHalting($e)
+	{
+		if ($e instanceof ErrorException)
+		{
+			$ignore = E_WARNING | E_NOTICE | E_USER_WARNING | E_USER_NOTICE | E_STRICT;
+			return (($ignore & $e->getSeverity()) == 0);
+		}
+
+		return true;
+	}
 }
-
-

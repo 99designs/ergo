@@ -5,7 +5,7 @@
  */
 class Ergo_Error_ConsoleErrorHandler extends Ergo_Error_AbstractErrorHandler
 {
-	const EXIT_CODE=10;
+	const EXIT_CODE = 2;
 
 	/* (non-phpdoc)
 	 * @see Ergo_Error_ErrorHandler::context()
@@ -33,7 +33,10 @@ class Ergo_Error_ConsoleErrorHandler extends Ergo_Error_AbstractErrorHandler
 		$logger = $this->logger();
 		$logger->logException($e);
 
-		echo "\n".$e->__toString()."\n\n";
-		exit(self::EXIT_CODE);
+		if ($this->isExceptionHalting($e))
+		{
+			echo "\n".$e->__toString()."\n\n";
+			exit(self::EXIT_CODE);
+		}
 	}
 }
