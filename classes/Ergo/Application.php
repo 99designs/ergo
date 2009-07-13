@@ -168,7 +168,7 @@ class Ergo_Application implements Ergo_Plugin
 	/**
 	 * Returns the Ergo_Error_ErrorProxy for the application
 	 */
-	protected function errorProxy()
+	public function errorProxy()
 	{
 		return $this->_errorProxy;
 	}
