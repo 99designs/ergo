@@ -12,7 +12,7 @@ interface Ergo_Error_ErrorHandler
 
 	/**
 	 * Returns logger attached to the error handler
-	 * @return object an Ergo_Logger
+	 * @return object an Ergo_Logging_CompositeLogger
 	 */
 	public function logger();
 

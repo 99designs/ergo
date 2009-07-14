@@ -3,16 +3,22 @@
 /**
  * A default logger factory that returns a logger multiplexer with no loggers
  */
-class Ergo_Logging_DefaultLoggerFactory implements Ergo_Logging_LoggerFactory
+class Ergo_Logging_DefaultLoggerFactory
+	implements Ergo_Logging_LoggerFactory
 {
 	private $_logger;
 
 	/**
-	 * Constructor
+	 * Returns a single logger instance
 	 */
-	function __construct()
+	protected function logger()
 	{
-		$this->_logger = new Ergo_Logging_LoggerMultiplexer();
+		if(!isset($this->_logger))
+		{
+			$this->_logger = new Ergo_Logging_LoggerMultiplexer();
+		}
+
+		return $this->_logger;
 	}
 
 	/* (non-phpdoc)
@@ -20,36 +26,25 @@ class Ergo_Logging_DefaultLoggerFactory implements Ergo_Logging_LoggerFactory
 	 */
 	public function createLogger($class)
 	{
-		return $this->_logger;
+		return $this->logger();
 	}
 
 	/**
 	 * Adds a logger to the internal logger multiplexer
-	 */
-	public function addLogger($logger)
-	{
-		$this->_logger->addLogger($logger);
-		return $this;
-	}
-
-	/**
-	 * Adds a logger to the internal logger multiplexer
+	 * @chainable
 	 */
 	public function addLoggers($loggers)
 	{
-		if(!is_array($loggers)) $loggers = func_get_args();
-
-		foreach($loggers as $logger) $this->addLogger($logger);
-
+		$this->logger()->addLoggers(func_get_args());
 		return $this;
 	}
 
 	/**
 	 * Clears all loggers
 	 */
-	public function clear()
+	public function clearLoggers()
 	{
-		$this->_logger->clear();
+		unset($this->_logger);
 		return $this;
 	}
 }

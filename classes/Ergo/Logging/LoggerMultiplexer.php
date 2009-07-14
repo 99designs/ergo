@@ -2,11 +2,13 @@
 
 
 /**
- * A logger that sends log messages to different logging backends
+ * A basic implementation of a composite logger that multiplexes log messages to many loggers
  *
  * @author Lachlan Donald <lachlan@99designs.com>
  */
-class Ergo_Logging_LoggerMultiplexer extends Ergo_Logging_AbstractLogger
+class Ergo_Logging_LoggerMultiplexer
+	extends Ergo_Logging_AbstractLogger
+	implements Ergo_Logging_CompositeLogger
 {
 	private $_loggers=array();
 
@@ -15,17 +17,39 @@ class Ergo_Logging_LoggerMultiplexer extends Ergo_Logging_AbstractLogger
 	 */
 	function __construct($loggers=array())
 	{
-		foreach((array)$loggers as $logger) $this->addLogger($logger);
+		$this->addLoggers($loggers);
 	}
 
-	/**
-	 * Adds a logger to recieve logging messages
-	 * @chainable
+	/* (non-phpdoc)
+	 * @see Ergo_Logging_CompositeLogger::addLoggers()
 	 */
-	function addLogger($logger)
+	function addLoggers($loggers)
 	{
-		$logger->setLogLevel($this->getLogLevel());
-		$this->_loggers[] = $logger;
+		foreach(func_get_args() as $logger)
+		{
+			if(is_array($logger))
+			{
+				foreach($logger as $sublogger)
+				{
+					$this->addLoggers($sublogger);
+				}
+			}
+			else if(is_object($logger))
+			{
+				$logger->setLogLevel($this->getLogLevel());
+				$this->_loggers[] = $logger;
+			}
+		}
+
+		return $this;
+	}
+
+	/* (non-phpdoc)
+	 * @see Ergo_Logging_CompositeLogger::clearLoggers()
+	 */
+	function clearLoggers()
+	{
+		$this->_loggers = array();
 		return $this;
 	}
 
@@ -62,14 +86,5 @@ class Ergo_Logging_LoggerMultiplexer extends Ergo_Logging_AbstractLogger
 		{
 			$logger->setLogLevel($level);
 		}
-	}
-
-	/**
-	 * Clears all loggers added
-	 * @chainable
-	 */
-	function clear()
-	{
-		$this->_loggers = array();
 	}
 }
