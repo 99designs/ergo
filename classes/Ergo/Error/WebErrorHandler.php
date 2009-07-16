@@ -25,10 +25,10 @@ class Ergo_Error_WebErrorHandler extends Ergo_Error_AbstractErrorHandler
 		return array(
 			'Environment'=>'Web',
 			'Request' => $requestStr,
-			'Server Name' => $_SERVER['SERVER_NAME'],
+			'Server Name' => $this->_server('SERVER_NAME', 'unknown'),
 			'Host' => $hostname,
-			'User IP' => $_SERVER['REMOTE_ADDR'],
-			'User Agent' => $_SERVER['HTTP_USER_AGENT']
+			'User IP' => $this->_server('REMOTE_ADDR', 'unknown'),
+			'User Agent' => $this->_server('HTTP_USER_AGENT', 'unknown'),
 		);
 	}
 
@@ -77,5 +77,10 @@ class Ergo_Error_WebErrorHandler extends Ergo_Error_AbstractErrorHandler
 			$sender->send();
 			exit(self::EXIT_CODE);
 		}
+	}
+
+	private function _server($var, $default)
+	{
+		return isset($_SERVER[$var]) ? $_SERVER[$var] : $default;
 	}
 }
