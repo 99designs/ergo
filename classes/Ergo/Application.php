@@ -10,8 +10,10 @@ class Ergo_Application implements Ergo_Plugin
 	const LOGGER_FACTORY='logger_factory';
 
 	protected $_registry;
-	private $_mixin, $_errorHandler;
+	private $_mixin;
 	private $_started=false;
+	private $_errorHandler;
+	private $_errorProxy;
 
 	/**
 	 * Template method, called when the application starts
@@ -35,6 +37,7 @@ class Ergo_Application implements Ergo_Plugin
 	{
 		if($this->_started==false)
 		{
+			$this->_errorProxy = new Ergo_Error_ErrorProxy($this);
 			$this->onStart();
 			foreach($this->plugins() as $plugin) $plugin->start();
 			$this->_started = true;
@@ -163,6 +166,14 @@ class Ergo_Application implements Ergo_Plugin
 	}
 
 	/**
+	 * Returns the Ergo_Error_ErrorProxy for the application
+	 */
+	public function errorProxy()
+	{
+		return $this->_errorProxy;
+	}
+
+	/**
 	 * Returns the {@link Ergo_Mixin} instance used for plugins
 	 */
 	protected function mixin()
@@ -236,7 +247,7 @@ class Ergo_Application implements Ergo_Plugin
 	{
 		$handle = $this->registry()->handle($key);
 
-		if(isset($setter)) $handle->set($provided);
+		if(isset($provided)) $handle->set($provided);
 
 		return $handle->exists() ? $handle->get() : $handle->set($default);
 	}

@@ -20,11 +20,13 @@ class Ergo_Logging_LoggerMultiplexer extends Ergo_Logging_AbstractLogger
 
 	/**
 	 * Adds a logger to recieve logging messages
+	 * @chainable
 	 */
 	function addLogger($logger)
 	{
 		$logger->setLogLevel($this->getLogLevel());
 		$this->_loggers[] = $logger;
+		return $this;
 	}
 
 	/* (non-phpdoc)
@@ -35,6 +37,17 @@ class Ergo_Logging_LoggerMultiplexer extends Ergo_Logging_AbstractLogger
 		foreach($this->_loggers as &$logger)
 		{
 			$logger->log($message, $level);
+		}
+	}
+
+	/* (non-phpdoc)
+	 * @see Ergo_Logger::logException()
+	 */
+	function logException($exception,$level=Ergo_Logger::ERROR)
+	{
+		foreach($this->_loggers as &$logger)
+		{
+			$logger->logException($exception,$level);
 		}
 	}
 
@@ -53,6 +66,7 @@ class Ergo_Logging_LoggerMultiplexer extends Ergo_Logging_AbstractLogger
 
 	/**
 	 * Clears all loggers added
+	 * @chainable
 	 */
 	function clear()
 	{
