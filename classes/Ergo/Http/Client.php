@@ -6,12 +6,14 @@
 class Ergo_Http_Client
 {
 	const MAX_REDIRECTS=10;
+	const DEFAULT_TIMEOUT=10;
 
 	private $_url;
 	private $_redirects=0;
 	private $_filters=array();
 	private $_headers=array();
 	private $_proxy;
+	private $_timeout=self::DEFAULT_TIMEOUT;
 
 	/**
 	 * @param string $url
@@ -213,7 +215,7 @@ class Ergo_Http_Client
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curl, CURLOPT_HEADER, true);
 		curl_setopt($curl, CURLOPT_VERBOSE, false);
-		curl_setopt($curl, CURLOPT_TIMEOUT, 10);
+		curl_setopt($curl, CURLOPT_TIMEOUT, $this->_timeout);
 		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
 
@@ -263,5 +265,15 @@ class Ergo_Http_Client
 
 		return $this->_dispatchRequest(
 			new Ergo_Http_Request('GET', $locationUrl, $this->_headers));
+	}
+
+	/**
+	 * Sets the connection timeout in seconds
+	 * @chainable
+	 */
+	public function setTimeout($seconds)
+	{
+		$this->_timeout = $seconds;
+		return $this;
 	}
 }
