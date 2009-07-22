@@ -8,6 +8,7 @@ class Ergo_Error_ErrorProxy
 {
 	private $_application;
 	private $_inError=false;
+	private $_registered=false;
 
 	/**
 	 * Constructor
@@ -26,6 +27,7 @@ class Ergo_Error_ErrorProxy
 		set_error_handler(array($this,'_handleError'));
 		set_exception_handler(array($this,'_handleException'));
 		register_shutdown_function(array($this,'_shutdown'));
+		$this->_registered = true;
 		return $this;
 	}
 
@@ -36,6 +38,7 @@ class Ergo_Error_ErrorProxy
 	{
 		restore_error_handler();
 		restore_exception_handler();
+		$this->_registered = false;
 		return $this;
 	}
 
@@ -112,7 +115,7 @@ class Ergo_Error_ErrorProxy
 	 */
 	public function _shutdown()
 	{
-		if ($error = error_get_last())
+		if ($this->_registered && $error = error_get_last())
 		{
 			try
 			{
