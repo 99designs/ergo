@@ -151,14 +151,21 @@ class Ergo_Http_ResponseBuilder
 		return $this->setStatusCode(304);
 	}
 
-	// ----------------------------------------
-	// convenience methods: cacheability
-
-	public function cacheControl($params)
+	/**
+	 * Sets the Cache-Control header to the strings passed as parameters.
+	 * @chainable
+	 */
+	public function cacheControl(/* ... */)
 	{
 		$this->_cacheControl = func_get_args();
+		return $this;
 	}
 
+	/**
+	 * Sets the Expires header based on a Unix timestamp.
+	 * @param int Unix timestamp
+	 * @chainable
+	 */
 	public function expires($time)
 	{
 		if(!empty($time) && is_string($time) && !$timestamp = strtotime($time))
@@ -174,7 +181,9 @@ class Ergo_Http_ResponseBuilder
 			return $this;
 		}
 
-		return $this->addHeader('Expires', date('r',$timestamp));
+		$this->addHeader('Expires', date('r',$timestamp));
+
+		return $this;
 	}
 
 }
