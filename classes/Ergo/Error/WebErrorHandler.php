@@ -58,6 +58,7 @@ class Ergo_Error_WebErrorHandler extends Ergo_Error_AbstractErrorHandler
 		$responseBuilder = new Ergo_Http_ResponseBuilder();
 		return $responseBuilder
 			->setStatusCode(500)
+			->notCachable()
 			->setBody($this->buildResponseBody($e))
 			->build();
 	}
