@@ -186,4 +186,15 @@ class Ergo_Http_ResponseBuilder
 		return $this;
 	}
 
+	/**
+	 * Sets the headers required to prevent response caching.
+	 * @chainable
+	 */
+	public function notCachable()
+	{
+		return $this
+			->cacheControl('no-store', 'no-cache', 'must-revalidate')
+			->addHeader('Pragma', 'no-cache')
+			->expires(strtotime('-1 year'));
+	}
 }
