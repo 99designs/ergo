@@ -312,6 +312,19 @@ class Ergo_Http_Url
 	}
 
 	/**
+	 * @param array $queryParameters
+	 */
+	public function getUrlForParameters($queryParameters)
+	{
+		$newUrl = clone $this;
+		$newUrl->_fragments['query'] = http_build_query($queryParameters);
+		$newUrl->_inputString = $newUrl->__toString();
+
+		return $newUrl;
+	}
+
+
+	/**
 	 * @see getUrlForRelativePath($path)
 	 */
 	public function relative($path)

@@ -230,6 +230,14 @@ class Ergo_Http_UrlTest extends UnitTestCase
 			'http://example.org/test');
 	}
 
+	public function testGetUrlForParameters()
+	{
+		$url = new Ergo_Http_Url('http://example.org/test');
+		$relative = $url->getUrlForParameters(array('a'=>1,'b'=>2,'c'=>'test'));
+		$this->assertEqual($relative->__toString(),
+			'http://example.org/test?a=1&b=2&c=test');
+	}
+
 	// ----------------------------------------
 
 	private function _assertExpectedValues($url, $custom = array())
