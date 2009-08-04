@@ -19,7 +19,7 @@ abstract class Ergo_Error_AbstractErrorHandler
 		if(is_object($logger))
 		{
 			$this->_logger = new Ergo_Logging_LoggerMultiplexer();
-			$this->_logger->addLogger($logger);
+			$this->_logger->addLoggers($logger);
 		}
 	}
 
