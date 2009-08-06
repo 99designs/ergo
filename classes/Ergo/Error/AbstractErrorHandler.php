@@ -45,17 +45,26 @@ abstract class Ergo_Error_AbstractErrorHandler
 	}
 
 	/**
+	* Determines whether an exception is recoverable
+	* @return bool
+	*/
+	protected function isExceptionRecoverable($e)
+	{
+		if ($e instanceof ErrorException)
+		{
+			$ignore = E_WARNING | E_NOTICE | E_USER_WARNING | E_USER_NOTICE | E_STRICT;
+			return (($ignore & $e->getSeverity()) != 0);
+		}
+
+		return false;
+	}
+
+	/**
 	* Determines whether the exception should halt execution
 	* @return bool
 	*/
 	protected function isExceptionHalting($e)
 	{
-		if ($e instanceof ErrorException)
-		{
-			$ignore = E_WARNING | E_NOTICE | E_USER_WARNING | E_USER_NOTICE | E_STRICT;
-			return (($ignore & $e->getSeverity()) == 0);
-		}
-
 		return true;
 	}
 }
