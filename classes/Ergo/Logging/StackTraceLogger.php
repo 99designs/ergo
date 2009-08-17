@@ -75,16 +75,9 @@ class Ergo_Logging_StackTraceLogger extends Ergo_Logging_AbstractLogger
 	 */
 	private function _appendToLogfile($message)
 	{
-		try
-		{
-			// write to the log file
-			$log = new SplFileObject($this->_filepath, "a+");
-			$log->fwrite($message);
-		}
-		catch(Exception $e)
-		{
-			echo $e->__toString();
-		}
+		// write to the log file
+		$log = new SplFileObject($this->_filepath, "a+");
+		$log->fwrite($message);
 	}
 
 	/**

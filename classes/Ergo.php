@@ -6,6 +6,7 @@
 class Ergo
 {
 	private static $_application;
+	private static $_starting;
 
 	/**
 	 * Starts a particular application instance
@@ -13,7 +14,9 @@ class Ergo
 	public static function start($application)
 	{
 		self::$_application = $application;
+		self::$_starting = true;
 		$application->start();
+		self::$_starting = false;
 	}
 
 	/**
@@ -31,6 +34,14 @@ class Ergo
 	public static function isStarted()
 	{
 		return !is_null(self::$_application);
+	}
+
+	/**
+	 * Whether the application instance is currently starting.
+	 */
+	public static function isStarting()
+	{
+		return self::$_starting;
 	}
 
 	/**
