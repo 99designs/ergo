@@ -23,7 +23,13 @@ abstract class Ergo_Logging_AbstractLogger implements Ergo_Logger
 	 */
 	function logException($exception,$level=Ergo_Logger::ERROR)
 	{
-		$this->log($exception->getMessage(),$level);
+		$this->log(sprintf(
+			"%s '%s' in %s:%d",
+			get_class($exception),
+			$exception->getMessage(),
+			$exception->getFile(),
+			$exception->getLine()
+			), $level);
 	}
 
 	/* (non-phpdoc)

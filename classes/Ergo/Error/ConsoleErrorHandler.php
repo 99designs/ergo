@@ -7,6 +7,19 @@ class Ergo_Error_ConsoleErrorHandler extends Ergo_Error_AbstractErrorHandler
 {
 	const EXIT_CODE = 2;
 
+	private $_showStackTrace;
+
+	/**
+	 * Constructor
+	 * @param bool whether to show stack traces
+	 * @param object an optional Ergo_Logger instance
+	 */
+	public function __construct($showStackTrace=true, $logger=null)
+	{
+		parent::__construct($logger);
+		$this->_showStackTrace = $showStackTrace;
+	}
+
 	/* (non-phpdoc)
 	 * @see Ergo_Error_ErrorHandler::context()
 	 */
@@ -35,7 +48,7 @@ class Ergo_Error_ConsoleErrorHandler extends Ergo_Error_AbstractErrorHandler
 
 		if ($this->isExceptionHalting($e))
 		{
-			echo "\n".$e->__toString()."\n\n";
+			if($this->_showStackTrace) echo "\n".$e->__toString()."\n\n";
 			exit(self::EXIT_CODE);
 		}
 	}
