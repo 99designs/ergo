@@ -13,7 +13,7 @@ abstract class Ergo_Logging_AbstractLogger implements Ergo_Logger
 	/**
 	 * Construct a logger with a default level of trace
 	 */
-	function __construct($level=Ergo_Logger::INFO)
+	public function __construct($level=Ergo_Logger::INFO)
 	{
 		$this->_loglevel = $level;
 	}

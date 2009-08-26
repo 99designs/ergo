@@ -15,8 +15,9 @@ class Ergo_Logging_LoggerMultiplexer
 	/**
 	 * Constructor
 	 */
-	function __construct($loggers=array())
+	function __construct($loggers=array(), $level=Ergo_Logger::INFO)
 	{
+		parent::__construct($level);
 		$this->addLoggers($loggers);
 	}
 
@@ -36,7 +37,6 @@ class Ergo_Logging_LoggerMultiplexer
 			}
 			else if(is_object($logger))
 			{
-				$logger->setLogLevel($this->getLogLevel());
 				$this->_loggers[] = $logger;
 			}
 		}

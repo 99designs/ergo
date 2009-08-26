@@ -27,10 +27,26 @@ class Ergo_Logging_ConsoleLogger extends Ergo_Logging_AbstractLogger
 		if($this->_isLevelEnabled($level))
 		{
 			echo $this->_getMessagePrefix($level);
-			echo "[" . date("Y-m-d H:i:s")." $level] ".$this->_getMemoryUsage().
-			" :: $message\n";
+
+			printf(
+				$this->_getMessageFormat(),
+				$level,
+				$this->_getMemoryUsage(),
+				$message
+				);
+
 			echo $this->_getMessageSuffix($level);
 		}
+	}
+
+	/**
+	 * Returns the message format used by the logger, parametized with
+	 * the level, memory usage as a string and the message
+	 * @see sprintf
+	 */
+	protected function _getMessageFormat()
+	{
+		return "[".date("Y-m-d H:i:s")." %s] %s :: %s\n";
 	}
 
 	/**
