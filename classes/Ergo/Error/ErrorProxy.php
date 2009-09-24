@@ -50,8 +50,18 @@ class Ergo_Error_ErrorProxy
 	{
 		if($this->_inError)
 		{
-			echo $e->__toString();
-			exit(0);
+			if(php_sapi_name() == 'cli')
+			{
+				echo $e->__toString();
+				exit(1);
+			}
+			else
+			{
+				header('HTTP/1.1 500 Internal Server Error');
+				echo "<h1>Error in error handler: ".$e->getMessage().'</h1>';
+				echo '<pre>'.$e->__toString().'</pre>';
+				exit(1);
+			}
 		}
 		else
 		{
