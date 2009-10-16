@@ -82,8 +82,8 @@ abstract class Ergo_Logging_AbstractLogger implements Ergo_Logger
 	function info($message)
 	{
 		$args = func_get_args();
-		$this->log(call_user_func_array('sprintf',$args),
-			Ergo_Logger::INFO);
+		$message = (count($args) > 1) ? call_user_func_array('sprintf',$args) : $message;
+		$this->log($message, Ergo_Logger::INFO);
 	}
 
 	/**
@@ -92,8 +92,8 @@ abstract class Ergo_Logging_AbstractLogger implements Ergo_Logger
 	function trace($message)
 	{
 		$args = func_get_args();
-		$this->log(call_user_func_array('sprintf',$args),
-			Ergo_Logger::TRACE);
+		$message = (count($args) > 1) ? call_user_func_array('sprintf',$args) : $message;
+		$this->log($message, Ergo_Logger::TRACE);
 	}
 
 	/**
@@ -102,8 +102,8 @@ abstract class Ergo_Logging_AbstractLogger implements Ergo_Logger
 	function warn($message)
 	{
 		$args = func_get_args();
-		$this->log(call_user_func_array('sprintf',$args),
-			Ergo_Logger::WARN);
+		$message = (count($args) > 1) ? call_user_func_array('sprintf',$args) : $message;
+		$this->log($message, Ergo_Logger::WARN);
 	}
 
 	/**
@@ -112,8 +112,8 @@ abstract class Ergo_Logging_AbstractLogger implements Ergo_Logger
 	function error($message)
 	{
 		$args = func_get_args();
-		$this->log(call_user_func_array('sprintf',$args),
-			Ergo_Logger::ERROR);
+		$message = (count($args) > 1) ? call_user_func_array('sprintf',$args) : $message;
+		$this->log($message, Ergo_Logger::ERROR);
 	}
 
 	/**
@@ -122,8 +122,8 @@ abstract class Ergo_Logging_AbstractLogger implements Ergo_Logger
 	function fatal($message)
 	{
 		$args = func_get_args();
-		$this->log(call_user_func_array('sprintf',$args),
-			Ergo_Logger::ERROR);
+		$message = (count($args) > 1) ? call_user_func_array('sprintf',$args) : $message;
+		$this->log($message, Ergo_Logger::FATAL);
 	}
 
 	// --------------------------------------------------------------------
