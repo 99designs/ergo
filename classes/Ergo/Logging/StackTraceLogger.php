@@ -26,7 +26,6 @@ class Ergo_Logging_StackTraceLogger extends Ergo_Logging_AbstractLogger
 	 */
 	function log($message,$level=Ergo_Logger::INFO)
 	{
-		$this->_appendToLogfile(sprintf('[%s] :: %s', $level, $message));
 	}
 
 	/**
