@@ -2,7 +2,6 @@
 
 class Ergo_Http_RequestTest extends UnitTestCase
 {
-
 	public function testSimpleUsage()
 	{
 		$headers = array(
@@ -24,4 +23,22 @@ class Ergo_Http_RequestTest extends UnitTestCase
 			));
 	}
 
+	public function testRequestFactoryWithAbsoluteUrlInEnvironment()
+	{
+		$_SERVER['HTTP_HOST'] = 'example.com'; // .com
+		$_SERVER['SERVER_PORT'] = '80';
+		$_SERVER['REQUEST_URI'] = 'http://example.org/'; // .org
+
+		$factory = new Ergo_Http_RequestFactory();
+		$request = $factory->create();
+
+		// I'm not sure exactly what the URL should be, but
+		// there's currently a bug which is definitely less correct
+		// than a URL that matches this pattern...
+		$this->assertWantedPattern(
+			'#https?://example.com(:80)?/#',
+			$request->getUrl()->__toString(),
+			'url: %s'
+		);
+	}
 }

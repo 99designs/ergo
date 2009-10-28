@@ -42,7 +42,7 @@ class Ergo_Http_RequestFactory implements Ergo_SingletonFactory
 			'http://%s:%d%s',
 			$_SERVER['HTTP_HOST'],
 			$_SERVER['SERVER_PORT'],
-			$_SERVER['REQUEST_URI']
+			$this->_uriRelativeToHost($_SERVER['REQUEST_URI'])
 		));
 	}
 
@@ -73,5 +73,16 @@ class Ergo_Http_RequestFactory implements Ergo_SingletonFactory
 	private function _getBody()
 	{
 		return file_get_contents('php://input');
+	}
+
+	/**
+	 * The path of the URI, which may or may not already be path-only.
+	 * @param string $uri
+	 * @return string
+	 */
+	private function _uriRelativeToHost($uri)
+	{
+		$uri = new Ergo_Http_Url($uri);
+		return $uri->getHostRelativeUrl();
 	}
 }
