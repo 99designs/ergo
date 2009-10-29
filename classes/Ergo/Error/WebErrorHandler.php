@@ -27,6 +27,7 @@ class Ergo_Error_WebErrorHandler extends Ergo_Error_AbstractErrorHandler
 			'Request' => $requestStr,
 			'Server Name' => $this->_server('SERVER_NAME', 'unknown'),
 			'Host' => $hostname,
+			'Referer' => $this->_server('HTTP_REFERER', 'unknown'),
 			'User IP' => $this->_server('REMOTE_ADDR', 'unknown'),
 			'User Agent' => $this->_server('HTTP_USER_AGENT', 'unknown'),
 		);
