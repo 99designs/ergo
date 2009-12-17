@@ -15,6 +15,8 @@ class Ergo_Http_Client
 	private $_proxy;
 	private $_timeout=self::DEFAULT_TIMEOUT;
 
+	public static $requestCount=0;
+
 	/**
 	 * @param string $url
 	 */
@@ -143,6 +145,9 @@ class Ergo_Http_Client
 		{
 			$request = $filter->request($request);
 		}
+
+		// track the number of requests across instances
+		self::$requestCount++;
 
 		// prepare and send the curl request
 		$curl = $this->_curlConnection($request);
