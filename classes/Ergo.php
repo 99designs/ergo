@@ -25,7 +25,6 @@ class Ergo
 	public static function stop()
 	{
 		self::$_application->stop();
-		self::$_application = null;
 	}
 
 	/**
