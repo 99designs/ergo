@@ -108,4 +108,20 @@ class Ergo
 	{
 		return self::application()->request();
 	}
+
+	/**
+	 * Gets a DateTime object
+	 */
+	public static function dateTime()
+	{
+		return self::application()->dateTime();
+	}
+
+	/**
+	 * Gets the current time
+	 */
+	public static function time()
+	{
+		return self::application()->time();
+	}
 }

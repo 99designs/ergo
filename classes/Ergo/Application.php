@@ -8,6 +8,7 @@ class Ergo_Application implements Ergo_Plugin
 {
 	const REQUEST_FACTORY='request_factory';
 	const LOGGER_FACTORY='logger_factory';
+	const REGISTRY_DATETIME='datetime';
 
 	protected $_registry;
 	private $_mixin;
@@ -250,5 +251,43 @@ class Ergo_Application implements Ergo_Plugin
 		if(isset($provided)) $handle->set($provided);
 
 		return $handle->exists() ? $handle->get() : $handle->set($default);
+	}
+
+	/**
+	 * Returns the current timestamp of the instance returned by {@link dateTime()}
+	 * @return int
+	 */
+	public function time()
+	{
+		return (int) $this->dateTime()->format('U');
+	}
+
+	/**
+	 * Returns the current {@link DateTime} instance in the registry, or creates a new one
+	 * @return object
+	 */
+	public function dateTime()
+	{
+		try
+		{
+			$dateTime = $this->lookup(Ergo_Application::REGISTRY_DATETIME);
+		}
+		catch(Ergo_RegistryException $e)
+		{
+			$dateTime = new DateTime('now');
+		}
+
+		return $dateTime;
+	}
+
+	/**
+	 * Sets a {@link DateTime} instance in the registry, for subsequent {@link dateTime()}
+	 * and {@link time()} calls
+	 * @chainable
+	 */
+	public function setDateTime($dateTime)
+	{
+		$this->register(Spf::REGISTRY_DATETIME, $dateTime, true);
+		return $this;
 	}
 }
