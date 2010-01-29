@@ -7,6 +7,14 @@ class Ergo_Config_ArrayConfig implements Ergo_Config
 {
 	protected $_data=array();
 
+	/**
+	 * Constructor
+	 */
+	public function __construct($data=array())
+	{
+		$this->_data = $data;
+	}
+
 	/* (non-phpdoc)
 	 * @see Ergo_Configuration::get
 	 */
