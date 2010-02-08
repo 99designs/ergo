@@ -268,16 +268,10 @@ class Ergo_Application implements Ergo_Plugin
 	 */
 	public function dateTime()
 	{
-		try
-		{
-			$dateTime = $this->lookup(Ergo_Application::REGISTRY_DATETIME);
-		}
-		catch(Ergo_RegistryException $e)
-		{
-			$dateTime = new DateTime('now');
-		}
-
-		return $dateTime;
+		return $this->registry()->isRegistered(Ergo_Application::REGISTRY_DATETIME)
+			? $this->lookup(Ergo_Application::REGISTRY_DATETIME)
+			: new DateTime('now')
+			;
 	}
 
 	/**
