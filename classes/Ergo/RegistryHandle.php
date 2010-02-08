@@ -47,5 +47,14 @@ class Ergo_RegistryHandle
 			return $this->_registry->lookup($this->_key);
 		}
 	}
+
+	/**
+	 * Returns a proxy object to the object refered to by the handle
+	 * @return Ergo_RegistryProxy
+	 */
+	public function proxy()
+	{
+		return new Ergo_RegistryProxy($this);
+	}
 }
 
