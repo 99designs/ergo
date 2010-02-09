@@ -27,6 +27,24 @@ class Ergo_ClassLoader
 	}
 
 	/**
+	 * Returns the class file for a particular class name
+	 * @return string
+	 */
+	protected function classFile($className)
+	{
+		$classFile = preg_replace('#_#', '/', $className).'.php';
+
+		foreach ($this->_paths as $path)
+		{
+			$classPath = "$path/$classFile";
+			if (file_exists($classPath))
+			{
+				return $classPath;
+			}
+		}
+	}
+
+	/**
 	 * SPL autoload function, loads a class file based on the class name.
 	 *
 	 * @param string
@@ -38,16 +56,10 @@ class Ergo_ClassLoader
 			return false;
 		}
 
-		$classFile = preg_replace('#_#', '/', $className).'.php';
-
-		foreach ($this->_paths as $path)
+		if($classFile = $this->classFile($className))
 		{
-			$classPath = "$path/$classFile";
-
-			if (file_exists($classPath)) {
-				require $classPath;
-				return true;
-			}
+			require $classFile;
+			return true;
 		}
 
 		return false;
