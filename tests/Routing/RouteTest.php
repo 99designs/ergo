@@ -13,7 +13,7 @@ class Ergo_Routing_RouteTest extends UnitTestCase
 	public function testRouteLookup()
 	{
 		$routeMap = new Ergo_Routing_RouteMap();
-		$routeMap->map($this->_exampleRoutes);
+		foreach($this->_exampleRoutes as $template=>$name) $routeMap->map($template, $name);
 
 		$this->_assertRoute($routeMap,'/fruits','fruits',
 			array()
@@ -31,7 +31,7 @@ class Ergo_Routing_RouteTest extends UnitTestCase
 	public function testRouteMapTrimsTrailingSlashes()
 	{
 		$routeMap = new Ergo_Routing_RouteMap();
-		$routeMap->map(array('/fruits'=>'fruits'));
+		foreach($this->_exampleRoutes as $template=>$name) $routeMap->map($template, $name);
 
 		$this->_assertRoute($routeMap,'/fruits/','fruits',
 			array()
@@ -41,7 +41,7 @@ class Ergo_Routing_RouteTest extends UnitTestCase
 	public function testRouteBuild()
 	{
 		$routeMap = new Ergo_Routing_RouteMap();
-		$routeMap->map($this->_exampleRoutes);
+		foreach($this->_exampleRoutes as $template=>$name) $routeMap->map($template, $name);
 
 		$this->assertEqual(
 			$routeMap->buildUrl('fruits'),
@@ -62,7 +62,7 @@ class Ergo_Routing_RouteTest extends UnitTestCase
 	public function testRouteLookupFailsOnNonExistentRouteName()
 	{
 		$routeMap = new Ergo_Routing_RouteMap();
-		$routeMap->map($this->_exampleRoutes);
+		foreach($this->_exampleRoutes as $template=>$name) $routeMap->map($template, $name);
 		$this->expectException('Ergo_Routing_LookupException');
 		$routeMap->lookup('/blarg');
 	}
@@ -70,7 +70,7 @@ class Ergo_Routing_RouteTest extends UnitTestCase
 	public function testRouteLookupFailsWithEmptyTemplateVars()
 	{
 		$routeMap = new Ergo_Routing_RouteMap();
-		$routeMap->map($this->_exampleRoutes);
+		foreach($this->_exampleRoutes as $template=>$name) $routeMap->map($template, $name);
 		$this->expectException('Ergo_Routing_LookupException');
 		$routeMap->lookup('/fruits//flavours/');
 	}
@@ -78,7 +78,7 @@ class Ergo_Routing_RouteTest extends UnitTestCase
 	public function testRouteBuildFailsWithExtraParam()
 	{
 		$routeMap = new Ergo_Routing_RouteMap();
-		$routeMap->map($this->_exampleRoutes);
+		foreach($this->_exampleRoutes as $template=>$name) $routeMap->map($template, $name);
 		$this->expectException('Ergo_Routing_BuildException');
 		$routeMap->buildUrl('fruits', array('test' => 123));
 	}
@@ -86,7 +86,7 @@ class Ergo_Routing_RouteTest extends UnitTestCase
 	public function testRouteBuildFailsWithMissingParam()
 	{
 		$routeMap = new Ergo_Routing_RouteMap();
-		$routeMap->map($this->_exampleRoutes);
+		foreach($this->_exampleRoutes as $template=>$name) $routeMap->map($template, $name);
 		$this->expectException('Ergo_Routing_BuildException');
 		$routeMap->buildUrl('flavours');
 	}
@@ -101,9 +101,7 @@ class Ergo_Routing_RouteTest extends UnitTestCase
 	public function testRoutesWithStringTypes()
 	{
 		$routeMap = new Ergo_Routing_RouteMap();
-		$routeMap->map(array(
-			'/fruits/{fruitname:string}' => 'fruit',
-			));
+		$routeMap->map('/fruits/{fruitname:string}','fruit');
 
 		$this->_assertRoute($routeMap,'/fruits/blargh','fruit',
 			array('fruitname'=>'blargh')
@@ -115,9 +113,7 @@ class Ergo_Routing_RouteTest extends UnitTestCase
 	public function testRoutesWithIntegerTypes()
 	{
 		$routeMap = new Ergo_Routing_RouteMap();
-		$routeMap->map(array(
-			'/fruits/{fruitid:int}' => 'fruit',
-			));
+		$routeMap->map('/fruits/{fruitid:int}','fruit');
 
 		$this->_assertRoute($routeMap,'/fruits/123','fruit',
 			array('fruitid'=>'123')
@@ -130,9 +126,7 @@ class Ergo_Routing_RouteTest extends UnitTestCase
 	public function testRoutesWithEnumTypes()
 	{
 		$routeMap = new Ergo_Routing_RouteMap();
-		$routeMap->map(array(
-			'/fruits/{fruittype:(orange|apple)}' => 'fruit',
-			));
+		$routeMap->map('/fruits/{fruittype:(orange|apple)}','fruit');
 
 		$this->_assertRoute($routeMap,'/fruits/apple','fruit',
 			array('fruittype'=>'apple')
@@ -145,9 +139,7 @@ class Ergo_Routing_RouteTest extends UnitTestCase
 	public function testSimpleStarRoutes()
 	{
 		$routeMap = new Ergo_Routing_RouteMap();
-		$routeMap->map(array(
-			'/fruits/*' => 'fruit',
-			));
+		$routeMap->map('/fruits/*','fruit');
 
 		$this->_assertRoute($routeMap,'/fruits/this/is/a/test','fruit');
 		$this->_assertNoRoute($routeMap,'/blargh');
@@ -156,9 +148,7 @@ class Ergo_Routing_RouteTest extends UnitTestCase
 	public function testStarRoutesWithParameters()
 	{
 		$routeMap = new Ergo_Routing_RouteMap();
-		$routeMap->map(array(
-			'/fruits/{fruitid}/*' => 'fruit',
-			));
+		$routeMap->map('/fruits/{fruitid}/*','fruit');
 
 		$this->_assertRoute($routeMap,'/fruits/5/this/is/a/test','fruit',array(
 			'fruitid'=>5
@@ -169,9 +159,7 @@ class Ergo_Routing_RouteTest extends UnitTestCase
 	public function testStarRoutesMatchNothing()
 	{
 		$routeMap = new Ergo_Routing_RouteMap();
-		$routeMap->map(array(
-			'/*' => 'default',
-			));
+		$routeMap->map('/*','default');
 
 		$this->_assertRoute($routeMap,'/','default');
 		$this->_assertRoute($routeMap,'/this/is/a/test','default');
@@ -180,9 +168,7 @@ class Ergo_Routing_RouteTest extends UnitTestCase
 	public function testInterpolationFailsWithStarRoutes()
 	{
 		$routeMap = new Ergo_Routing_RouteMap();
-		$routeMap->map(array(
-			'/{fruit}/*' => 'fruit',
-			));
+		$routeMap->map('/{fruit}/*','fruit');
 
 		$this->expectException();
 		$routeMap->buildUrl('fruit', array('fruit' =>'apple'));

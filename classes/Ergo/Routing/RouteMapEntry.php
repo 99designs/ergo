@@ -24,17 +24,19 @@ class Ergo_Routing_RouteMapEntry
 	private $_parameters;
 	private $_pattern;
 	private $_interpolate;
+	private $_tags;
 
 	/**
 	 * @param string $name
 	 * @param string $template
 	 */
-	public function __construct($name, $template)
+	public function __construct($name, $template, $tags=array())
 	{
 		$this->_name = $name;
 		$this->_template = $template;
 		$this->_parameters = $this->_getParameterNames($template);
 		$this->_pattern = $this->_getParameterPattern($template);
+		$this->_tags = $tags;
 	}
 
 	/**
@@ -92,6 +94,14 @@ class Ergo_Routing_RouteMapEntry
 			array($this, '_interpolateCallback'),
 			$this->_template
 		);
+	}
+
+	/**
+	 * Returns any tags associated with the entry
+	 */
+	public function getTags()
+	{
+		return $this->_tags;
 	}
 
 	// ----------------------------------------

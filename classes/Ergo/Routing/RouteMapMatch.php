@@ -6,18 +6,21 @@
 class Ergo_Routing_RouteMapMatch
 	extends ArrayIterator
 {
-
 	private $_name;
 	private $_parameters;
+	private $_tags;
 
 	/**
 	 * @param string $name
 	 * @param array $parameters
+	 * @params array $tags
 	 */
-	public function __construct($name, $parameters)
+	public function __construct($name, $parameters, $tags=array())
 	{
 		$this->_name = $name;
 		$this->_parameters = $parameters;
+		$this->_tags = $tags;
+
 		parent::__construct($parameters);
 	}
 
@@ -43,5 +46,21 @@ class Ergo_Routing_RouteMapMatch
 	public function parameter($key,$default=false)
 	{
 		return isset($this[$key]) ? $this[$key] : $default;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getTags()
+	{
+		return $this->_tags;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function hasTag($tag)
+	{
+		return in_array($tag, $this->_tags);
 	}
 }
