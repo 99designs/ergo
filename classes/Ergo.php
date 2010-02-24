@@ -78,6 +78,14 @@ class Ergo
 	}
 
 	/**
+	 * Register an objectin the application registry
+	 */
+	public static function register($key, $object)
+	{
+		return self::registry()->register($key, $object);
+	}
+
+	/**
 	 * Gets a logger for a class or filename from the current application
 	 */
 	public static function loggerFor($class)
