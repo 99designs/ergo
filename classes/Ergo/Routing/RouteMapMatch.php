@@ -15,11 +15,11 @@ class Ergo_Routing_RouteMapMatch
 	 * @param array $parameters
 	 * @params array $tags
 	 */
-	public function __construct($name, $parameters, $tags=array())
+	public function __construct($name, $parameters, $tags=null)
 	{
 		$this->_name = $name;
 		$this->_parameters = $parameters;
-		$this->_tags = $tags;
+		$this->_tags = $tags ? $tags : array();
 
 		parent::__construct($parameters);
 	}

@@ -53,7 +53,8 @@ class Ergo_Routing_RouteMapEntry
 				? array()
 				: array_combine($this->_parameters, $matches);
 
-			return new Ergo_Routing_RouteMapMatch($this->_name, $parameters);
+			return new Ergo_Routing_RouteMapMatch(
+				$this->_name, $parameters, $this->getTags());
 		}
 		else if(strlen($path) > 1 && substr($path,-1) == '/')
 		{
