@@ -9,25 +9,19 @@ Example
 
 Building an Application Object
 
-<code>
-<?php
-
-class MyApp extends Ergo_Application
-{
-	public function onStart()
+	class MyApp extends Ergo_Application
 	{
-		// set up a central registry for core objects
-		$this->registry()
-			->register('db', new MyDatabaseConnection())
-			->register('routes', new MyRouteMap())
-			;
+		public function onStart()
+		{
+			// set up a central registry for core objects
+			$this->registry()
+				->register('db', new MyDatabaseConnection())
+				->register('routes', new MyRouteMap())
+				;
+		}
 	}
-}
 
-Ergo::start();
-
-?>
-</code>
+	Ergo::start();
 
 
 Meaning
