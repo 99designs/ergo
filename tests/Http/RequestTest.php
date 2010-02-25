@@ -35,7 +35,7 @@ class Ergo_Http_RequestTest extends UnitTestCase
 		// I'm not sure exactly what the URL should be, but
 		// there's currently a bug which is definitely less correct
 		// than a URL that matches this pattern...
-		$this->assertWantedPattern(
+		$this->assertPattern(
 			'#https?://example.com(:80)?/#',
 			$request->getUrl()->__toString(),
 			'url: %s'
