@@ -21,7 +21,7 @@ Building an Application Object
 		}
 	}
 
-	Ergo::start();
+	Ergo::start(new MyApp());
 
 
 Meaning
