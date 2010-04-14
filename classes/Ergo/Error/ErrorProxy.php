@@ -48,7 +48,13 @@ class Ergo_Error_ErrorProxy
 	 */
 	public function _handleException($e)
 	{
-		if($this->_inError)
+		if(!$this->_inError && $handler = $this->_application->errorHandler())
+		{
+			$this->_inError = true;
+			$handler->handle($e);
+			$this->_inError = false;
+		}
+		else
 		{
 			if(php_sapi_name() == 'cli')
 			{
@@ -58,16 +64,10 @@ class Ergo_Error_ErrorProxy
 			else
 			{
 				header('HTTP/1.1 500 Internal Server Error');
-				echo "<h1>Error in error handler: ".$e->getMessage().'</h1>';
+				echo "<h1>Error: ".$e->getMessage().'</h1>';
 				echo '<pre>'.$e->__toString().'</pre>';
 				exit(1);
 			}
-		}
-		else
-		{
-			$this->_inError = true;
-			$this->_application->errorHandler()->handle($e);
-			$this->_inError = false;
 		}
 	}
 
