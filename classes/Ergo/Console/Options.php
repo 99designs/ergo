@@ -102,12 +102,8 @@ class Ergo_Console_Options
 	 */
 	public function value($key)
 	{
-		if(!isset($this->_parsed)) $this->parse($this->_args);
-
-		if(!$this->has($key))
-			throw new Exception("No value for $key");
-
-		return $this->_parsed[$key][0];
+		$values = $this->values($key);
+		return $values[0];
 	}
 
 	/**
@@ -119,10 +115,14 @@ class Ergo_Console_Options
 	{
 		if(!isset($this->_parsed)) $this->parse($this->_args);
 
-		if(!$this->has($key))
-			throw new Exception("No value for $key");
-
-		return array_filter($this->_parsed[$key], array($this,'_filterNull'));
+		if(isset($this->_parsed[$key]))
+		{
+			return array_filter($this->_parsed[$key], array($this,'_filterNull'));
+		}
+		else
+		{
+			return array($this->_definition($key)->value);
+		}
 	}
 
 	// php magic method - getter
@@ -178,7 +178,7 @@ class Ergo_Console_Options
 			return (object) array(
 				'name'=>$m[1],
 				'recurrance'=>empty($m[2])?'?':$m[2],
-				'value'=>empty($m[3])?null:ltrim($m[3],'='),
+				'value'=>empty($m[3])?null:$this->_parseOptionValue(ltrim($m[3],'=')),
 				'needsValue'=>empty($m[3])?false:true,
 				);
 		}
@@ -186,6 +186,19 @@ class Ergo_Console_Options
 		{
 			throw new InvalidArgumentException("Failed to parse $option");
 		}
+	}
+
+	// parses values like "true" and "false" into type php var
+	private function _parseOptionValue($value)
+	{
+		if($value == 'true')
+			return true;
+		else if($value == 'false')
+			return false;
+		else if(ctype_digit($value))
+			return (int) true;
+		else
+			return $value;
 	}
 
 	// returns the next bare parameter to be captured, false if none
