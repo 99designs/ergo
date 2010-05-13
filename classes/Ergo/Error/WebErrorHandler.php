@@ -77,6 +77,8 @@ class Ergo_Error_WebErrorHandler extends Ergo_Error_AbstractErrorHandler
 			// send it off
 			$sender = new Ergo_Http_ResponseSender($this->buildResponse($e));
 			$sender->send();
+
+			if (ob_get_level() > 0) ob_flush();
 			exit(self::EXIT_CODE);
 		}
 	}
