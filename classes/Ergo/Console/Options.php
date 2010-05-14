@@ -10,10 +10,12 @@ class Ergo_Console_Options
 	/**
 	 * Constructor
 	 * @param array $argv
+	 * @param array params to pass to define
 	 */
-	public function __construct($argv)
+	public function __construct($argv, $define=array())
 	{
 		$this->_args = $argv;
+		$this->define($define);
 	}
 
 	/**
@@ -47,11 +49,7 @@ class Ergo_Console_Options
 
 		foreach(array_slice($args,1) as $arg)
 		{
-			if($needsValue && preg_match('/^(--?|:)/', $arg))
-			{
-				throw new Exception("Argument {$m[1]} needs a value");
-			}
-			else if(preg_match('/^(--?\w+)/', $arg, $m))
+			if(!$needsValue && preg_match('/^(--?\w+)/', $arg, $m))
 			{
 				if($this->_definition($m[1])->needsValue)
 				{
@@ -103,7 +101,7 @@ class Ergo_Console_Options
 	public function value($key)
 	{
 		$values = $this->values($key);
-		return $values[0];
+		return count($values) ? $values[0] : null;
 	}
 
 	/**
