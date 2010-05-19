@@ -281,7 +281,7 @@ class Ergo_Application implements Ergo_Plugin
 	 */
 	public function setDateTime($dateTime)
 	{
-		$this->register(Spf::REGISTRY_DATETIME, $dateTime, true);
+		$this->registry()->register(Spf::REGISTRY_DATETIME, $dateTime, true);
 		return $this;
 	}
 }
