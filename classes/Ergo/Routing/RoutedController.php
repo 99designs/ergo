@@ -93,7 +93,7 @@ class Ergo_Routing_RoutedController
 	 */
 	public function connect($url, $name, $controller=null)
 	{
-		$this->_routeMap->map(array($url=>$name));
+		$this->_routeMap->map($url, $name, $controller);
 
 		// register the controller if one is provided
 		if(!is_null($controller))
