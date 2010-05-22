@@ -28,6 +28,7 @@ class Ergo_Http_RequestTest extends UnitTestCase
 		$_SERVER['HTTP_HOST'] = 'example.com'; // .com
 		$_SERVER['SERVER_PORT'] = '80';
 		$_SERVER['REQUEST_URI'] = 'http://example.org/'; // .org
+		$_SERVER['REQUEST_METHOD'] = 'GET';
 
 		$factory = new Ergo_Http_RequestFactory();
 		$request = $factory->create();
