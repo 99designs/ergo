@@ -4,14 +4,22 @@
 define('BASEDIR',dirname(__FILE__));
 require_once(BASEDIR.'/classes/Ergo/ClassLoader.php');
 
-// show
-if (in_array('--help', $argv))
+$classloader = new Ergo_ClassLoader();
+$classloader->register()->includePaths(array(
+	BASEDIR."/classes",
+	BASEDIR."/lib/simpletest",
+	));
+
+$options = new Ergo_Console_Options($argv, array(
+	'--file=false','--dir=false','--help','-h'
+	));
+
+// show usage
+if ($options->has('--help', '-h'))
 {
 	echo <<<EOM
 
-CLI test runner.
-
-Available options:
+CLI test runner, defaults to running Ergo tests
 
   --file <path>		adds a specific test file
   --dir <path>    	adds a directory containing classes/ and tests/
@@ -22,25 +30,11 @@ EOM;
 	exit(0);
 }
 
-$testFiles = array();
-$dirs = array();
-
-// collect arguments
-for($i=1; $i<count($argv); $i++)
-{
-	if($argv[$i]=='--file') $testFiles[] = $argv[++$i];
-	if($argv[$i]=='--dir') $dirs[] = $argv[++$i];
-}
+$testFiles = array_filter($options->values('--file'));
+$dirs = array_filter($options->values('--dir'));
 
 // default to this app's tests
-if(count($dirs)==0 && count($files)==0) $dirs[] = BASEDIR;
-
-// build class loader
-$classloader = new Ergo_ClassLoader();
-$classloader->register()
-	->includePaths(array(
-		"$basedir/lib/simpletest",
-		));
+if(!$options->has('--file','--dir')) $dirs[] = BASEDIR;
 
 // add all directories
 foreach($dirs as $dir)
@@ -51,10 +45,10 @@ foreach($dirs as $dir)
 		));
 }
 
+// write an include path
 $classloader->export();
 
 require_once('autorun.php');
-
 $suite = new TestSuite('Tests');
 
 if ($testFiles)
