@@ -8,7 +8,7 @@ class Ergo
 	private static $_application;
 	private static $_starting;
 	private static $_started;
-
+	private static $_shutdownRegistered=false;
 
 	/**
 	 * Starts a particular application instance
@@ -21,6 +21,13 @@ class Ergo
 		$application->start();
 		self::$_starting = false;
 		self::$_started = true;
+
+		// callback to clean up on process shutdown
+		if(!self::$_shutdownRegistered)
+		{
+			register_shutdown_function(array(__CLASS__, 'shutdown'));
+			self::$_shutdownRegistered = true;
+		}
 	}
 
 	/**
@@ -30,6 +37,15 @@ class Ergo
 	{
 		self::$_application->stop();
 		self::$_started = false;
+	}
+
+	/**
+	 * Called as a shutdown function, calls stop() if required
+	 */
+	public function shutdown()
+	{
+		if(self::$_started)
+			self::stop();
 	}
 
 	/**
