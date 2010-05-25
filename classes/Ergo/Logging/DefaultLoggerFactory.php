@@ -9,9 +9,9 @@ class Ergo_Logging_DefaultLoggerFactory
 	private $_logger;
 
 	/**
-	 * Returns a single logger instance
+	 * Returns the singleton logger instance
 	 */
-	protected function logger()
+	public function logger()
 	{
 		if(!isset($this->_logger))
 		{

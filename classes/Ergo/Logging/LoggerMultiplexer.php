@@ -87,4 +87,15 @@ class Ergo_Logging_LoggerMultiplexer
 			$logger->setLogLevel($level);
 		}
 	}
+
+	/**
+	 * Calls any method on loggers
+	 */
+	public function __call($method, $params)
+	{
+		foreach($this->_loggers as $logger)
+		{
+			call_user_func_array(array($logger, $method), $params);
+		}
+	}
 }
