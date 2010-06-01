@@ -46,17 +46,25 @@ class Ergo_Routing_RouteMap
 	}
 
 	/**
-	 * Build a URL path based on a route name and associated parameters.
-	 * @param string $name
-	 * @param array $parameters
+	 * Looks up a RouteMapEntry by name
 	 */
-	public function buildUrl($name, $parameters = array())
+	public function entry($name)
 	{
 		if(!isset($this->_entries[$name]))
 		{
 			throw new Ergo_Routing_BuildException("No route named '$name'");
 		}
 
-		return $this->_entries[$name]->interpolate($parameters);
+		return $this->_entries[$name];
+	}
+
+	/**
+	 * Build a URL path based on a route name and associated parameters.
+	 * @param string $name
+	 * @param array $parameters
+	 */
+	public function buildUrl($name, $parameters = array())
+	{
+		$this->entry($name)->interpolate($parameters);
 	}
 }

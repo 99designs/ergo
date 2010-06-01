@@ -98,6 +98,14 @@ class Ergo_Routing_RouteMapEntry
 	}
 
 	/**
+	 * Returns the route name of the entry
+	 */
+	public function getName()
+	{
+		return $this->_name;
+	}
+
+	/**
 	 * Returns any tags associated with the entry
 	 */
 	public function getTags()
