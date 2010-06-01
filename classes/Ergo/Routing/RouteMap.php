@@ -65,6 +65,6 @@ class Ergo_Routing_RouteMap
 	 */
 	public function buildUrl($name, $parameters = array())
 	{
-		$this->entry($name)->interpolate($parameters);
+		return $this->entry($name)->interpolate($parameters);
 	}
 }
