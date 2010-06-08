@@ -42,4 +42,21 @@ class Ergo_Http_RequestTest extends UnitTestCase
 			'url: %s'
 		);
 	}
+
+	public function testRequestFactorySchemeHeader()
+	{
+		$_SERVER['HTTP_HOST'] = 'example.com';
+		$_SERVER['REQUEST_URI'] = 'https://example.com/';
+		$_SERVER['REQUEST_METHOD'] = 'GET';
+		$_SERVER['HTTP_X_FORWARDED_PROTO'] = 'https';
+		$_SERVER['SERVER_PORT'] = '80';
+
+		$factory = new Ergo_Http_RequestFactory();
+		$factory->setSchemeHeader('X-Forwarded-Proto');
+		$request = $factory->create();
+
+		$this->assertEqual($request->getRequestMethod(), 'GET');
+		$this->assertEqual((string) $request->getUrl(), 'https://example.com/');
+		$this->assertEqual($request->getUrl()->getScheme(), 'https');
+	}
 }

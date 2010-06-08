@@ -6,6 +6,7 @@
 class Ergo_Http_RequestFactory implements Ergo_SingletonFactory
 {
 	private $_instance;
+	private $_schemaHeader;
 
 	/**
 	 * @return Ergo_Http_Request
@@ -25,6 +26,17 @@ class Ergo_Http_RequestFactory implements Ergo_SingletonFactory
 		return $this->_instance;
 	}
 
+	/**
+	 * Sets the HTTP header to examine to determine the scheme, either http
+	 * or https. E.g X-Forwarded-Proto
+	 * @chainable
+	 */
+	public function setSchemeHeader($header)
+	{
+		$this->_schemaHeader = $header;
+		return $this;
+	}
+
 	/* (non-phpdoc)
 	 * @return
 	 */
@@ -39,11 +51,47 @@ class Ergo_Http_RequestFactory implements Ergo_SingletonFactory
 	private function _getUrl()
 	{
 		return new Ergo_Http_Url(sprintf(
-			'http://%s:%d%s',
+			'%s://%s:%d%s',
+			$this->_getScheme(),
 			$_SERVER['HTTP_HOST'],
-			$_SERVER['SERVER_PORT'],
+			$this->_getPort(),
 			$this->_uriRelativeToHost($_SERVER['REQUEST_URI'])
 		));
+	}
+
+	private function _getPort()
+	{
+		return $this->_getSchemeHeader() == 'https'
+			? '443'
+			: $_SERVER['SERVER_PORT']
+			;
+	}
+
+	private function _getSchemeHeader()
+	{
+		if(isset($this->_schemaHeader))
+		{
+			$header = strtr(sprintf('HTTP_%s',
+				strtoupper($this->_schemaHeader)),'-','_');
+
+			return isset($_SERVER[$header]) ? $_SERVER[$header] : null;
+		}
+	}
+
+	private function _getScheme()
+	{
+		if(isset($this->_schemaHeader))
+		{
+			$header = strtr(sprintf('HTTP_%s',
+				strtoupper($this->_schemaHeader)),'-','_');
+
+			return (isset($_SERVER[$header]) && $_SERVER[$header] == 'https')
+				? 'https' : 'http';
+		}
+		else
+		{
+			return 'http';
+		}
 	}
 
 	/**
