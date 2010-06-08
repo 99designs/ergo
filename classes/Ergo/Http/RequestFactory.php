@@ -80,17 +80,17 @@ class Ergo_Http_RequestFactory implements Ergo_SingletonFactory
 
 	private function _getScheme()
 	{
-		if(isset($this->_schemaHeader))
+		if($schemeHeader = $this->_getSchemeHeader())
 		{
-			$header = strtr(sprintf('HTTP_%s',
-				strtoupper($this->_schemaHeader)),'-','_');
-
-			return (isset($_SERVER[$header]) && $_SERVER[$header] == 'https')
-				? 'https' : 'http';
+			return $schemeHeader;
 		}
 		else
 		{
-			return 'http';
+			$requestUrl = new Ergo_Http_Url($_SERVER['REQUEST_URI']);
+			return $requestUrl->hasScheme()
+				? $requestUrl->getScheme()
+				: 'http'
+				;
 		}
 	}
 
