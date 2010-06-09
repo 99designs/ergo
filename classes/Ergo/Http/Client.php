@@ -13,6 +13,7 @@ class Ergo_Http_Client
 	private $_filters=array();
 	private $_headers=array();
 	private $_proxy;
+	private $_auth;
 	private $_timeout=self::DEFAULT_TIMEOUT;
 
 	public static $requestCount=0;
@@ -56,6 +57,15 @@ class Ergo_Http_Client
 		$this->_proxy = $url;
 		return $this;
 	}
+	
+	/**
+	 *	Sets HTTP authentication credentials
+	 */
+	public function setHttpAuth($user, $pass)
+	{
+		$this->_auth = $user . ':' . $pass;
+		return $this;
+	}
 
 	/**
 	 * Sends a POST request
@@ -97,7 +107,7 @@ class Ergo_Http_Client
 	 * Parses a response into headers and a body
 	 */
 	private function _buildResponse($response)
-	{
+	{		
 		$sections = explode("\r\n\r\n", $response,2);
 		$body = isset($sections[1]) ? $sections[1] : NULL;
 		$headers = array();
@@ -228,6 +238,13 @@ class Ergo_Http_Client
 		if(isset($this->_proxy))
 		{
 			curl_setopt($curl, CURLOPT_PROXY, $this->_proxy);
+		}
+		
+		// enable http authentication
+		if(isset($this->_auth))
+		{
+			curl_setopt($curl, CURLOPT_USERPWD, $this->_auth);
+			curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
 		}
 
 		if($method == 'PUT' || $method == 'POST')
