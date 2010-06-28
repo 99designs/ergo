@@ -17,6 +17,7 @@ class Ergo_Http_Client
 	private $_timeout=self::DEFAULT_TIMEOUT;
 
 	public static $requestCount=0;
+	public static $requestTime=0;
 
 	/**
 	 * @param string $url
@@ -158,6 +159,7 @@ class Ergo_Http_Client
 
 		// track the number of requests across instances
 		self::$requestCount++;
+		$timestart = microtime(true);
 
 		// prepare and send the curl request
 		$curl = $this->_curlConnection($request);
@@ -173,6 +175,9 @@ class Ergo_Http_Client
 		$body = $response->getBody();
 
 		curl_close($curl);
+
+		// track the time taken across instances
+		self::$requestTime += microtime(true) - $timestart;
 
 		// process a redirect if needed
 		if($httpCode < 400 && $location)
