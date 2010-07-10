@@ -45,7 +45,6 @@ class Ergo_Console_Options
 	public function parse($args)
 	{
 		$needsValue = false;
-		$argumentPattern = "/^((?:--?|:)\w+)([*?+])?(=.+?)?$/";
 
 		foreach(array_slice($args,1) as $arg)
 		{
@@ -53,7 +52,15 @@ class Ergo_Console_Options
 			{
 				if($this->_definition($m[1])->needsValue)
 				{
-					$needsValue = $m[1];
+					// check for --arg=value matches
+					if(preg_match('/^(--?\w+)=(.+?)$/', $arg, $am))
+					{
+						$this->_parsed[$m[1]][] = $am[2];
+					}
+					else
+					{
+						$needsValue = $m[1];
+					}
 				}
 				else
 				{
