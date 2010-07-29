@@ -238,6 +238,21 @@ class Ergo_Http_UrlTest extends UnitTestCase
 			'http://example.org/test?a=1&b=2&c=test');
 	}
 
+	public function testGetUrlForScheme()
+	{
+		// implicit default port
+		$url = new Ergo_Http_Url('http://example.org');
+		$this->assertEqual('https://example.org/', (string)$url->getUrlForScheme('https'));
+
+		// explicit default port
+		$url = new Ergo_Http_Url('http://example.org:80');
+		$this->assertEqual('https://example.org/', (string)$url->getUrlForScheme('https'));
+
+		// explicit non standard port
+		$url = new Ergo_Http_Url('http://example.org:123');
+		$this->assertEqual('https://example.org:123/', (string)$url->getUrlForScheme('https'));
+	}
+
 	// ----------------------------------------
 
 	private function _assertExpectedValues($url, $custom = array())
