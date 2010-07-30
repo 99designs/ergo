@@ -276,7 +276,8 @@ class Ergo_Http_Url
 	public function getUrlForScheme($scheme)
 	{
 		$newUrl = clone $this;
-		$wasDefaultPort = $newUrl->isPortDefault();
+
+		$wasDefaultPort = ($newUrl->hasScheme() && $newUrl->isPortDefault());
 
 		$newUrl->_fragments['scheme'] = $scheme;
 		if ($wasDefaultPort)
