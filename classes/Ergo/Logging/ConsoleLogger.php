@@ -37,6 +37,8 @@ class Ergo_Logging_ConsoleLogger extends Ergo_Logging_AbstractLogger
 
 			echo $this->_getMessageSuffix($level);
 		}
+
+		return $this;
 	}
 
 	/**

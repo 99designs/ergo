@@ -21,6 +21,7 @@ class Ergo_Logging_SyslogLogger extends Ergo_Logging_AbstractLogger
 	function log($message,$level=Ergo_Logger::INFO)
 	{
 		syslog($this->_levelToPriority($level), $message);
+		return $this;
 	}
 
 	/**
@@ -51,6 +52,7 @@ class Ergo_Logging_SyslogLogger extends Ergo_Logging_AbstractLogger
 			);
 
 		$this->log($message, $level);
+		return $this;
 	}
 
 	/**

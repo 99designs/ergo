@@ -13,6 +13,7 @@ class Ergo_Logging_NullLogger extends Ergo_Logging_AbstractLogger
 	 */
 	function log($message,$level=Ergo_Logger::INFO)
 	{
+		return $this;
 	}
 
 	/* (non-phpdoc)
@@ -20,6 +21,7 @@ class Ergo_Logging_NullLogger extends Ergo_Logging_AbstractLogger
 	 */
 	function logException($exception,$level=Ergo_Logger::ERROR)
 	{
+		return $this;
 	}
 
 	/* (non-phpdoc)
@@ -27,5 +29,6 @@ class Ergo_Logging_NullLogger extends Ergo_Logging_AbstractLogger
 	 */
 	function setLogLevel($level)
 	{
+		return $this;
 	}
 }

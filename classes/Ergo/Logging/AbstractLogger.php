@@ -38,6 +38,7 @@ abstract class Ergo_Logging_AbstractLogger implements Ergo_Logger
 	function setLogLevel($level)
 	{
 		$this->_loglevel = $level;
+		return $this;
 	}
 
 	/**
@@ -84,6 +85,7 @@ abstract class Ergo_Logging_AbstractLogger implements Ergo_Logger
 		$args = func_get_args();
 		$message = (count($args) > 1) ? call_user_func_array('sprintf',$args) : $message;
 		$this->log($message, Ergo_Logger::INFO);
+		return $this;
 	}
 
 	/**
@@ -94,6 +96,7 @@ abstract class Ergo_Logging_AbstractLogger implements Ergo_Logger
 		$args = func_get_args();
 		$message = (count($args) > 1) ? call_user_func_array('sprintf',$args) : $message;
 		$this->log($message, Ergo_Logger::TRACE);
+		return $this;
 	}
 
 	/**
@@ -104,6 +107,7 @@ abstract class Ergo_Logging_AbstractLogger implements Ergo_Logger
 		$args = func_get_args();
 		$message = (count($args) > 1) ? call_user_func_array('sprintf',$args) : $message;
 		$this->log($message, Ergo_Logger::WARN);
+		return $this;
 	}
 
 	/**
@@ -114,6 +118,7 @@ abstract class Ergo_Logging_AbstractLogger implements Ergo_Logger
 		$args = func_get_args();
 		$message = (count($args) > 1) ? call_user_func_array('sprintf',$args) : $message;
 		$this->log($message, Ergo_Logger::ERROR);
+		return $this;
 	}
 
 	/**
@@ -124,6 +129,7 @@ abstract class Ergo_Logging_AbstractLogger implements Ergo_Logger
 		$args = func_get_args();
 		$message = (count($args) > 1) ? call_user_func_array('sprintf',$args) : $message;
 		$this->log($message, Ergo_Logger::FATAL);
+		return $this;
 	}
 
 	// --------------------------------------------------------------------
@@ -137,36 +143,7 @@ abstract class Ergo_Logging_AbstractLogger implements Ergo_Logger
 		// ignore suppressed errors
 		if (error_reporting() === 0) return;
 
-		$this->error(
-			"PHP Error " . $this->_errorNumberString($errno) . ": ".
-			$errstr . ' in '. $errfile . ':' .$errline
-			);
+		$error = new Ergo_Logging_Error($errno);
+		$this->error("PHP Error $error: $errstr in $errfile:$errline");
 	}
-
-	/**
-	 * Convert a php errorno into a string
-	 */
-	private function _errorNumberString($intval)
-	{
-		$errorlevels = array(
-			2048 => 'E_STRICT',
-			2047 => 'E_ALL',
-			1024 => 'E_USER_NOTICE',
-			512 => 'E_USER_WARNING',
-			256 => 'E_USER_ERROR',
-			128 => 'E_COMPILE_WARNING',
-			64 => 'E_COMPILE_ERROR',
-			32 => 'E_CORE_WARNING',
-			16 => 'E_CORE_ERROR',
-			8 => 'E_NOTICE',
-			4 => 'E_PARSE',
-			2 => 'E_WARNING',
-			1 => 'E_ERROR'
-			);
-
-		return $errorlevels[$intval];
-	}
-
 }
-
-?>

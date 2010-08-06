@@ -58,10 +58,10 @@ class Ergo_Logging_LoggerMultiplexer
 	 */
 	function log($message,$level=Ergo_Logger::INFO)
 	{
-		foreach($this->_loggers as &$logger)
-		{
+		foreach($this->_loggers as $logger)
 			$logger->log($message, $level);
-		}
+
+		return $this;
 	}
 
 	/* (non-phpdoc)
@@ -69,10 +69,10 @@ class Ergo_Logging_LoggerMultiplexer
 	 */
 	function logException($exception,$level=Ergo_Logger::ERROR)
 	{
-		foreach($this->_loggers as &$logger)
-		{
+		foreach($this->_loggers as $logger)
 			$logger->logException($exception,$level);
-		}
+
+		return $this;
 	}
 
 	/* (non-phpdoc)
@@ -94,8 +94,8 @@ class Ergo_Logging_LoggerMultiplexer
 	public function __call($method, $params)
 	{
 		foreach($this->_loggers as $logger)
-		{
 			call_user_func_array(array($logger, $method), $params);
-		}
+
+		return $this;
 	}
 }

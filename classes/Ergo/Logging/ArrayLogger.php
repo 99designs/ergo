@@ -14,6 +14,7 @@ class Ergo_Logging_ArrayLogger extends Ergo_Logging_AbstractLogger
 	public function log($message, $level=Ergo_Logger::INFO)
 	{
 		$this->_array[] = array($message, $level, time());
+		return $this;
 	}
 
 	/**

@@ -26,6 +26,7 @@ class Ergo_Logging_StackTraceLogger extends Ergo_Logging_AbstractLogger
 	 */
 	function log($message,$level=Ergo_Logger::INFO)
 	{
+		return $this;
 	}
 
 	/**
@@ -54,8 +55,8 @@ class Ergo_Logging_StackTraceLogger extends Ergo_Logging_AbstractLogger
 		// add the error details to the context
 		if($type == 'error')
 		{
-			$message .= "Severity: ".
-				$this->_errorNumberString($e->getSeverity())."\n";
+			$error = new Ergo_Logging_Error($e->getSeverity());
+			$message .= "Severity: $error\n";
 		}
 
 		// add any other context
@@ -67,6 +68,7 @@ class Ergo_Logging_StackTraceLogger extends Ergo_Logging_AbstractLogger
 		$message .= "\n";
 
 		$this->_appendToLogfile($message);
+		return $this;
 	}
 
 	/**
@@ -77,36 +79,5 @@ class Ergo_Logging_StackTraceLogger extends Ergo_Logging_AbstractLogger
 		// write to the log file
 		$log = new SplFileObject($this->_filepath, "a+");
 		$log->fwrite($message);
-	}
-
-	/**
-	 * Converts a PHP error int to a string
-	 */
-	private function _errorNumberString($intval)
-	{
-		$errorlevels = array(
-			E_ALL => 'E_ALL',
-			E_RECOVERABLE_ERROR => 'E_RECOVERABLE_ERROR',
-			E_STRICT => 'E_STRICT',
-			E_USER_NOTICE => 'E_USER_NOTICE',
-			E_USER_WARNING => 'E_USER_WARNING',
-			E_USER_ERROR => 'E_USER_ERROR',
-			E_COMPILE_WARNING => 'E_COMPILE_WARNING',
-			E_COMPILE_ERROR => 'E_COMPILE_ERROR',
-			E_CORE_WARNING => 'E_CORE_WARNING',
-			E_CORE_ERROR => 'E_CORE_ERROR',
-			E_NOTICE => 'E_NOTICE',
-			E_PARSE => 'E_PARSE',
-			E_WARNING => 'E_WARNING',
-			E_ERROR => 'E_ERROR'
-		);
-
-		if (defined('E_DEPRECATED'))
-		{
-			$errorlevels[E_DEPRECATED] = 'E_DEPRECATED';
-			$errorlevels[E_USER_DEPRECATED] = 'E_USER_DEPRECATED';
-		}
-
-		return $errorlevels[$intval];
 	}
 }

@@ -22,9 +22,9 @@ class Ergo_Logging_CallbackLogger extends Ergo_Logging_AbstractLogger
 	function log($message,$level=Ergo_Logger::INFO)
 	{
 		if($this->_isLevelEnabled($level))
-		{
 			call_user_func($this->_callback,array('log',$message,$level));
-		}
+
+		return $this;
 	}
 }
 

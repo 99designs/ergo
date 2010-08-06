@@ -22,6 +22,8 @@ class Ergo_Logging_FileLogger extends Ergo_Logging_AbstractLogger
 			$this->_filepath,
 			$this->_buildLogMessage($message,$level)."\n",
 			FILE_APPEND);
+
+		return $this;
 	}
 
 	/**
