@@ -291,6 +291,19 @@ class Ergo_Http_Url
 	}
 
 	/**
+	 * Builds a url with a different fragment (the part after # in the url)
+	 * @param string
+	 * @return Ergo_Http_Url
+	 */
+	public function getUrlForFragment($fragment)
+	{
+		$newUrl = clone $this;
+		$newUrl->_fragments['fragment'] = $fragment;
+		$newUrl->_inputString = $newUrl->__toString();
+		return $newUrl;
+	}
+
+	/**
 	 * Join path/querystring/fragment components together
 	 */
 	private function _joinPathComponents($path)

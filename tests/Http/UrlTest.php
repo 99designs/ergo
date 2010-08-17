@@ -253,6 +253,17 @@ class Ergo_Http_UrlTest extends UnitTestCase
 		$this->assertEqual('https://example.org:123/', (string)$url->getUrlForScheme('https'));
 	}
 
+	public function testGetUrlForFragment()
+	{
+		// url without a fragment currently
+		$url = new Ergo_Http_Url('http://example.org/');
+		$this->assertEqual('http://example.org/#blarg', (string)$url->getUrlForFragment('blarg'));
+
+		// url with a fragment loses current fragment
+		$url = new Ergo_Http_Url('http://example.org/#blarg');
+		$this->assertEqual('http://example.org/#gralb', (string)$url->getUrlForFragment('gralb'));
+	}
+
 	// ----------------------------------------
 
 	private function _assertExpectedValues($url, $custom = array())
