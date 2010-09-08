@@ -1,16 +1,21 @@
 <?php
 
 /**
- * A command line options parser
+ * A command line options parser. Takes a specification and then an array of tokens from the
+ * command line to parse.
  */
 class Ergo_Console_Options
 {
-	private $_args, $_options=array(), $_parsed;
+	private
+		$_args,
+		$_options=array(),
+		$_parsed
+		;
 
 	/**
 	 * Constructor
 	 * @param array $argv
-	 * @param array params to pass to define
+	 * @param array params to pass to define, see define()
 	 */
 	public function __construct($argv, $define=array())
 	{
@@ -27,67 +32,128 @@ class Ergo_Console_Options
 	 * --flag=withvalue
 	 *
 	 * Bare parameters without a prefix can be captured as :alias
+	 *
+	 * By default parameters can occur zero or one time, this can be controlled
+	 * with characters after the flag name:
+	 *
+	 * --flag?	the default, zero or one
+	 * --flag+	one or more times
+	 * --flag*	zero or more times
+	 *
+	 * @chainable
 	 */
 	public function define($options)
 	{
-		if(!is_array($options)) $options = array($options);
+		if(!is_array($options)) $options = preg_split("/\s+/",$options);
 
 		foreach($options as $option)
 		{
 			$option = $this->_parseOption($option);
 			$this->_options[$option->name] = $option;
 		}
+
+		return $this;
+	}
+
+	/**
+	 * Either returns the definition for a passed flag (-s or --short), or returns false
+	 * @return mixed
+	 */
+	private function _flag($token)
+	{
+		if(!preg_match('/^--?([\w-]+)/', $token, $m))
+			return false;
+
+		if(!isset($this->_options[$token]))
+			return false;
+
+		return $this->_options[$token];
 	}
 
 	/**
 	 * Forces a re-parse of specific arguments
+	 * @chainable
 	 */
-	public function parse($args)
+	public function parse($args=null)
 	{
+		$args = is_null($args) ? $this->_args : $args;
+		$tokens = array_slice($args,1);
 		$needsValue = false;
+		$i = 100;
 
-		foreach(array_slice($args,1) as $arg)
+		// process a FIFO stack of tokens
+		while($token = array_shift($tokens))
 		{
-			if(!$needsValue && preg_match('/^(--?\w+)/', $arg, $m))
+			// FIXME: when this is stable, remove this
+			if(--$i <- 0) throw new Exception('too many iterations');
+
+			if(!isset($this->_options[$token]))
 			{
-				if($this->_definition($m[1])->needsValue)
+				// short arguments with multiple letters need expanding
+				if(preg_match('/^-([a-z0-9]{2,})$/i', $token, $m))
 				{
-					// check for --arg=value matches
-					if(preg_match('/^(--?\w+)=(.+?)$/', $arg, $am))
-					{
-						$this->_parsed[$m[1]][] = $am[2];
-					}
-					else
-					{
-						$needsValue = $m[1];
-					}
+					foreach(str_split($m[1], 1) as $x) array_unshift($tokens, "-$x");
+					continue;
 				}
+				// joined arguments like --arg=value need splitting
+				else if(preg_match('/^(--?\w+)=(.+?)$/', $token, $m))
+				{
+					$tokens = array_merge(explode('=', $token, 2), $tokens);
+					continue;
+				}
+			}
+
+			if($flag = $this->_flag($token))
+			{
+				if($needsValue)
+					throw new InvalidArgumentException("Flag $needsValue needs a value");
+
+				if($flag->needsValue)
+					$needsValue = $token;
 				else
-				{
-					$this->_parsed[$arg][] = null;
-				}
+					$this->_parsed[$flag->name][] = NULL;
 			}
 			else
 			{
 				if($needsValue)
-				{
-					$this->_parsed[$needsValue][] = $arg;
-					$needsValue = false;
-				}
+					$this->_parsed[$needsValue][] = $token;
 				else if($param = $this->_nextParameter())
-				{
-					$this->_parsed[$param][] = $arg;
-				}
+					$this->_parsed[$param][] = $token;
 				else
-				{
-					throw new Exception("Unknown parameter $arg");
-				}
+					throw new InvalidArgumentException("Unknown argument $token");
+
+				$needsValue = false;
 			}
 		}
+
+		if($needsValue)
+			throw new InvalidArgumentException("Flag $needsValue needs a value");
+
+		return $this;
 	}
 
 	/**
-	 * Determines if the specific key has been set
+	 * Returns an array of error messages related to validation, or false if there are none
+	 * @return mixed
+	 */
+	public function errors()
+	{
+		if(!isset($this->_parsed)) $this->parse($this->_args);
+
+		$errors = array();
+
+		foreach($this->_options as $option=>$config)
+		{
+			if($config->recurrance == '+' && !$this->has($option))
+				$errors[] = sprintf("Flag --blargh is required");
+		}
+
+		return $errors;
+	}
+
+	/**
+	 * Determines if the specific key has been set. If multiple parameters are passed
+	 * it checks if at least one of the parameters is set.
 	 * @return bool
 	 */
 	public function has($key)
@@ -116,18 +182,17 @@ class Ergo_Console_Options
 	 * @throws Exception
 	 * @return array
 	 */
-	public function values($key)
+	public function values($arg)
 	{
 		if(!isset($this->_parsed)) $this->parse($this->_args);
 
-		if(isset($this->_parsed[$key]))
-		{
-			return array_filter($this->_parsed[$key], array($this,'_filterNull'));
-		}
-		else
-		{
-			return array($this->_definition($key)->value);
-		}
+		if(!isset($this->_options[$arg]))
+			throw new InvalidArgumentException("Unknown argument $arg");
+
+		return isset($this->_parsed[$arg])
+			? array_filter($this->_parsed[$arg], array($this,'_filterNull'))
+			: array($this->_options[$arg]->value)
+			;
 	}
 
 	// php magic method - getter
@@ -159,26 +224,10 @@ class Ergo_Console_Options
 			if(isset($this->_options[$key])) return $key;
 	}
 
-	// returns the internal option definition for a key
-	private function _definition($key)
-	{
-		if(!isset($this->_options[$key]))
-		{
-			return (object) array(
-				'name'=>$key,
-				'recurrance'=>'?',
-				'value'=>null,
-				'needsValue'=>false,
-				);
-		}
-
-		return $this->_options[$key];
-	}
-
 	// parses an options definition into a struct
 	private function _parseOption($option)
 	{
-		if(preg_match("/^((?:--?|:)[\w-]+)([*?+])?(=.+?)?$/",$option,$m))
+		if(preg_match('/^((?:--?|:)[\w-]+)([*?+])?(=.+?)?$/',$option,$m))
 		{
 			return (object) array(
 				'name'=>$m[1],
@@ -196,12 +245,12 @@ class Ergo_Console_Options
 	// parses values like "true" and "false" into type php var
 	private function _parseOptionValue($value)
 	{
-		if($value == 'true')
+		if($value === 'true')
 			return true;
-		else if($value == 'false')
+		else if($value === 'false')
 			return false;
 		else if(ctype_digit($value))
-			return (int) true;
+			return (int) $value;
 		else
 			return $value;
 	}
