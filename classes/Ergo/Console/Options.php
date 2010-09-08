@@ -6,6 +6,8 @@
  */
 class Ergo_Console_Options
 {
+	const LOOP_LIMIT=100;
+
 	private
 		$_args,
 		$_options=array(),
@@ -79,13 +81,13 @@ class Ergo_Console_Options
 		$args = is_null($args) ? $this->_args : $args;
 		$tokens = array_slice($args,1);
 		$needsValue = false;
-		$i = 100;
+		$i = self::LOOP_LIMIT;
 
 		// process a FIFO stack of tokens
 		while($token = array_shift($tokens))
 		{
 			// FIXME: when this is stable, remove this
-			if(--$i <- 0) throw new Exception('too many iterations');
+			if(--$i <- 0) throw new Exception('Exceeded loop limit, there is a bug');
 
 			if(!isset($this->_options[$token]))
 			{
@@ -133,8 +135,8 @@ class Ergo_Console_Options
 	}
 
 	/**
-	 * Returns an array of error messages related to validation, or false if there are none
-	 * @return mixed
+	 * Returns an array of error messages related to validation, none implies valid
+	 * @return array
 	 */
 	public function errors()
 	{
@@ -149,6 +151,18 @@ class Ergo_Console_Options
 		}
 
 		return $errors;
+	}
+
+	/**
+	 * Throws exceptions for parameter validation errors
+	 * @chainable
+	 */
+	public function validate()
+	{
+		foreach($this->errors() as $error)
+			throw new Exception($error);
+
+		return $this;
 	}
 
 	/**
@@ -195,33 +209,10 @@ class Ergo_Console_Options
 			;
 	}
 
-	// php magic method - getter
-	public function __get($property)
-	{
-		return $this->value($this->_key($property));
-	}
-
-	// php magic method - isset
-	public function __isset($property)
-	{
-		return $this->has($this->_key($property));
-	}
-
 	// callback for array_filter
 	private function _filterNull($value)
 	{
 		return !is_null($value);
-	}
-
-	// checks for a key for a property
-	private function _key($property)
-	{
-		$candidates = array(
-			"-$property", "--$property", ":$property"
-			);
-
-		foreach($candidates as $key)
-			if(isset($this->_options[$key])) return $key;
 	}
 
 	// parses an options definition into a struct
