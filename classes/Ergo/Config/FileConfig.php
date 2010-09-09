@@ -3,7 +3,7 @@
 /**
  * A configuration object that uses a file with a php array in it
  */
-class Ergo_Config_FileConfig extends Ergo_Config_ArrayConfig
+class Ergo_Config_FileConfig implements Ergo_Config
 {
 	protected $_data=array();
 
@@ -23,6 +23,17 @@ class Ergo_Config_FileConfig extends Ergo_Config_ArrayConfig
 		}
 
 		return $this->_data[$key];
+	}
+
+	/**
+	 * @param string $key
+	 * @param mixed $value
+	 * @chainable
+	 */
+	public function set($key, $value)
+	{
+		$this->_data[$key] = $value;
+		return $this;
 	}
 
 	/* (non-phpdoc)
