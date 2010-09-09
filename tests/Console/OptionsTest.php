@@ -64,13 +64,13 @@ class Ergo_Console_OptionsTest extends UnitTestCase
 		$this->assertTrue($options->has('-z'));
 		$this->assertEqual($options->values('-r'), array('meep'));
 
-		$this->expectException();
-
 		$options = new Ergo_Console_Options(array('x.php','-vrz'));
 		$options
 			->define(array('-v*=false','-x','-z','-r'))
 			->parse()
 			;
+
+		$this->assertEqual(count($options->errors()), 1);
 	}
 
 	public function testMultipleParamsToHas()
@@ -92,7 +92,7 @@ class Ergo_Console_OptionsTest extends UnitTestCase
 		$this->assertTrue($options->has('-v'));
 
 		$this->assertEqual($options->errors(), array(
-			'Flag --blargh is required'
+			'Parameter --blargh is required'
 			));
 	}
 }

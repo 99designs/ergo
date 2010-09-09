@@ -2,7 +2,8 @@
 
 /**
  * A command line options parser. Takes a specification and then an array of tokens from the
- * command line to parse.
+ * command line to parse. Errors are captured silently for missing parameters, flags that require
+ * values, etc.
  */
 class Ergo_Console_Options
 {
@@ -11,6 +12,7 @@ class Ergo_Console_Options
 	private
 		$_args,
 		$_options=array(),
+		$_errors=array(),
 		$_parsed
 		;
 
@@ -39,6 +41,7 @@ class Ergo_Console_Options
 	 * with characters after the flag name:
 	 *
 	 * --flag?	the default, zero or one
+	 * --flag!	exactly one time
 	 * --flag+	one or more times
 	 * --flag*	zero or more times
 	 *
@@ -83,11 +86,15 @@ class Ergo_Console_Options
 		$needsValue = false;
 		$i = self::LOOP_LIMIT;
 
+		// reset global state
+		$this->_parsed = array();
+		$this->_errors = array();
+
 		// process a FIFO stack of tokens
 		while($token = array_shift($tokens))
 		{
 			// FIXME: when this is stable, remove this
-			if(--$i <- 0) throw new Exception('Exceeded loop limit, there is a bug');
+			if(--$i <- 0) throw new OutOfBoundsException('Exceeded loop limit, there is a bug');
 
 			if(!isset($this->_options[$token]))
 			{
@@ -108,7 +115,7 @@ class Ergo_Console_Options
 			if($flag = $this->_flag($token))
 			{
 				if($needsValue)
-					throw new InvalidArgumentException("Flag $needsValue needs a value");
+					$this->_errors[] = "Flag $needsValue needs a value";
 
 				if($flag->needsValue)
 					$needsValue = $token;
@@ -122,14 +129,24 @@ class Ergo_Console_Options
 				else if($param = $this->_nextParameter())
 					$this->_parsed[$param][] = $token;
 				else
-					throw new InvalidArgumentException("Unknown argument $token");
+					$this->_errors[] = "Unknown parameter $token";
 
 				$needsValue = false;
 			}
 		}
 
 		if($needsValue)
-			throw new InvalidArgumentException("Flag $needsValue needs a value");
+			$this->_errors[] = "Flag $needsValue needs a value";
+
+		// check required params
+		foreach($this->_options as $option=>$config)
+		{
+			if(in_array($config->recurrance, array('+', '!')) && !$this->has($option))
+				$this->_errors[] = sprintf("Parameter $option is required");
+
+			if(in_array($config->recurrance, array('!', '?')) && count($this->values($option)) > 1)
+				$this->_errors[] = sprintf("Multiple values for $option not allowed");
+		}
 
 		return $this;
 	}
@@ -142,15 +159,19 @@ class Ergo_Console_Options
 	{
 		if(!isset($this->_parsed)) $this->parse($this->_args);
 
-		$errors = array();
+		return $this->_errors;
+	}
 
-		foreach($this->_options as $option=>$config)
-		{
-			if($config->recurrance == '+' && !$this->has($option))
-				$errors[] = sprintf("Flag --blargh is required");
-		}
+	/**
+	 * Prints the first error to the console
+	 * @chainable
+	 */
+	public function printErrors()
+	{
+		if($errors = $this->errors())
+			printf("\n%s\n", $errors[0]);
 
-		return $errors;
+		return $this;
 	}
 
 	/**
@@ -200,19 +221,13 @@ class Ergo_Console_Options
 	{
 		if(!isset($this->_parsed)) $this->parse($this->_args);
 
-		if(!isset($this->_options[$arg]))
+		if(!isset($this->_options[$arg]) && !isset($this->_parsed[$arg]))
 			throw new InvalidArgumentException("Unknown argument $arg");
 
 		return isset($this->_parsed[$arg])
-			? array_filter($this->_parsed[$arg], array($this,'_filterNull'))
+			? $this->_parsed[$arg]
 			: array($this->_options[$arg]->value)
 			;
-	}
-
-	// callback for array_filter
-	private function _filterNull($value)
-	{
-		return !is_null($value);
 	}
 
 	// parses an options definition into a struct
