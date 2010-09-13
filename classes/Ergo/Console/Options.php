@@ -96,7 +96,7 @@ class Ergo_Console_Options
 			// FIXME: when this is stable, remove this
 			if(--$i <- 0) throw new OutOfBoundsException('Exceeded loop limit, there is a bug');
 
-			if(!isset($this->_options[$token]))
+			if(!$needsValue && !isset($this->_options[$token]))
 			{
 				// short arguments with multiple letters need expanding
 				if(preg_match('/^-([a-z0-9]{2,})$/i', $token, $m))
@@ -224,22 +224,30 @@ class Ergo_Console_Options
 		if(!isset($this->_options[$arg]) && !isset($this->_parsed[$arg]))
 			throw new InvalidArgumentException("Unknown argument $arg");
 
-		return isset($this->_parsed[$arg])
-			? $this->_parsed[$arg]
-			: array($this->_options[$arg]->value)
-			;
+		if($this->_options[$arg]->type == 'flag' && !$this->_options[$arg]->needsValue)
+		{
+			return array();
+		}
+		else
+		{
+			return isset($this->_parsed[$arg])
+				? $this->_parsed[$arg]
+				: array($this->_options[$arg]->value)
+				;
+		}
 	}
 
 	// parses an options definition into a struct
 	private function _parseOption($option)
 	{
-		if(preg_match('/^((?:--?|:)[\w-]+)([*?+])?(=.+?)?$/',$option,$m))
+		if(preg_match('/^((?:--?|:)[\w-]+)([*?+])?(=.*?)?$/',$option,$m))
 		{
 			return (object) array(
 				'name'=>$m[1],
 				'recurrance'=>empty($m[2])?'?':$m[2],
 				'value'=>empty($m[3])?null:$this->_parseOptionValue(ltrim($m[3],'=')),
 				'needsValue'=>empty($m[3])?false:true,
+				'type'=>$option[0] == ':' ? 'param' : 'flag',
 				);
 		}
 		else
@@ -253,6 +261,8 @@ class Ergo_Console_Options
 	{
 		if($value === 'true')
 			return true;
+		if($value === '')
+			return NULL;
 		else if($value === 'false')
 			return false;
 		else if(ctype_digit($value))

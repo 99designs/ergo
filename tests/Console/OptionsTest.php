@@ -12,6 +12,7 @@ class Ergo_Console_OptionsTest extends UnitTestCase
 		$this->assertTrue($options->has('--after'));
 		$this->assertEqual($options->value('--after'), '2008-01-01');
 		$this->assertEqual($options->values('--after'), array('2008-01-01'));
+		$this->assertNoErrors($options);
 	}
 
 	public function testDefaultValue()
@@ -22,6 +23,7 @@ class Ergo_Console_OptionsTest extends UnitTestCase
 		$this->assertFalse($options->has('--blargh'));
 		$this->assertEqual($options->value('--blargh'), '24');
 		$this->assertEqual($options->values('--blargh'), array('24'));
+		$this->assertNoErrors($options);
 	}
 
 	public function testBareParameters()
@@ -32,6 +34,7 @@ class Ergo_Console_OptionsTest extends UnitTestCase
 		$this->assertTrue($options->has('-v'));
 		$this->assertTrue($options->has(':filename'));
 		$this->assertEqual($options->value(':filename'), 'myfilename');
+		$this->assertNoErrors($options);
 	}
 
 	public function testShortParametersCanBeAggregated()
@@ -43,15 +46,17 @@ class Ergo_Console_OptionsTest extends UnitTestCase
 		$this->assertTrue($options->has('-z'));
 		$this->assertTrue($options->has('-q'));
 		$this->assertFalse($options->has('-x'));
+		$this->assertNoErrors($options);
 	}
 
 	public function testShortParametersWithValues()
 	{
 		$options = new Ergo_Console_Options(array('testscript.php','-v', 'blargh','-v=meep'));
-		$options->define(array('-v=null*'));
+		$options->define(array('-v*=null'));
 
 		$this->assertTrue($options->has('-v'));
 		$this->assertEqual($options->values('-v'), array('blargh','meep'));
+		$this->assertNoErrors($options);
 	}
 
 	public function testShortParametersWithValuesAndAggregates()
@@ -81,6 +86,7 @@ class Ergo_Console_OptionsTest extends UnitTestCase
 		$this->assertFalse($options->has('-v'));
 		$this->assertTrue($options->has(':file'));
 		$this->assertTrue($options->has('-v',':file'));
+		$this->assertNoErrors($options);
 	}
 
 	public function testRequiredParameters()
@@ -94,5 +100,45 @@ class Ergo_Console_OptionsTest extends UnitTestCase
 		$this->assertEqual($options->errors(), array(
 			'Parameter --blargh is required'
 			));
+	}
+
+	public function testOptionsWithEmptyDefaults()
+	{
+		$options = new Ergo_Console_Options(array('x.php'));
+		$options->define(array('--blargh='));
+
+		$this->assertFalse($options->has('--blargh'));
+		$this->assertNull($options->value('--blargh'));
+		$this->assertEqual($options->values('--blargh'), array(NULL));
+		$this->assertNoErrors($options);
+	}
+
+	public function testOptionsWithNoValues()
+	{
+		$options = new Ergo_Console_Options(array('x.php'));
+		$options->define(array('--blargh'));
+
+		$this->assertFalse($options->has('--blargh'));
+		$this->assertNull($options->value('--blargh'));
+		$this->assertEqual($options->values('--blargh'), array());
+		$this->assertNoErrors($options);
+	}
+
+	public function testOptionsValuesStartingWithDashes()
+	{
+		$options = new Ergo_Console_Options(array('x.php','-xv','-a','-3months'));
+		$options->define(array('-x','-v','-a='));
+
+		$this->assertTrue($options->has('-x'));
+		$this->assertTrue($options->has('-v'));
+		$this->assertTrue($options->has('-a'));
+
+		$this->assertEqual($options->value('-a'), '-3months');
+		$this->assertNoErrors($options);
+	}
+
+	private function assertNoErrors($options)
+	{
+		$this->assertEqual(count($options->errors()), 0);
 	}
 }
