@@ -54,5 +54,13 @@ class Ergo_Config_ArrayConfig implements Ergo_Config
 	{
 		return array_keys($this->_data);
 	}
+
+	/* (non-phpdoc)
+	 * @see IteratorAggregate::getIterator()
+	 */
+	public function getIterator()
+	{
+		return new ArrayIterator($this->_data);
+	}
 }
 

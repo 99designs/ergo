@@ -4,7 +4,7 @@
  * A configuration object which provides an interface to key-based configuration
  * information for an application
  */
-interface Ergo_Config
+interface Ergo_Config extends IteratorAggregate
 {
 	/**
 	 * Gets a key from the configuration.

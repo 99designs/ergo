@@ -81,5 +81,13 @@ class Ergo_Config_FileConfig implements Ergo_Config
 	{
 		return new Ergo_Config_ArrayConfig($this->_data);
 	}
+
+	/* (non-phpdoc)
+	 * @see IteratorAggregate::getIterator()
+	 */
+	public function getIterator()
+	{
+		return new ArrayIterator($this->_data);
+	}
 }
 
