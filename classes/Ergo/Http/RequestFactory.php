@@ -53,7 +53,7 @@ class Ergo_Http_RequestFactory implements Ergo_SingletonFactory
 		return new Ergo_Http_Url(sprintf(
 			'%s://%s:%d%s',
 			$this->_getScheme(),
-			$_SERVER['HTTP_HOST'],
+			$_SERVER['SERVER_NAME'],
 			$this->_getPort(),
 			$this->_uriRelativeToHost($_SERVER['REQUEST_URI'])
 		));
