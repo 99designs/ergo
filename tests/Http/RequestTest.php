@@ -25,10 +25,13 @@ class Ergo_Http_RequestTest extends UnitTestCase
 
 	public function testRequestFactoryWithAbsoluteUrlInEnvironment()
 	{
-		$_SERVER['HTTP_HOST'] = 'example.com'; // .com
-		$_SERVER['SERVER_PORT'] = '80';
-		$_SERVER['REQUEST_URI'] = 'http://example.org/'; // .org
-		$_SERVER['REQUEST_METHOD'] = 'GET';
+		$_SERVER = array(
+			'SERVER_NAME' => 'example.com', // .com
+			'HTTP_HOST' => 'example.com', // .com
+			'SERVER_PORT' => '80',
+			'REQUEST_URI' => 'http://example.org/', // .org
+			'REQUEST_METHOD' => 'GET',
+			);
 
 		$factory = new Ergo_Http_RequestFactory();
 		$request = $factory->create();
@@ -45,11 +48,14 @@ class Ergo_Http_RequestTest extends UnitTestCase
 
 	public function testRequestFactorySchemeHeader()
 	{
-		$_SERVER['HTTP_HOST'] = 'example.com';
-		$_SERVER['REQUEST_URI'] = 'https://example.com/';
-		$_SERVER['REQUEST_METHOD'] = 'GET';
-		$_SERVER['HTTP_X_FORWARDED_PROTO'] = 'https';
-		$_SERVER['SERVER_PORT'] = '80';
+		$_SERVER = array(
+			'SERVER_NAME' => 'example.com', // .com
+			'HTTP_HOST' => 'example.com', // .com
+			'SERVER_PORT' => '80',
+			'REQUEST_URI' => 'http://example.com/', // .org
+			'REQUEST_METHOD' => 'GET',
+			'HTTP_X_FORWARDED_PROTO' => 'https',
+			);
 
 		$factory = new Ergo_Http_RequestFactory();
 		$factory->setSchemeHeader('X-Forwarded-Proto');
