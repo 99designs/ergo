@@ -30,6 +30,14 @@ class Ergo_Application implements Ergo_Plugin
 	{
 	}
 
+	/**
+	 * Returns whether this application instance has been started
+	 * @return bool
+	 */
+	protected function isStarted()
+	{
+		return $this->_started;
+	}
 
 	/* (non-phpdoc)
 	 * @see Ergo_Plugin::start()
