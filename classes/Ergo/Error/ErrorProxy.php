@@ -64,6 +64,7 @@ class Ergo_Error_ErrorProxy
 			else
 			{
 				header('HTTP/1.1 500 Internal Server Error');
+
 				echo "<h1>Error: ".$e->getMessage().'</h1>';
 				echo '<pre>'.$e->__toString().'</pre>';
 				exit(1);

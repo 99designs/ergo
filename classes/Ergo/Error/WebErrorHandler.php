@@ -74,6 +74,13 @@ class Ergo_Error_WebErrorHandler extends Ergo_Error_AbstractErrorHandler
 
 		if ($this->isExceptionHalting($e))
 		{
+			// if headers are sent, we can't send a response
+			if(headers_sent())
+			{
+				echo $this->buildResponseBody($e);
+				exit(0);
+			}
+
 			// send it off
 			$sender = new Ergo_Http_ResponseSender($this->buildResponse($e));
 			$sender->send();
