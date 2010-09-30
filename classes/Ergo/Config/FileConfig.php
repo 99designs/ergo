@@ -62,13 +62,17 @@ class Ergo_Config_FileConfig implements Ergo_Config
 	function loadFile($file, $optional=false, $varname=false)
 	{
 		if(!is_file($file) && !$optional)
-		{
-			throw new Ergo_Config_Exception("Failed to read $file");
-		}
+			throw new Ergo_Config_Exception("Failed to read config file '$file'");
 
-		$returned = include($file);
-		$config = $varname ? $$varname : $returned;
-		$this->_data = array_merge($this->_data,$config);
+		$config = @include($file);
+
+		if(!is_array($config) && $varname)
+			$config = $$varname;
+
+		if(!is_array($config) && !$optional)
+			throw new Ergo_Config_Exception("Config file '$file' doesn't contain a config");
+		else if(is_array($config))
+			$this->_data = array_merge($this->_data, $config);
 
 		return $this;
 	}
