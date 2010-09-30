@@ -64,15 +64,15 @@ class Ergo_Config_FileConfig implements Ergo_Config
 		if(!is_file($file) && !$optional)
 			throw new Ergo_Config_Exception("Failed to read config file '$file'");
 
-		$config = @include($file);
+		$newConfig = @include($file);
 
-		if(!is_array($config) && $varname)
-			$config = $$varname;
+		if(!is_array($newConfig) && $varname)
+			$newConfig = $$varname;
 
-		if(!is_array($config) && !$optional)
+		if(!is_array($newConfig) && !$optional)
 			throw new Ergo_Config_Exception("Config file '$file' doesn't contain a config");
-		else if(is_array($config))
-			$this->_data = array_merge($this->_data, $config);
+		else if(is_array($newConfig))
+			$this->_data = array_merge($this->_data, $newConfig);
 
 		return $this;
 	}
