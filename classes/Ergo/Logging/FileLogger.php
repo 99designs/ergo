@@ -8,8 +8,9 @@ class Ergo_Logging_FileLogger extends Ergo_Logging_AbstractLogger
 {
 	private $_filepath;
 
-	function __construct($filepath)
+	function __construct($filepath, $level=Ergo_Logger::INFO)
 	{
+		parent::__construct($level);
 		$this->_filepath = $filepath;
 	}
 
