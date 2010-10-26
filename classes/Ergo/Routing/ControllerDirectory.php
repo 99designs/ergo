@@ -7,9 +7,20 @@ namespace Ergo\Routing;
  */
 class ControllerDirectory implements ControllerResolver
 {
-	public function __construct($dir)
+	private $_iterator;
+	private $_callback;
+
+	/**
+	 * @param DirectoryIterator
+	 * @param callback takes a file and class and returns a controller
+	 */
+	public function __construct($directoryIterator, $callback=null)
 	{
-		$this->_dir = rtrim($dir, '/');
+		$this->_iterator = $directoryIterator;
+		$this->_callback = $callback ?: function($file, $className) {
+			require_once($file);
+			return new $className();
+		};
 	}
 
 	/* (non-phpdoc)
@@ -17,21 +28,10 @@ class ControllerDirectory implements ControllerResolver
 	 */
 	public function resolve($name)
 	{
-		/*
-		$className = sprintf('%sController',$name);
-		$fileName = str_replace('_','/',"$this->_dir/$className.php");
+		foreach($this->_iterator as $file)
+			if($file->getFilename() == "$name.php")
+				return call_user_func($this->_callback, (string) $file, $name);
 
-		if(!is_file($fileName) && !class_exists($className, false))
-		{
-			throw new Ergo_Exception("Missing controller file $fileName");
-		}
-
-		if(!class_exists($className, false))
-		{
-			require($fileName);
-		}
-
-		return new $className();
-		*/
+		throw new \Ergo\Exception("Unable to find a file for controller $name");
 	}
 }

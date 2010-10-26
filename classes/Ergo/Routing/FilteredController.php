@@ -23,6 +23,7 @@ class FilteredController extends AbstractController
 
 	/**
 	 * Adds an callback for processing the request before it is processed, must return a request
+	 * @chainable
 	 */
 	public function addRequestFilter($filter)
 	{
@@ -32,6 +33,7 @@ class FilteredController extends AbstractController
 
 	/**
 	 * Adds an callback for processing the response after it is processed, must return a response
+	 * @chainable
 	 */
 	public function addResponseFilter($filter)
 	{
