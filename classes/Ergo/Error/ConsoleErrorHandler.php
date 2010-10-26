@@ -1,9 +1,11 @@
 <?php
 
+namespace Ergo\Error;
+
 /**
  * A handler that displays an errors in the console
  */
-class Ergo_Error_ConsoleErrorHandler extends Ergo_Error_AbstractErrorHandler
+class ConsoleErrorHandler extends AbstractErrorHandler
 {
 	const EXIT_CODE = 2;
 
@@ -12,7 +14,7 @@ class Ergo_Error_ConsoleErrorHandler extends Ergo_Error_AbstractErrorHandler
 	/**
 	 * Constructor
 	 * @param bool whether to show stack traces
-	 * @param object an optional Ergo_Logger instance
+	 * @param object an optional \Ergo\Logger instance
 	 */
 	public function __construct($showStackTrace=true, $logger=null)
 	{
@@ -21,7 +23,7 @@ class Ergo_Error_ConsoleErrorHandler extends Ergo_Error_AbstractErrorHandler
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Error_ErrorHandler::context()
+	 * @see ErrorHandler::context()
 	 */
 	public function context()
 	{
@@ -39,7 +41,7 @@ class Ergo_Error_ConsoleErrorHandler extends Ergo_Error_AbstractErrorHandler
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Error_ErrorHandler::handle()
+	 * @see ErrorHandler::handle()
 	 */
 	public function handle($e)
 	{

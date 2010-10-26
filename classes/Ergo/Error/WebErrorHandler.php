@@ -1,20 +1,21 @@
 <?php
 
+namespace Ergo\Error;
+
 /**
  * A handler that displays an error in a web-friendly way
  */
-class Ergo_Error_WebErrorHandler extends Ergo_Error_AbstractErrorHandler
+class WebErrorHandler extends AbstractErrorHandler
 {
 	const EXIT_CODE = 2;
 
 	/* (non-phpdoc)
-	 * @see Ergo_Error_ErrorHandler::context()
+	 * @see ErrorHandler::context()
 	 */
 	public function context()
 	{
 		$request = Ergo::request();
 		$headers = $request->getHeaders();
-
 		$hostname = $headers->value('Host');
 		$requestStr = sprintf('%s %s',
 			$request->getRequestMethod(),
@@ -56,7 +57,7 @@ class Ergo_Error_WebErrorHandler extends Ergo_Error_AbstractErrorHandler
 	protected function buildResponse($e)
 	{
 		// build a response
-		$responseBuilder = new Ergo_Http_ResponseBuilder();
+		$responseBuilder = new http\ResponseBuilder();
 		return $responseBuilder
 			->setStatusCode(500)
 			->notCachable()
@@ -65,7 +66,7 @@ class Ergo_Error_WebErrorHandler extends Ergo_Error_AbstractErrorHandler
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Error_ErrorHandler::handle()
+	 * @see ErrorHandler::handle()
 	 */
 	public function handle($e)
 	{
@@ -82,7 +83,7 @@ class Ergo_Error_WebErrorHandler extends Ergo_Error_AbstractErrorHandler
 			}
 
 			// send it off
-			$sender = new Ergo_Http_ResponseSender($this->buildResponse($e));
+			$sender = new http\ResponseSender($this->buildResponse($e));
 			$sender->send();
 
 			if (ob_get_level() > 0) ob_flush();

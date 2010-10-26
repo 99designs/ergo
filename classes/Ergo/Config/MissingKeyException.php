@@ -1,3 +1,5 @@
 <?php
 
-class Ergo_Config_MissingKeyException extends Ergo_Config_Exception {}
+namespace Ergo\Config;
+
+class MissingKeyException extends Exception {}

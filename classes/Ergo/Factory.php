@@ -1,13 +1,14 @@
 <?php
 
+namespace Ergo;
+
 /**
  * A factory used for object creation
  */
-interface Ergo_Factory
+interface Factory
 {
 	/**
 	 * @return object
 	 */
 	public function create();
-
 }

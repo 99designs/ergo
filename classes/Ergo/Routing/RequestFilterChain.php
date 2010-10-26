@@ -1,6 +1,8 @@
 <?php
 
-class Ergo_Routing_RequestFilterChain
+namespace Ergo\Routing;
+
+class RequestFilterChain
 {
 	private $_filters=array();
 
@@ -13,15 +15,14 @@ class Ergo_Routing_RequestFilterChain
 		{
 			if(!$request = $filter->filter($request))
 			{
-				throw new Ergo_Routing_Exception(
-					"Filter returned a null request");
+				throw new Exception("Filter returned a null request");
 			}
 		}
 
 		return $request;
 	}
 
-	public function addFilter(Ergo_Routing_RequestFilter $filter)
+	public function addFilter(RequestFilter $filter)
 	{
 		$this->_filters[] = $filter;
 		return $this;

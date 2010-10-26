@@ -1,28 +1,26 @@
 <?php
 
+namespace Ergo\Logging;
 
 /**
  * A basic implementation of a composite logger that multiplexes log messages to many loggers
- *
  * @author Lachlan Donald <lachlan@99designs.com>
  */
-class Ergo_Logging_LoggerMultiplexer
-	extends Ergo_Logging_AbstractLogger
-	implements Ergo_Logging_CompositeLogger
+class LoggerMultiplexer extends AbstractLogger implements CompositeLogger
 {
 	private $_loggers=array();
 
 	/**
 	 * Constructor
 	 */
-	function __construct($loggers=array(), $level=Ergo_Logger::INFO)
+	function __construct($loggers=array(), $level=\Ergo\Logger::INFO)
 	{
 		parent::__construct($level);
 		$this->addLoggers($loggers);
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Logging_CompositeLogger::addLoggers()
+	 * @see CompositeLogger::addLoggers()
 	 */
 	function addLoggers($loggers)
 	{
@@ -45,7 +43,7 @@ class Ergo_Logging_LoggerMultiplexer
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Logging_CompositeLogger::clearLoggers()
+	 * @see CompositeLogger::clearLoggers()
 	 */
 	function clearLoggers()
 	{
@@ -54,9 +52,9 @@ class Ergo_Logging_LoggerMultiplexer
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Logger::log()
+	 * @see \Ergo\Logger::log()
 	 */
-	function log($message,$level=Ergo_Logger::INFO)
+	function log($message,$level=\Ergo\Logger::INFO)
 	{
 		foreach($this->_loggers as $logger)
 			$logger->log($message, $level);
@@ -65,9 +63,9 @@ class Ergo_Logging_LoggerMultiplexer
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Logger::logException()
+	 * @see \Ergo\Logger::logException()
 	 */
-	function logException($exception,$level=Ergo_Logger::ERROR)
+	function logException($exception,$level=\Ergo\Logger::ERROR)
 	{
 		foreach($this->_loggers as $logger)
 			$logger->logException($exception,$level);
@@ -76,7 +74,7 @@ class Ergo_Logging_LoggerMultiplexer
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Logger::setLogLevel()
+	 * @see \Ergo\Logger::setLogLevel()
 	 */
 	function setLogLevel($level)
 	{

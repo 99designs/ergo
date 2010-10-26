@@ -1,11 +1,12 @@
 <?php
 
+namespace Ergo\Logging;
+
 /**
- * A logger that writes to a file
- *
+ * A logger that writes to the system log facility
  * @author Lachlan Donald <lachlan@99designs.com>
  */
-class Ergo_Logging_SyslogLogger extends Ergo_Logging_AbstractLogger
+class SyslogLogger extends AbstractLogger
 {
 	/**
 	 * Construct
@@ -16,9 +17,9 @@ class Ergo_Logging_SyslogLogger extends Ergo_Logging_AbstractLogger
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Logger::log()
+	 * @see \Ergo\Logger::log()
 	 */
-	function log($message,$level=Ergo_Logger::INFO)
+	function log($message,$level=\Ergo\Logger::INFO)
 	{
 		syslog($this->_levelToPriority($level), $message);
 		return $this;
@@ -31,18 +32,18 @@ class Ergo_Logging_SyslogLogger extends Ergo_Logging_AbstractLogger
 	{
 		switch($level)
 		{
-			case Ergo_Logger::TRACE: return LOG_DEBUG;
-			case Ergo_Logger::INFO: return LOG_INFO;
-			case Ergo_Logger::WARN: return LOG_WARNING;
-			case Ergo_Logger::ERROR: return LOG_ERR;
-			case Ergo_Logger::FATAL: return LOG_CRIT;
+			case \Ergo\Logger::TRACE: return LOG_DEBUG;
+			case \Ergo\Logger::INFO: return LOG_INFO;
+			case \Ergo\Logger::WARN: return LOG_WARNING;
+			case \Ergo\Logger::ERROR: return LOG_ERR;
+			case \Ergo\Logger::FATAL: return LOG_CRIT;
 		}
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Logger::logException()
+	 * @see \Ergo\Logger::logException()
 	 */
-	public function logException($exception,$level=Ergo_Logger::ERROR)
+	public function logException($exception,$level=\Ergo\Logger::ERROR)
 	{
 		$message = sprintf("exception '%s' with message '%s' in %s:%d",
 			get_class($exception),

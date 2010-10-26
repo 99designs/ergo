@@ -1,7 +1,9 @@
 <?php
 
+namespace Ergo\Routing;
+
 /**
- * A route entry in a {@link Ergo_Routing_RouteMap}.
+ * A route entry in a {@link RouteMap}.
  *
  * Parses routes with parameters in them e.g
  * <pre>
@@ -11,7 +13,7 @@
  * http://example.org/{myparam}/{myparam2}?test={myparam3}
  * </pre>
  */
-class Ergo_Routing_RouteMapEntry
+class RouteMapEntry
 {
 	const REGEX_PARAM = '#{(.+?)(:.+?)?}#';
 	const TYPE_ANY = '([^/]+?)';
@@ -40,7 +42,7 @@ class Ergo_Routing_RouteMapEntry
 	}
 
 	/**
-	 * @return Ergo_Routing_RouteMapMatch or null if no match.
+	 * @return RouteMapMatch or null if no match.
 	 */
 	public function getMatch($path)
 	{
@@ -53,7 +55,7 @@ class Ergo_Routing_RouteMapEntry
 				? array()
 				: array_combine($this->_parameters, $matches);
 
-			return new Ergo_Routing_RouteMapMatch(
+			return new RouteMapMatch(
 				$this->_name, $parameters, $this->getTags());
 		}
 		else if(strlen($path) > 1 && substr($path,-1) == '/')
@@ -73,7 +75,7 @@ class Ergo_Routing_RouteMapEntry
 		// fail fast if the pattern has a star match
 		if(preg_match('/\*/',$this->_pattern))
 		{
-			throw new Ergo_Routing_BuildException(
+			throw new BuildException(
 				'Can\'t build a url for a pattern with star');
 		}
 
@@ -82,7 +84,7 @@ class Ergo_Routing_RouteMapEntry
 
 		if (count($diff = array_diff(array_keys($parameters), $this->_parameters)))
 		{
-			throw new Ergo_Routing_BuildException(sprintf(
+			throw new BuildException(sprintf(
 				"Unexpected parameter%s [%s] for route '%s'",
 				count($diff) == 1 ? '' : 's',
 				implode(',', $diff),
@@ -124,7 +126,7 @@ class Ergo_Routing_RouteMapEntry
 
 		if (!isset($this->_interpolate[$key]))
 		{
-			throw new Ergo_Routing_Exception(sprintf(
+			throw new Exception(sprintf(
 				"%s route needs '%s' value for '%s'",
 				$this->_name,
 				$key,
@@ -169,7 +171,7 @@ class Ergo_Routing_RouteMapEntry
 		}
 
 		// unknown type, fail
-		throw new Ergo_Routing_BuildException(
+		throw new BuildException(
 			"Unknown type $type in $this->_template");
 	}
 
@@ -215,5 +217,4 @@ class Ergo_Routing_RouteMapEntry
 			preg_quote($template, '#')
 		);
 	}
-
 }

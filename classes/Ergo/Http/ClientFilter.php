@@ -1,19 +1,21 @@
 <?php
 
+namespace Ergo\Http;
+
 /**
  * Filters an Http connection
  */
-interface Ergo_Http_ClientFilter
+interface ClientFilter
 {
 	/**
 	 * Called before the request is dispatched
-	 * @return Ergo_Http_Request
+	 * @return Request
 	 */
 	function request($request);
 
 	/**
 	 * Called before the response is returned
-	 * @return Ergo_Http_Response
+	 * @return Response
 	 */
 	function response($response);
 }

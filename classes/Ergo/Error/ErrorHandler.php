@@ -1,9 +1,11 @@
 <?php
 
+namespace Ergo\Error;
+
 /**
  * A basic handler for exceptions with simple logging and error formatting.
  */
-interface Ergo_Error_ErrorHandler
+interface ErrorHandler
 {
 	/**
 	 * Handles an exception or error
@@ -12,7 +14,7 @@ interface Ergo_Error_ErrorHandler
 
 	/**
 	 * Returns logger attached to the error handler
-	 * @return object an Ergo_Logging_CompositeLogger
+	 * @return object an \Ergo\Logging\CompositeLogger
 	 */
 	public function logger();
 

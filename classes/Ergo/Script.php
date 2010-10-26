@@ -1,9 +1,11 @@
 <?php
 
+namespace Ergo;
+
 /**
  * A simple wrapper around a php script
  */
-class Ergo_Script
+class Script
 {
 	private $_path;
 
@@ -16,5 +18,10 @@ class Ergo_Script
 	{
 		// TODO: generate errors if this file doesn't exist
 		return include($this->_path);
+	}
+
+	public function __invoke()
+	{
+		return $this->execute();
 	}
 }

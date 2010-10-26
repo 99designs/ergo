@@ -1,3 +1,5 @@
 <?php
 
-class Ergo_RegistryException extends Ergo_Exception {}
+namespace Ergo;
+
+class RegistryException extends Exception {}

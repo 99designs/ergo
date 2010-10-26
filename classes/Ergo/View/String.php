@@ -1,9 +1,11 @@
 <?php
 
+namespace Ergo\View;
+
 /**
  * A string based view
  */
-class Ergo_View_String implements Ergo_View
+class String implements \Ergo\View
 {
 	private $_string;
 

@@ -1,10 +1,12 @@
 <?php
 
+namespace Ergo\Routing;
+
 /**
  * Maps URL templates to named routes.
  * Supports url templates.
  */
-class Ergo_Routing_RouteMap
+class RouteMap
 {
 	private $_entries = array();
 
@@ -17,13 +19,10 @@ class Ergo_Routing_RouteMap
 	public function map($template, $routeName, $tags=array())
 	{
 		if(isset($this->_entries[$routeName]))
-		{
-			throw new Ergo_Routing_BuildException(
-				"A route named $routeName exists already");
-		}
+			throw new BuildException("A route named $routeName exists already");
 
 		$this->_entries[$routeName] =
-			new Ergo_Routing_RouteMapEntry($routeName, $template, $tags);
+			new RouteMapEntry($routeName, $template, $tags);
 
 		return $this;
 	}
@@ -37,12 +36,10 @@ class Ergo_Routing_RouteMap
 		foreach ($this->_entries as $entry)
 		{
 			if ($match = $entry->getMatch($path))
-			{
 				return $match;
-			}
 		}
 
-		throw new Ergo_Routing_LookupException("No route matches path '$path'");
+		throw new LookupException("No route matches path '$path'");
 	}
 
 	/**
@@ -52,7 +49,7 @@ class Ergo_Routing_RouteMap
 	{
 		if(!isset($this->_entries[$name]))
 		{
-			throw new Ergo_Routing_BuildException("No route named '$name'");
+			throw new BuildException("No route named '$name'");
 		}
 
 		return $this->_entries[$name];

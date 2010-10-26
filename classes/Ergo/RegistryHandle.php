@@ -1,9 +1,11 @@
 <?php
 
+namespace Ergo;
+
 /**
  * A handle to a specific registry key
  */
-class Ergo_RegistryHandle
+class RegistryHandle
 {
 	private $_registry, $_key;
 

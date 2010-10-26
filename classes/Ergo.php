@@ -71,81 +71,22 @@ class Ergo
 	{
 		if(!isset(self::$_application))
 		{
-			throw new Ergo_Exception('No application initialized');
+			throw new Exception('No application initialized');
 		}
 
 		return self::$_application;
 	}
 
 	/**
-	 * Looks up a config key in the current application config
+	 * Delegates static calls to the internal {@link Application} object
 	 */
-	public static function config($key)
+	static function __callStatic($method, $arguments)
 	{
-		return self::application()->config($key);
+		if(!method_exists(self::application(), $method))
+			throw new \InvalidArgumentException("Application doesn't implement $method()");
+
+		return call_user_func_array(
+			array(self::application(), $method), $arguments);
 	}
 
-	/**
-	 * Gets the current application registry
-	 */
-	public static function registry()
-	{
-		return self::application()->registry();
-	}
-
-	/**
-	 * Register an objectin the application registry
-	 */
-	public static function register($key, $object)
-	{
-		return self::registry()->register($key, $object);
-	}
-
-	/**
-	 * Gets a logger for a class or filename from the current application
-	 */
-	public static function loggerFor($class)
-	{
-		return self::application()->loggerFor($class);
-	}
-
-	/**
-	 * Looks up a key in the current application registry
-	 */
-	public static function lookup($key)
-	{
-		return self::application()->lookup($key);
-	}
-
-	/**
-	 * Looks up the front controller object for an application
-	 */
-	public static function controller()
-	{
-		return self::application()->controller();
-	}
-
-	/**
-	 * Looks up the front controller object for an application
-	 */
-	public static function request()
-	{
-		return self::application()->request();
-	}
-
-	/**
-	 * Gets a DateTime object
-	 */
-	public static function dateTime()
-	{
-		return self::application()->dateTime();
-	}
-
-	/**
-	 * Gets the current time
-	 */
-	public static function time()
-	{
-		return self::application()->time();
-	}
 }

@@ -1,7 +1,10 @@
 <?php
 
-abstract class Ergo_Routing_AbstractController
-	implements Ergo_Routing_Controller
+namespace Ergo\Routing;
+
+use Ergo\Http;
+
+abstract class AbstractController implements Controller
 {
 	private $_routeMap;
 	private $_filterChain;
@@ -9,13 +12,13 @@ abstract class Ergo_Routing_AbstractController
 
 	public function __construct()
 	{
-		$this->_filterChain = new Ergo_Routing_RequestFilterChain();
+		$this->_filterChain = new RequestFilterChain();
 	}
 
 	/**
-	 * Adds an {@link Ergo_Routing_RequestFilter} to the controller
+	 * Adds an {@link Ergo\Routing\RequestFilter} to the controller
 	 */
-	public function addRequestFilter(Ergo_Routing_RequestFilter $filter)
+	public function addRequestFilter(RequestFilter $filter)
 	{
 		$this->_filterChain->addFilter($filter);
 		return $this;
@@ -39,13 +42,13 @@ abstract class Ergo_Routing_AbstractController
 	}
 
 	/**
-	 * @return Ergo_Routing_RouteMap
+	 * @return RouteMap
 	 */
 	public function getRouteMap()
 	{
 		if (!isset($this->_routeMap))
 		{
-			throw new Ergo_Routing_Exception(
+			throw new Exception(
 				"A routemap must be set into the controller first");
 		}
 
@@ -63,11 +66,11 @@ abstract class Ergo_Routing_AbstractController
 	}
 
 	/**
-	 * @return Ergo_Http_ResponseBuilder
+	 * @return ResponseBuilder
 	 */
 	public function responseBuilder()
 	{
-		return new Ergo_Http_ResponseBuilder();
+		return new Http\ResponseBuilder();
 	}
 }
 

@@ -1,17 +1,20 @@
 <?php
 
+namespace Ergo;
+
 /**
  * Basic SPL class loader
  */
-class Ergo_ClassLoader
+class ClassLoader
 {
 	private $_paths = array();
 
 	/**
 	 * Registers this class as an SPL class loader.
 	 */
-	public function register()
+	public function register($paths=array())
 	{
+		$this->_paths = $paths;
 		spl_autoload_register(array($this, 'loadClass'));
 		return $this;
 	}
@@ -32,7 +35,7 @@ class Ergo_ClassLoader
 	 */
 	protected function classFile($className)
 	{
-		$classFile = preg_replace('#_#', '/', $className).'.php';
+		$classFile = preg_replace('#(_|\\\\)#', '/', $className).'.php';
 
 		foreach ($this->_paths as $path)
 		{
@@ -62,7 +65,7 @@ class Ergo_ClassLoader
 			return true;
 		}
 
-		return false;
+		throw new Exception("Unable to load $className");
 	}
 
 	/**

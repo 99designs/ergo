@@ -1,9 +1,11 @@
 <?php
 
+namespace Ergo\Logging;
+
 /**
  * A class for mapping between php error codes and the string names
  */
-class Ergo_Logging_Error
+class Error
 {
 	private $_errorint;
 

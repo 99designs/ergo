@@ -1,6 +1,10 @@
 <?php
 
-class Ergo_Http_Error_Unauthorized extends Ergo_Http_Error
+namespace Ergo\Http\Error;
+
+use \Ergo\Http\Error;
+
+class Unauthorized extends Error
 {
 	const STATUS_CODE=401;
 

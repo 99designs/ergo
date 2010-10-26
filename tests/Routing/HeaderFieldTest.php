@@ -1,18 +1,21 @@
 <?php
 
+namespace Ergo\Tests\Routing;
+
+use Ergo\Http;
+
 /**
  * @author Paul Annesley <paul@annesley.cc>
  * @licence http://www.opensource.org/licenses/mit-license.php
  * @see http://github.com/pda/phool
  */
-class Ergo_Routing_HeaderFieldTest extends UnitTestCase
+class HeaderFieldTest extends \UnitTestCase
 {
-
 	private $_normalizer;
 
 	function setUp()
 	{
-		$this->_normalizer = new Ergo_Http_HeaderCaseNormalizer();
+		$this->_normalizer = new Http\HeaderCaseNormalizer();
 	}
 
 	// ----------------------------------------
@@ -20,7 +23,7 @@ class Ergo_Routing_HeaderFieldTest extends UnitTestCase
 
 	public function testHeaderField()
 	{
-		$header = new Ergo_Http_HeaderField('Host', 'example.org');
+		$header = new Http\HeaderField('Host', 'example.org');
 		$this->assertEqual($header->getName(), 'Host');
 		$this->assertEqual($header->getValue(), 'example.org');
 		$this->assertEqual("$header", "Host: example.org\r\n");
@@ -28,14 +31,14 @@ class Ergo_Routing_HeaderFieldTest extends UnitTestCase
 
 	public function testHeaderFieldNameNormalization()
 	{
-		$header = new Ergo_Http_HeaderField('Example-header', 'x');
+		$header = new Http\HeaderField('Example-header', 'x');
 		$this->assertEqual($header->getName(), 'Example-Header');
 		$this->assertEqual("$header", "Example-Header: x\r\n");
 	}
 
 	public function testHeaderFieldFromString()
 	{
-		$header = Ergo_Http_HeaderField::fromString('test: blarg: meh');
+		$header = Http\HeaderField::fromString('test: blarg: meh');
 		$this->assertEqual($header->getName(), 'Test');
 		$this->assertEqual($header->getValue(), 'blarg: meh');
 	}
@@ -45,7 +48,7 @@ class Ergo_Routing_HeaderFieldTest extends UnitTestCase
 		$string = "Test: blarg: meh\r\n";
 
 		$this->assertEqual(
-			Ergo_Http_HeaderField::fromString($string)->__toString(),
+			Http\HeaderField::fromString($string)->__toString(),
 			$string
 		);
 	}
@@ -76,5 +79,4 @@ class Ergo_Routing_HeaderFieldTest extends UnitTestCase
 			'One-Two-Three-Four-Five'
 		);
 	}
-
 }

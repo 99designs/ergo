@@ -1,6 +1,8 @@
 <?php
 
-interface Ergo_Routing_RequestFilter
+namespace Ergo\Routing;
+
+interface RequestFilter
 {
 	public function filter($request);
 }

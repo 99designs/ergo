@@ -1,28 +1,32 @@
 <?php
 
-Mock::generate('Ergo_Logger','Ergo_MockLogger');
+namespace Ergo\Tests\Logging;
 
-class Ergo_Logging_LoggerMultiplexerTest extends UnitTestCase
+use \Ergo\Logging;
+
+\Mock::generate('\Ergo\Logger','MockLogger');
+
+class LoggerMultiplexerTest extends \UnitTestCase
 {
 	public function testLoggerBuiltViaConstructor()
 	{
-		$logger1 = new Ergo_MockLogger();
+		$logger1 = new \MockLogger();
 		$logger1->expectOnce('log');
-		$logger2 = new Ergo_MockLogger();
+		$logger2 = new \MockLogger();
 		$logger2->expectOnce('log');
 
-		$multiplexer = new Ergo_Logging_LoggerMultiplexer(array($logger1, $logger2));
+		$multiplexer = new Logging\LoggerMultiplexer(array($logger1, $logger2));
 		$multiplexer->log('test');
 	}
 
 	public function testLoggerBuiltIncrementally()
 	{
-		$logger1 = new Ergo_MockLogger();
+		$logger1 = new \MockLogger();
 		$logger1->expectOnce('log');
-		$logger2 = new Ergo_MockLogger();
+		$logger2 = new \MockLogger();
 		$logger2->expectOnce('log');
 
-		$multiplexer = new Ergo_Logging_LoggerMultiplexer();
+		$multiplexer = new Logging\LoggerMultiplexer();
 		$multiplexer->addLoggers($logger1);
 		$multiplexer->addLoggers(array($logger2));
 		$multiplexer->addLoggers(array(null));

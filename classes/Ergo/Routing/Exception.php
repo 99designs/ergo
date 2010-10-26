@@ -1,5 +1,7 @@
 <?php
 
-class Ergo_Routing_Exception extends Ergo_Exception
+namespace Ergo\Routing;
+
+class Exception extends \Ergo\Exception
 {
 }

@@ -1,10 +1,14 @@
 <?php
 
-class Ergo_Http_HeaderCollectionTest extends UnitTestCase
+namespace Ergo\Tests\Http;
+
+use Ergo\Http;
+
+class HeaderCollectionTest extends \UnitTestCase
 {
 	public function testSimpleUsage()
 	{
-		$collection = new Ergo_Http_HeaderCollection();
+		$collection = new Http\HeaderCollection();
 		$collection->add('Content-Length: 9');
 
 		$this->assertEqual($collection->values('Content-Length'), array('9'));

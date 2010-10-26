@@ -1,9 +1,11 @@
 <?php
 
+namespace Ergo\View;
+
 /**
  * A file based view
  */
-class Ergo_View_File implements Ergo_View
+class File implements \Ergo\View
 {
 	private $_file;
 

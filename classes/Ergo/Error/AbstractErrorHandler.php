@@ -1,24 +1,26 @@
 <?php
 
+namespace Ergo\Error;
+
+
 /**
  * A basic handler for PHP errors and exceptions which consolidates errors
  * into error exceptions provides for simple logging and error formatting.
  */
-abstract class Ergo_Error_AbstractErrorHandler
-	implements Ergo_Error_ErrorHandler
+abstract class AbstractErrorHandler implements ErrorHandler
 {
 	private $_proxy;
 	private $_logger;
 
 	/**
 	 * Constructor
-	 * @param object an optional Ergo_Logger instance
+	 * @param object an optional \Ergo\Logger instance
 	 */
 	public function __construct($logger=null)
 	{
 		if(is_object($logger))
 		{
-			$this->_logger = new Ergo_Logging_LoggerMultiplexer();
+			$this->_logger = new Logging\LoggerMultiplexer();
 			$this->_logger->addLoggers($logger);
 		}
 	}
@@ -30,7 +32,7 @@ abstract class Ergo_Error_AbstractErrorHandler
 	{
 		if(!isset($this->_logger))
 		{
-			$this->_logger = new Ergo_Logging_LoggerMultiplexer();
+			$this->_logger = new Logging\LoggerMultiplexer();
 		}
 
 		return $this->_logger;

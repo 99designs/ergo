@@ -1,9 +1,11 @@
 <?php
 
+namespace Ergo\Http;
+
 /**
  * Represents the query string portion of a url
  */
-class Ergo_Http_QueryString
+class QueryString
 {
 	private $_params=array();
 	private $_default=false;

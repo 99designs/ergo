@@ -1,5 +1,7 @@
 <?php
 
+namespace Ergo\Http;
+
 /**
  * An HTTP header belonging to a Request or a Response.
  *
@@ -16,7 +18,7 @@
  * @licence http://www.opensource.org/licenses/mit-license.php
  * @see http://github.com/pda/phool
  */
-class Ergo_Http_HeaderField
+class HeaderField
 {
 	const CRLF = "\r\n";
 
@@ -29,7 +31,7 @@ class Ergo_Http_HeaderField
 	 */
 	public function __construct($name, $value)
 	{
-		$normalizer = new Ergo_Http_HeaderCaseNormalizer();
+		$normalizer = new HeaderCaseNormalizer();
 		$this->_name = $normalizer->normalize($name);
 		$this->_value = $value;
 	}

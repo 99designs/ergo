@@ -1,6 +1,10 @@
 <?php
 
-class Ergo_Http_Error_InternalServerError extends Ergo_Http_Error
+namespace Ergo\Http\Error;
+
+use \Ergo\Http\Error;
+
+class InternalServerError extends Error
 {
 	const STATUS_CODE=500;
 

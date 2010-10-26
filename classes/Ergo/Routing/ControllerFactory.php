@@ -1,10 +1,12 @@
 <?php
 
-interface Ergo_Routing_ControllerFactory
+namespace Ergo\Routing;
+
+interface ControllerFactory
 {
 	/**
 	 * @param $name
-	 * @return Ergo_Routing_Controller
+	 * @return Controller
 	 */
 	public function createController($name);
 

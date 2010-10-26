@@ -1,30 +1,32 @@
 <?php
 
+namespace Ergo\Http;
+
 /**
  * An HTTP response.
  * @see http://tools.ietf.org/html/rfc2616#section-6
  */
-class Ergo_Http_Response
+class Response
 {
 	private $_status;
 	private $_headers;
 	private $_body;
 
 	/**
-	 * @param Ergo_Http_Status $status
-	 * @param Ergo_Http_HeaderField[] $headers
+	 * @param Status $status
+	 * @param HeaderField[] $headers
 	 * @param string $body
 	 */
 	public function __construct($status, $headers, $body=null)
 	{
-		if (is_numeric($status)) $status = new Ergo_Http_Status($status);
+		if (is_numeric($status)) $status = new Status($status);
 		$this->_status = $status;
-		$this->_headers = new Ergo_Http_HeaderCollection($headers);
+		$this->_headers = new HeaderCollection($headers);
 		$this->_body = $body;
 	}
 
 	/**
-	 * @return Ergo_Http_Status
+	 * @return Status
 	 */
 	public function getStatus()
 	{
@@ -32,7 +34,7 @@ class Ergo_Http_Response
 	}
 
 	/**
-	 * @return Ergo_Http_HeaderCollection
+	 * @return HeaderCollection
 	 */
 	public function getHeaders()
 	{

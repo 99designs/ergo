@@ -1,10 +1,12 @@
 <?php
 
+namespace Ergo;
+
 /**
  * A class that promotes composition by collecting mixin objects and delegating
  * calls to those objects as though they were one object
  */
-class Ergo_Mixin
+class Mixin
 {
 	private $_delegates=array();
 	private $_callmap=array();
@@ -59,7 +61,7 @@ class Ergo_Mixin
 
 		if(!isset($this->_callmap[$method]))
 		{
-			throw new BadMethodCallException("No delegates with method '$method'");
+			throw new \BadMethodCallException("No delegates with method '$method'");
 		}
 
 		return call_user_func_array(array(

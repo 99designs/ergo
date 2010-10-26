@@ -1,6 +1,8 @@
 <?php
 
-class Ergo_CallbackFactory implements Ergo_Factory
+namespace Ergo;
+
+class CallbackFactory implements Factory
 {
 	private $_callable;
 

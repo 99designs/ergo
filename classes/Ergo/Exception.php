@@ -1,3 +1,5 @@
 <?php
 
-class Ergo_Exception extends Exception {}
+namespace Ergo;
+
+class Exception extends \Exception {}

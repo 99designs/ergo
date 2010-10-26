@@ -1,12 +1,12 @@
 <?php
 
+namespace Ergo\Logging;
 
 /**
  * A console logger that includes process information
- *
  * @author Lachlan Donald <lachlan@99designs.com>
  */
-class Ergo_Logging_ProcessLogger extends Ergo_Logging_ConsoleLogger
+class ProcessLogger extends ConsoleLogger
 {
 	protected function _getMessageFormat()
 	{

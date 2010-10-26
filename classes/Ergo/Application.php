@@ -1,20 +1,32 @@
 <?php
 
+namespace Ergo;
+
 /**
  * The foundation and central lookup mechanism for a web application, reference
  * by the static {@link Ergo} object
  */
-class Ergo_Application implements Ergo_Plugin
+class Application implements Plugin
 {
 	const REQUEST_FACTORY='request_factory';
 	const LOGGER_FACTORY='logger_factory';
 	const REGISTRY_DATETIME='datetime';
+	const REGISTRY_ROUTER='router';
 
 	protected $_registry;
 	private $_mixin;
 	private $_started=false;
 	private $_errorHandler;
 	private $_errorProxy;
+	private $_classLoader;
+
+	/**
+	 * Constructor
+	 */
+	public function __construct($classLoader=null)
+	{
+		$this->_classLoader = $classLoader;
+	}
 
 	/**
 	 * Template method, called when the application starts
@@ -46,7 +58,7 @@ class Ergo_Application implements Ergo_Plugin
 	{
 		if($this->_started==false)
 		{
-			$this->_errorProxy = new Ergo_Error_ErrorProxy($this);
+			$this->_errorProxy = new Error\ErrorProxy($this);
 			$this->onStart();
 			foreach($this->plugins() as $plugin) $plugin->start();
 			$this->_started = true;
@@ -83,7 +95,7 @@ class Ergo_Application implements Ergo_Plugin
 	{
 		if(!isset($this->_registry))
 		{
-			$this->_registry = new Ergo_Registry();
+			$this->_registry = new Registry();
 		}
 
 		return $this->_registry;
@@ -105,7 +117,7 @@ class Ergo_Application implements Ergo_Plugin
 	{
 		if(!isset($this->_loggerFactory))
 		{
-			$this->_loggerFactory = new Ergo_Logging_DefaultLoggerFactory();
+			$this->_loggerFactory = new Logging\DefaultLoggerFactory();
 		}
 
 		return $this->_loggerFactory;
@@ -115,7 +127,7 @@ class Ergo_Application implements Ergo_Plugin
 	 * Creates or sets the logger factory used to create loggers
 	 * @chainable
 	 */
-	public function setLoggerFactory(Ergo_Logging_LoggerFactory $factory)
+	public function setLoggerFactory(logger\LoggerFactory $factory)
 	{
 		$this->_loggerFactory = $factory;
 		return $this;
@@ -142,7 +154,7 @@ class Ergo_Application implements Ergo_Plugin
 	 */
 	public function controller()
 	{
-		return new Ergo_Routing_RoutedController();
+		return new Routing\RoutedController();
 	}
 
 	/**
@@ -158,20 +170,17 @@ class Ergo_Application implements Ergo_Plugin
 	 */
 	public function requestFactory()
 	{
-		return $this->genericFactory(self::REQUEST_FACTORY,
-			new Ergo_Http_RequestFactory()
-			);
+		return $this->lookup(self::REQUEST_FACTORY, function() {
+			return new Http\RequestFactory($_SERVER);
+		});
 	}
 
 	/**
 	 * Creates or sets the logger factory used to create loggers
 	 */
-	public function setRequestFactory(Ergo_Factory $factory)
+	public function setRequestFactory(Factory $factory)
 	{
-		return $this->genericFactory(self::REQUEST_FACTORY,
-			new Ergo_Http_RequestFactory(),
-			$factory
-			);
+		$this->register(self::REQUEST_FACTORY, $factory);
 	}
 
 	/**
@@ -189,7 +198,7 @@ class Ergo_Application implements Ergo_Plugin
 	{
 		if(!isset($this->_mixin))
 		{
-			$this->_mixin = new Ergo_Mixin();
+			$this->_mixin = new Mixin();
 		}
 
 		return $this->_mixin;
@@ -206,7 +215,7 @@ class Ergo_Application implements Ergo_Plugin
 	/**
 	 * Adds a {@link Ergo_Plugin} to the application
 	 */
-	public function plug(Ergo_Plugin $plugin)
+	public function plug(\Ergo\Plugin $plugin)
 	{
 		$this->mixin()->addDelegate($plugin);
 		return $this;
@@ -276,9 +285,9 @@ class Ergo_Application implements Ergo_Plugin
 	 */
 	public function dateTime()
 	{
-		return $this->registry()->isRegistered(Ergo_Application::REGISTRY_DATETIME)
-			? $this->lookup(Ergo_Application::REGISTRY_DATETIME)
-			: new DateTime('now')
+		return $this->registry()->isRegistered(self::REGISTRY_DATETIME)
+			? $this->lookup(self::REGISTRY_DATETIME)
+			: new \DateTime('now')
 			;
 	}
 
@@ -289,7 +298,32 @@ class Ergo_Application implements Ergo_Plugin
 	 */
 	public function setDateTime($dateTime)
 	{
-		$this->registry()->register(Spf::REGISTRY_DATETIME, $dateTime, true);
+		$this->registry()->register(self::REGISTRY_DATETIME, $dateTime, true);
 		return $this;
+	}
+
+	/**
+	 * Returns a request router
+	 * @return Router
+	 */
+	public function router()
+	{
+		$this->registry()->lookup(self::REGISTRY_ROUTER, function(){
+
+		});
+	}
+
+	/**
+	 * Returns the class loader associateds with the application
+	 * @return Router
+	 */
+	public function classLoader()
+	{
+		if(!isset($this->_classLoader))
+		{
+			$this->_classLoader = new ClassLoader();
+		}
+
+		return $this->_classLoader;
 	}
 }

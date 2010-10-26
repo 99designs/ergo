@@ -1,31 +1,32 @@
 <?php
 
+namespace Ergo\Logging;
 
 /**
  * A logger that drops all log messages
  *
  * @author Lachlan Donald <lachlan@99designs.com>
  */
-class Ergo_Logging_NullLogger extends Ergo_Logging_AbstractLogger
+class NullLogger extends AbstractLogger
 {
 	/* (non-phpdoc)
-	 * @see Ergo_Logger::log()
+	 * @see \Ergo\Logger::log()
 	 */
-	function log($message,$level=Ergo_Logger::INFO)
+	function log($message,$level=\Ergo\Logger::INFO)
 	{
 		return $this;
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Logger::logException()
+	 * @see \Ergo\Logger::logException()
 	 */
-	function logException($exception,$level=Ergo_Logger::ERROR)
+	function logException($exception,$level=\Ergo\Logger::ERROR)
 	{
 		return $this;
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Logger::setLogLevel()
+	 * @see \Ergo\Logger::setLogLevel()
 	 */
 	function setLogLevel($level)
 	{

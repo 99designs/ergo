@@ -1,23 +1,25 @@
 <?php
+
+namespace Ergo\Logging;
+
 /**
  * A logger that writes to a file
- *
  * @author Lachlan Donald <lachlan@99designs.com>
  */
-class Ergo_Logging_FileLogger extends Ergo_Logging_AbstractLogger
+class FileLogger extends AbstractLogger
 {
 	private $_filepath;
 
-	function __construct($filepath, $level=Ergo_Logger::INFO)
+	function __construct($filepath, $level=\Ergo\Logger::INFO)
 	{
 		parent::__construct($level);
 		$this->_filepath = $filepath;
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Logger::log()
+	 * @see \Ergo\Logger::log()
 	 */
-	function log($message,$level=Ergo_Logger::INFO)
+	function log($message,$level=\Ergo\Logger::INFO)
 	{
 		file_put_contents(
 			$this->_filepath,

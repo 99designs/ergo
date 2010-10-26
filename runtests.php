@@ -4,14 +4,11 @@
 define('BASEDIR',dirname(__FILE__));
 require_once(BASEDIR.'/classes/Ergo/ClassLoader.php');
 
-$classloader = new Ergo_ClassLoader();
-$classloader->register()->includePaths(array(
-	BASEDIR."/classes",
-	BASEDIR."/lib/simpletest",
-	));
+$classloader = new \Ergo\ClassLoader();
+$classloader->register(array(BASEDIR."/classes"));
 
-$options = new Ergo_Console_Options($argv, array(
-	'--file=false','--dir=false','--help','-h'
+$options = new \Ergo\Console\Options($argv, array(
+	'--file=false','--dir=false','--help','-h','--test='
 	));
 
 // show usage
@@ -21,9 +18,10 @@ if ($options->has('--help', '-h'))
 
 CLI test runner, defaults to running Ergo tests
 
-  --file <path>		adds a specific test file
-  --dir <path>    	adds a directory containing classes/ and tests/
-  --help            this documentation.
+  --file <path>			adds a specific test file
+  --dir <path>    		adds a directory containing classes/ and tests/
+  --test <testname>	only run a specific testcase
+  --help            	this documentation.
 
 EOM;
 
@@ -49,7 +47,7 @@ foreach($dirs as $dir)
 $classloader->export();
 
 require_once('autorun.php');
-$suite = new TestSuite('Tests');
+$suite = new \TestSuite('Tests');
 
 if ($testFiles)
 {
@@ -62,8 +60,8 @@ else
 {
 	foreach($dirs as $dir)
 	{
-		$iterator = new RecursiveIteratorIterator(
-			new RecursiveDirectoryIterator($dir.'/tests'));
+		$iterator = new \RecursiveIteratorIterator(
+			new \RecursiveDirectoryIterator($dir.'/tests'));
 
 		foreach ($iterator as $file)
 		{
@@ -74,4 +72,3 @@ else
 		}
 	}
 }
-

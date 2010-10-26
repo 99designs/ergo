@@ -1,11 +1,12 @@
 <?php
 
+namespace Ergo\Logging;
+
 /**
  * A logger that appends a multiline stack trace to a file
- *
  * @author Lachlan Donald <lachlan@99designs.com>
  */
-class Ergo_Logging_StackTraceLogger extends Ergo_Logging_AbstractLogger
+class StackTraceLogger extends AbstractLogger
 {
 	private $_filepath;
 	private $_context;
@@ -22,9 +23,9 @@ class Ergo_Logging_StackTraceLogger extends Ergo_Logging_AbstractLogger
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Logger::log()
+	 * @see \Ergo\Logger::log()
 	 */
-	function log($message,$level=Ergo_Logger::INFO)
+	function log($message,$level=\Ergo\Logger::INFO)
 	{
 		return $this;
 	}
@@ -40,7 +41,7 @@ class Ergo_Logging_StackTraceLogger extends Ergo_Logging_AbstractLogger
 	/**
 	 * Writes detailed exception information to a logfile
 	 */
-	public function logException($exception,$level=Ergo_Logger::ERROR)
+	public function logException($exception,$level=\Ergo\Logger::ERROR)
 	{
 		$e = $exception;
 		$type = ($e instanceof ErrorException) ? 'error' : 'exception';
@@ -55,7 +56,7 @@ class Ergo_Logging_StackTraceLogger extends Ergo_Logging_AbstractLogger
 		// add the error details to the context
 		if($type == 'error')
 		{
-			$error = new Ergo_Logging_Error($e->getSeverity());
+			$error = new Error($e->getSeverity());
 			$message .= "Severity: $error\n";
 		}
 

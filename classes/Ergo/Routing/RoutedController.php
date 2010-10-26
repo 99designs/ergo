@@ -1,10 +1,11 @@
 <?php
 
+namespace Ergo\Routing;
+
 /**
  * Routes a request to a controller method based on path and request method.
  */
-class Ergo_Routing_RoutedController
-	implements Ergo_Routing_Controller
+class RoutedController implements Controller
 {
 	private $_routeMap;
 	private $_controllerFactory;
@@ -12,19 +13,19 @@ class Ergo_Routing_RoutedController
 	private $_filterChain;
 
 	/**
-	 * @param Ergo_Routing_RouteMap
+	 * @param RouteMap
 	 */
 	public function __construct($routeMap=null)
 	{
-		$this->_filterChain = new Ergo_Routing_RequestFilterChain();
+		$this->_filterChain = new RequestFilterChain();
 		$this->_routeMap = isset($params['routeMap']) ?
-			$params['routeMap'] : new Ergo_Routing_RouteMap();
+			$params['routeMap'] : new RouteMap();
 	}
 
 	/**
-	 * Adds an {@link Ergo_Routing_RequestFilter} to the controller
+	 * Adds an {@link RequestFilter} to the controller
 	 */
-	public function addRequestFilter(Ergo_Routing_RequestFilter $filter)
+	public function addRequestFilter(RequestFilter $filter)
 	{
 		$this->_filterChain->addFilter($filter);
 		return $this;
@@ -41,7 +42,7 @@ class Ergo_Routing_RoutedController
 	/**
 	 * Sets an optional controller factory to use to build controllers
 	 */
-	public function setControllerFactory(Ergo_Routing_ControllerFactory $factory)
+	public function setControllerFactory(ControllerFactory $factory)
 	{
 		$this->_controllerFactory = $factory;
 	}
@@ -66,12 +67,12 @@ class Ergo_Routing_RoutedController
 		}
 		else
 		{
-			throw new Ergo_Routing_Exception("No controller found for $name");
+			throw new Exception("No controller found for $name");
 		}
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Routing_Controller::execute
+	 * @see Controller::execute
 	 */
 	public function execute($request)
 	{
@@ -80,7 +81,7 @@ class Ergo_Routing_RoutedController
 
 		$match = $this->_routeMap->lookup($path);
 		return $this->_controllerFor($match->getName())->execute(
-			new Ergo_Routing_RoutedRequest(
+			new RoutedRequest(
 				$this->_filterChain->filter($request),
 					$match, $this->_routeMap));
 	}

@@ -1,5 +1,7 @@
 <?php
 
+namespace Ergo\Http;
+
 /**
  * Encapsulates an HTTP or HTTPS URL parsed from a string.
  *
@@ -7,7 +9,7 @@
  * @licence http://www.opensource.org/licenses/mit-license.php
  * @see http://github.com/pda/phool
  */
-class Ergo_Http_Url
+class Url
 {
 
 	private $_inputString;
@@ -38,7 +40,7 @@ class Ergo_Http_Url
 	 */
 	public function getScheme()
 	{
-		if (!$this->hasScheme()) throw new Ergo_Http_UrlException(sprintf(
+		if (!$this->hasScheme()) throw new UrlException(sprintf(
 			"URL '%s' has no scheme component",
 			$this->_inputString
 		));
@@ -61,7 +63,7 @@ class Ergo_Http_Url
 	 */
 	public function getHost()
 	{
-		if (!$this->hasHost()) throw new Ergo_Http_UrlException(sprintf(
+		if (!$this->hasHost()) throw new UrlException(sprintf(
 			"URL '%s' has no host component",
 			$this->_inputString
 		));
@@ -110,7 +112,7 @@ class Ergo_Http_Url
 	 */
 	public function getQueryString()
 	{
-		if (!$this->hasQueryString()) throw new Ergo_Http_UrlException(sprintf(
+		if (!$this->hasQueryString()) throw new UrlException(sprintf(
 			"URL '%s' has no query string",
 			$this->_inputString
 		));
@@ -133,7 +135,7 @@ class Ergo_Http_Url
 	 */
 	public function getFragmentString()
 	{
-		if (!$this->hasFragmentString()) throw new Ergo_Http_UrlException(sprintf(
+		if (!$this->hasFragmentString()) throw new UrlException(sprintf(
 			"URL '%s' has no fragment string",
 			$this->_inputString
 		));
@@ -174,7 +176,7 @@ class Ergo_Http_Url
 	 */
 	public function getDefaultPort()
 	{
-		if (!$this->hasDefaultPort()) throw new Ergo_Http_UrlException(sprintf(
+		if (!$this->hasDefaultPort()) throw new UrlException(sprintf(
 			"No default port for URL '%s'",
 			$this->_inputString
 		));
@@ -182,7 +184,7 @@ class Ergo_Http_Url
 		$scheme = $this->getScheme();
 		if ($scheme == 'http') return 80;
 		elseif ($scheme == 'https') return 443;
-		else throw new Ergo_Http_UrlException("No default port for scheme '$scheme'");
+		else throw new UrlException("No default port for scheme '$scheme'");
 	}
 
 	/**
@@ -229,14 +231,14 @@ class Ergo_Http_Url
 
 	/**
 	 * Builds a URL with a different path component
-	 * @return Ergo_Http_Url
+	 * @return Url
 	 */
 	public function getUrlForPath($path)
 	{
 		$fragments = parse_url($path);
 
 		if (!isset($fragments['path']))
-			throw new Ergo_Http_UrlException("URL is not a valid path: '$path'");
+			throw new UrlException("URL is not a valid path: '$path'");
 
 		$newUrl = clone $this;
 		$newUrl->_fragments['path'] = $fragments['path'];
@@ -258,7 +260,7 @@ class Ergo_Http_Url
 
 	/**
 	 * Builds a URL with a different host
-	 * @return Ergo_Http_Url
+	 * @return Url
 	 */
 	public function getUrlForHost($host)
 	{
@@ -271,7 +273,7 @@ class Ergo_Http_Url
 
 	/**
 	 * Builds a URL with a different scheme
-	 * @return Ergo_Http_Url
+	 * @return Url
 	 */
 	public function getUrlForScheme($scheme)
 	{
@@ -293,7 +295,7 @@ class Ergo_Http_Url
 	/**
 	 * Builds a url with a different fragment (the part after # in the url)
 	 * @param string
-	 * @return Ergo_Http_Url
+	 * @return Url
 	 */
 	public function getUrlForFragment($fragment)
 	{
@@ -324,7 +326,7 @@ class Ergo_Http_Url
 
 	/**
 	 * Builds a URL with a path component that is relative to the current one
-	 * @return Ergo_Http_Url
+	 * @return Url
 	 */
 	public function getUrlForRelativePath($path)
 	{

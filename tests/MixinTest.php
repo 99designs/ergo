@@ -1,12 +1,14 @@
 <?php
 
+namespace Ergo\Tests\Mixin;
+
 class MyClass { function test() { return 'blargh'; } }
 
-class Ergo_MixinTest extends UnitTestCase
+class MixinTest extends \UnitTestCase
 {
 	public function testMixin()
 	{
-		$mixin = new Ergo_Mixin();
+		$mixin = new \Ergo\Mixin();
 
 		$this->assertFalse($mixin->isCallable('test'));
 		$mixin->addDelegate(new MyClass());

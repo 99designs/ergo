@@ -1,20 +1,23 @@
 <?php
 
+namespace Ergo\Routing;
+
+use Ergo\Http;
+
 /**
  * A controller for handling HTTP requests against a resource.
  */
-abstract class Ergo_Routing_AbstractRestController
-	extends Ergo_Routing_AbstractController
+abstract class AbstractRestController extends AbstractController
 {
 	/* (non-phpdoc)
-	 * @see Ergo_Routing_Controller::execute()
+	 * @see Controller::execute()
 	 */
 	public function execute($request)
 	{
 		$method = strtolower($request->getRequestMethod());
 		if(!in_array($method,array('get','put','post','delete','head')))
 		{
-			throw new Ergo_Routing_Exception("Unknown HTTP verb");
+			throw new Exception("Unknown HTTP verb");
 		}
 
 		$this->setRouteMap($request->getRouteMap());
@@ -24,51 +27,51 @@ abstract class Ergo_Routing_AbstractRestController
 
 	/**
 	 * Handles an HTTP GET request.
-	 * @param Ergo_Http_Request
-	 * @return Ergo_Http_Response
+	 * @param Request
+	 * @return Response
 	 */
 	public function get($request)
 	{
-		throw new Ergo_Http_Error_MethodNotAllowed('GET');
+		throw new Http\Error\MethodNotAllowed('GET');
 	}
 
 	/**
 	 * Handles an HTTP HEAD request.
-	 * @param Ergo_Http_Request
-	 * @return Ergo_Http_Response
+	 * @param Http\Request
+	 * @return Http\Response
 	 */
 	public function head($request)
 	{
-		throw new Ergo_Http_Error_MethodNotAllowed('HEAD');
+		throw new Http\Error\MethodNotAllowed('HEAD');
 	}
 
 	/**
 	 * Handles an HTTP POST request.
-	 * @param Ergo_Http_Request
-	 * @return Ergo_Http_Response
+	 * @param Http\Request
+	 * @return Http\Response
 	 */
 	public function post($request)
 	{
-		throw new Ergo_Http_Error_MethodNotAllowed('POST');
+		throw new Http\Error\MethodNotAllowed('POST');
 	}
 
 	/**
 	 * Handles an HTTP PUT request.
-	 * @param Ergo_Http_Request
-	 * @return Ergo_Http_Response
+	 * @param Http\Request
+	 * @return Http\Response
 	 */
 	public function put($request)
 	{
-		throw new Ergo_Http_Error_MethodNotAllowed('PUT');
+		throw new Http\Error\MethodNotAllowed('PUT');
 	}
 
 	/**
 	 * Handles an HTTP DELETE request.
-	 * @param Ergo_Http_Request
-	 * @return Ergo_Http_Response
+	 * @param Http\Request
+	 * @return Http\Response
 	 */
 	public function delete($request)
 	{
-		throw new Ergo_Http_Error_MethodNotAllowed('DELETE');
+		throw new Http\Error\MethodNotAllowed('DELETE');
 	}
 }

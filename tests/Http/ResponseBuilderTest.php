@@ -1,11 +1,14 @@
 <?php
 
-class Ergo_Http_ResponseBuilderTest extends UnitTestCase
-{
+namespace Ergo\Tests\Http;
 
+use Ergo\Http;
+
+class ResponseBuilderTest extends \UnitTestCase
+{
 	public function testBasicUsage()
 	{
-		$builder = new Ergo_Http_ResponseBuilder();
+		$builder = new Http\ResponseBuilder();
 
 		$builder
 			->addHeader('Content-Type', 'text/plain')
@@ -15,7 +18,7 @@ class Ergo_Http_ResponseBuilderTest extends UnitTestCase
 
 		$response = $builder->build();
 
-		$this->assertIsA($response, 'Ergo_Http_Response');
+		$this->assertIsA($response, '\Ergo\Http\Response');
 
 		$this->assertEqual($response->getStatus()->getCode(), 418);
 		$this->assertTrue($response->hasBody());
@@ -30,7 +33,7 @@ class Ergo_Http_ResponseBuilderTest extends UnitTestCase
 
 	public function testRedirectTemporary()
 	{
-		$builder = new Ergo_Http_ResponseBuilder();
+		$builder = new Http\ResponseBuilder();
 
 		$response = $builder
 			->found('http://example.org/test')
@@ -47,7 +50,7 @@ class Ergo_Http_ResponseBuilderTest extends UnitTestCase
 
 	public function testRedirectPermanent()
 	{
-		$builder = new Ergo_Http_ResponseBuilder();
+		$builder = new Http\ResponseBuilder();
 
 		$response = $builder
 			->moved('http://example.org/test')
@@ -64,7 +67,7 @@ class Ergo_Http_ResponseBuilderTest extends UnitTestCase
 
 	public function testCreated()
 	{
-		$builder = new Ergo_Http_ResponseBuilder();
+		$builder = new Http\ResponseBuilder();
 
 		$response = $builder
 			->created('http://example.org/test')
@@ -81,7 +84,7 @@ class Ergo_Http_ResponseBuilderTest extends UnitTestCase
 
 	public function testForbidden()
 	{
-		$builder = new Ergo_Http_ResponseBuilder();
+		$builder = new Http\ResponseBuilder();
 
 		$response = $builder
 			->forbidden()
@@ -93,7 +96,7 @@ class Ergo_Http_ResponseBuilderTest extends UnitTestCase
 
 	public function testNotFound()
 	{
-		$builder = new Ergo_Http_ResponseBuilder();
+		$builder = new Http\ResponseBuilder();
 
 		$response = $builder
 			->notFound()
@@ -105,7 +108,7 @@ class Ergo_Http_ResponseBuilderTest extends UnitTestCase
 
 	public function testMethodNotAllowed()
 	{
-		$builder = new Ergo_Http_ResponseBuilder();
+		$builder = new Http\ResponseBuilder();
 
 		$response = $builder
 			->methodNotAllowed()

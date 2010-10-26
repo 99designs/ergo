@@ -1,10 +1,11 @@
 <?php
 
+namespace Ergo\Routing;
+
 /**
- * A match result from a lookup against a {@link Ergo_Routing_RouteMap}
+ * A match result from a lookup against a {@link RouteMap}
  */
-class Ergo_Routing_RouteMapMatch
-	extends ArrayIterator
+class RouteMapMatch extends \ArrayIterator
 {
 	private $_name;
 	private $_parameters;

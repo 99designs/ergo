@@ -1,9 +1,13 @@
 <?php
 
+namespace Ergo\Http;
+
+use Ergo\Http\Error;
+
 /**
  * A simple HTTP client
  */
-class Ergo_Http_Client
+class Client
 {
 	const MAX_REDIRECTS=10;
 	const DEFAULT_TIMEOUT=10;
@@ -24,15 +28,15 @@ class Ergo_Http_Client
 	 */
 	function __construct($url)
 	{
-		if (!$url) throw new InvalidArgumentException('A base url must be set');
-		$this->_url = new Ergo_Http_Url($url);
+		if (!$url) throw new \InvalidArgumentException('A base url must be set');
+		$this->_url = new Url($url);
 	}
 
 	/**
 	 * Adds an HTTP header to all requests
 	 * @chainable
 	 */
-	public function addFilter(Ergo_Http_ClientFilter $filter)
+	public function addFilter(ClientFilter $filter)
 	{
 		$this->_filters[] = $filter;
 		return $this;
@@ -40,12 +44,12 @@ class Ergo_Http_Client
 
 	/**
 	 * Adds an HTTP header to all requests
-	 * @param mixed either a string or a Ergo_Http_HeaderField
+	 * @param mixed either a string or a HeaderField
 	 * @chainable
 	 */
 	public function addHeader($header)
 	{
-		if(is_string($header)) $header = Ergo_Http_HeaderField::fromString($header);
+		if(is_string($header)) $header = HeaderField::fromString($header);
 		$this->_headers[] = $header;
 		return $this;
 	}
@@ -58,7 +62,7 @@ class Ergo_Http_Client
 		$this->_proxy = $url;
 		return $this;
 	}
-	
+
 	/**
 	 *	Sets HTTP authentication credentials
 	 */
@@ -70,7 +74,7 @@ class Ergo_Http_Client
 
 	/**
 	 * Sends a POST request
-	 * @return Ergo_Http_Response
+	 * @return Response
 	 */
 	function post($path, $body)
 	{
@@ -79,7 +83,7 @@ class Ergo_Http_Client
 
 	/**
 	 * Sends a PUT request
-	 * @return Ergo_Http_Response
+	 * @return Response
 	 */
 	function put($path, $body)
 	{
@@ -88,7 +92,7 @@ class Ergo_Http_Client
 
 	/**
 	 * Sends a GET request
-	 * @return Ergo_Http_Response
+	 * @return Response
 	 */
 	function get($path)
 	{
@@ -97,7 +101,7 @@ class Ergo_Http_Client
 
 	/**
 	 * Sends a DELETE request
-	 * @return Ergo_Http_Response
+	 * @return Response
 	 */
 	function delete($path)
 	{
@@ -108,7 +112,7 @@ class Ergo_Http_Client
 	 * Parses a response into headers and a body
 	 */
 	private function _buildResponse($response)
-	{		
+	{
 		$sections = explode("\r\n\r\n", $response,2);
 		$body = isset($sections[1]) ? $sections[1] : NULL;
 		$headers = array();
@@ -120,10 +124,10 @@ class Ergo_Http_Client
 		// process headers
 		foreach(array_slice($headerlines,1) as $headerline)
 		{
-			$headers[] = Ergo_Http_HeaderField::fromString($headerline);
+			$headers[] = HeaderField::fromString($headerline);
 		}
 
-		$response = new Ergo_Http_Response($code,$headers,$body);
+		$response = new Response($code,$headers,$body);
 
 		// pass the response through the filter chain
 		foreach($this->_filters as $filter)
@@ -135,11 +139,11 @@ class Ergo_Http_Client
 	}
 
 	/**
-	 * Builds an Ergo_Http_Request object
+	 * Builds an Request object
 	 */
 	private function _buildRequest($method,$path,$body=null)
 	{
-		$request = new Ergo_Http_Request(
+		$request = new Request(
 			$method, $this->_url->getUrlForRelativePath($path),
 			$this->_headers, $body);
 
@@ -165,7 +169,7 @@ class Ergo_Http_Client
 		$curl = $this->_curlConnection($request);
 		if(($curlResponse = curl_exec($curl)) === false)
 		{
-			throw new Ergo_Http_Error('Curl error: ' . curl_error($curl),
+			throw new Error('Curl error: ' . curl_error($curl),
 				curl_errno($curl));
 		}
 
@@ -192,23 +196,23 @@ class Ergo_Http_Client
 		// translate error code to a typed exception
 		if($httpCode == 500)
 		{
-			throw new Ergo_Http_Error_InternalServerError($body);
+			throw new Error\InternalServerError($body);
 		}
 		elseif($httpCode == 400)
 		{
-			throw new Ergo_Http_Error_BadRequest($body);
+			throw new Error\BadRequest($body);
 		}
 		elseif($httpCode == 401)
 		{
-			throw new Ergo_Http_Error_Unauthorized($body);
+			throw new Error\Unauthorized($body);
 		}
 		elseif($httpCode == 404)
 		{
-			throw new Ergo_Http_Error_NotFound($body);
+			throw new Error\NotFound($body);
 		}
 		else if($httpCode >= 300)
 		{
-			throw new Ergo_Http_Error($body,$httpCode);
+			throw new Error($body,$httpCode);
 		}
 
 		return $response;
@@ -244,7 +248,7 @@ class Ergo_Http_Client
 		{
 			curl_setopt($curl, CURLOPT_PROXY, $this->_proxy);
 		}
-		
+
 		// enable http authentication
 		if(isset($this->_auth))
 		{
@@ -275,7 +279,7 @@ class Ergo_Http_Client
 	 */
 	private function _redirect($location)
 	{
-		$locationUrl = new Ergo_Http_Url($location);
+		$locationUrl = new Url($location);
 
 		// if the location header was relative (bleh) add the host
 		if(!$locationUrl->hasHost())
@@ -285,13 +289,13 @@ class Ergo_Http_Client
 
 		if($this->_redirects > self::MAX_REDIRECTS)
 		{
-			throw new Ergo_Http_Error_BadRequest("Exceeded maximum redirects");
+			throw new Error\BadRequest("Exceeded maximum redirects");
 		}
 
 		$this->_redirects++;
 
 		return $this->_dispatchRequest(
-			new Ergo_Http_Request('GET', $locationUrl, $this->_headers));
+			new Request('GET', $locationUrl, $this->_headers));
 	}
 
 	/**

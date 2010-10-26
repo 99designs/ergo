@@ -1,15 +1,17 @@
 <?php
 
+namespace Ergo\Http;
+
 /**
  * A collection of HTTP headers
  */
-class Ergo_Http_HeaderCollection implements IteratorAggregate
+class HeaderCollection implements \IteratorAggregate
 {
 	private $_headers=array();
 
 	/**
 	 * Constructor
-	 * @param $headers Ergo_Http_HeaderField[]
+	 * @param $headers HeaderField[]
 	 */
 	public function __construct($headers=array())
 	{
@@ -18,7 +20,7 @@ class Ergo_Http_HeaderCollection implements IteratorAggregate
 
 	/**
 	 * Adds a header to the collection, either in "Header: Value" format
-	 * or an {@link Ergo_Http_HeaderField} object.
+	 * or an {@link HeaderField} object.
 	 * @chainable
 	 */
 	function add($header)
@@ -26,7 +28,7 @@ class Ergo_Http_HeaderCollection implements IteratorAggregate
 		// convert to object form
 		if(is_string($header))
 		{
-			$header = Ergo_Http_HeaderField::fromString($header);
+			$header = HeaderField::fromString($header);
 		}
 
 		$this->_headers[] = $header;
@@ -50,7 +52,7 @@ class Ergo_Http_HeaderCollection implements IteratorAggregate
 	 */
 	function values($name)
 	{
-		$normalizer = new Ergo_Http_HeaderCaseNormalizer();
+		$normalizer = new HeaderCaseNormalizer();
 		$name = $normalizer->normalize($name);
 		$values = array();
 
@@ -87,6 +89,6 @@ class Ergo_Http_HeaderCollection implements IteratorAggregate
 	 */
 	function getIterator()
 	{
-		return new ArrayIterator(array_values($this->_headers));
+		return new \ArrayIterator(array_values($this->_headers));
 	}
 }
