@@ -4,6 +4,7 @@ namespace Ergo\Tests\Routing;
 
 use Ergo\Http;
 use Ergo\Routing;
+use Ergo\Routing;
 
 \Mock::generate('\Ergo\Routing\Controller','Routing\MockController');
 
@@ -96,9 +97,9 @@ class RouteTest extends \UnitTestCase
 		$router->buildUrl('flavours');
 	}
 
-	public function testRouterMatchArrayInterface()
+	public function testRouteMatchArrayInterface()
 	{
-		$match = new Routing\RouterMatch('test', array('a' => 'b'));
+		$match = new Routing\RouteMatch('test', array('a' => 'b'));
 		$this->assertEqual($match['a'], 'b');
 	}
 

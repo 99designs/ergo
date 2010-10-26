@@ -2,12 +2,12 @@
 
 namespace Ergo\Routing;
 
-interface ControllerFactory
+interface ControllerResolver
 {
 	/**
 	 * @param $name
 	 * @return Controller
 	 */
-	public function createController($name);
+	public function resolve($name);
 
 }

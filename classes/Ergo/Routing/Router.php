@@ -3,39 +3,49 @@
 namespace Ergo\Routing;
 
 /**
- * Maps URL templates to named routes.
- * Supports url templates.
+ *
  */
-class Router
+class Router implements Controller
 {
-	private $_entries = array();
+	private $_routes = array();
+	private $_controllers = array();
+	private $_resolver;
 
 	/**
-	 * Maps a url template to a named route, along with optional tags
+	 * Constructor
+	 * @param ControllerResolver
+	 */
+	public function __construct($resolver=null)
+	{
+		$this->_resolver = $resolver;
+	}
+
+	/**
+	 * Connects a route template to
 	 * @param string a url template
 	 * @param string a unique name for the route
 	 * @chainable
 	 */
-	public function map($template, $routeName, $tags=array())
+	public function connect($template, $name, $controller=null)
 	{
-		if(isset($this->_entries[$routeName]))
-			throw new BuildException("A route named $routeName exists already");
+		$this->_routes[$name] = new Route($name, $template);
 
-		$this->_entries[$routeName] =
-			new RouterEntry($routeName, $template, $tags);
+		if($controller)
+			$this->_controllers[$name] = $controller;
 
 		return $this;
 	}
 
 	/**
-	 * Look up a RouterMatch based on the path of a URL.
+	 * Looks up a route match based on a url path
 	 * @param string $path
+	 * @return RouteMatch
 	 */
 	public function lookup($path)
 	{
-		foreach ($this->_entries as $entry)
+		foreach ($this->_routes as $route)
 		{
-			if ($match = $entry->getMatch($path))
+			if ($match = $route->getMatch($path))
 				return $match;
 		}
 
@@ -43,16 +53,15 @@ class Router
 	}
 
 	/**
-	 * Looks up a RouterEntry by name
+	 * Looks up a route by name
+	 * @return Route
 	 */
-	public function entry($name)
+	public function routeByName($name)
 	{
-		if(!isset($this->_entries[$name]))
-		{
-			throw new BuildException("No route named '$name'");
-		}
+		if(!isset($this->_routes[$name]))
+			throw new LookupException("No route named '$name'");
 
-		return $this->_entries[$name];
+		return $this->_routes[$name];
 	}
 
 	/**
@@ -62,6 +71,49 @@ class Router
 	 */
 	public function buildUrl($name, $parameters = array())
 	{
-		return $this->entry($name)->interpolate($parameters);
+		return $this->routeByName($name)->interpolate($parameters);
+	}
+
+	/**
+	 * Looks up a controller from a route name
+	 */
+	public function controller($name)
+	{
+		if(isset($this->_controllers[$name]))
+		{
+			$controller = $this->_controllers[$name];
+
+			if(is_string($controller))
+				return $this->_controllerFromString($controller);
+			if(is_callable($controller))
+				return new CallbackController($controller);
+		}
+		else if($this->_resolver)
+		{
+			return $this->_resolver->resolve($name);
+		}
+
+		throw new LookupException("No controller defined for route '$name'");
+	}
+
+	/**
+	 * @return Controller
+	 */
+	private function _controllerFromString($string)
+	{
+		if(preg_match('/^redirect\:(.+?)$/', $string, $matches))
+			return new RedirectController($matches[1]);
+
+		throw new LookupException("Unknown controller string format '$string'");
+	}
+
+	/* (non-phpdoc)
+	 * @see Controller::execute()
+	 */
+	public function execute($request)
+	{
+		$match = $this->lookup($request->getUrl()->getPath());
+		$controller = $this->controller($match->getName());
+		return $controller->execute(new RoutedRequest($request, $match, $this));
 	}
 }

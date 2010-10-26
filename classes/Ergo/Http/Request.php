@@ -24,10 +24,10 @@ class Request
 	 * @param string $method
 	 * @param Url $url
 	 */
-	public function __construct($method, $url, $headers, $body=null)
+	public function __construct($method, $url, $headers=array(), $body=null)
 	{
 		$this->_method = $method;
-		$this->_url = $url;
+		$this->_url = is_string($url) ? new Url($url) : $url;
 		$this->_headers = new HeaderCollection($headers);
 		$this->_body = $body;
 	}

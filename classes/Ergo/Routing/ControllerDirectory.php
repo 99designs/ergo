@@ -3,22 +3,21 @@
 namespace Ergo\Routing;
 
 /**
- * A controller factory that uses a directory of controller files. Files should be named without
- * a Controller suffix. Note that underscores in controller names are translated to subdirectories
+ * A controller factory that uses a directory of controller files.
  */
-class ControllerDirectory implements ControllerFactory
+class ControllerDirectory implements ControllerResolver
 {
-	function __construct($dir)
+	public function __construct($dir)
 	{
 		$this->_dir = rtrim($dir, '/');
 	}
 
-	/**
-	 * @param $name
-	 * @return Controller
+	/* (non-phpdoc)
+	 * @see ControllerResolver::resolve()
 	 */
-	public function createController($name)
+	public function resolve($name)
 	{
+		/*
 		$className = sprintf('%sController',$name);
 		$fileName = str_replace('_','/',"$this->_dir/$className.php");
 
@@ -33,5 +32,6 @@ class ControllerDirectory implements ControllerFactory
 		}
 
 		return new $className();
+		*/
 	}
 }

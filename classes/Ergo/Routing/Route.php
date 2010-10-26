@@ -13,7 +13,7 @@ namespace Ergo\Routing;
  * http://example.org/{myparam}/{myparam2}?test={myparam3}
  * </pre>
  */
-class RouterEntry
+class Route
 {
 	const REGEX_PARAM = '#{(.+?)(:.+?)?}#';
 	const TYPE_ANY = '([^/]+?)';
@@ -40,7 +40,7 @@ class RouterEntry
 	}
 
 	/**
-	 * @return RouterMatch or null if no match.
+	 * @return RouteMatch or null if no match.
 	 */
 	public function getMatch($path)
 	{
@@ -53,7 +53,7 @@ class RouterEntry
 				? array()
 				: array_combine($this->_parameters, $matches);
 
-			return new RouterMatch($this->_name, $parameters);
+			return new RouteMatch($this->_name, $parameters);
 		}
 		else if(strlen($path) > 1 && substr($path,-1) == '/')
 		{

@@ -42,7 +42,7 @@ class RoutedController implements Controller
 	/**
 	 * Sets an optional controller factory to use to build controllers
 	 */
-	public function setControllerFactory(ControllerFactory $factory)
+	public function setControllerResolver(ControllerResolver $factory)
 	{
 		$this->_controllerFactory = $factory;
 	}

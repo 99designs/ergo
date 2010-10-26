@@ -5,7 +5,7 @@ namespace Ergo\Tests\Routing;
 use Ergo\Http;
 use Ergo\Routing;
 
-\Mock::generate('\Ergo\Routing\ControllerFactory', 'MockControllerFactory');
+\Mock::generate('\Ergo\Routing\ControllerResolver', 'MockControllerResolver');
 
 class RoutedControllerTest extends \UnitTestCase implements Routing\Controller
 {
@@ -18,14 +18,14 @@ class RoutedControllerTest extends \UnitTestCase implements Routing\Controller
 		$this->assertEqual($response->getBody(), 'Blargh');
 	}
 
-	public function testUsingAControllerFactory()
+	public function testUsingAControllerResolver()
 	{
-		$factory = new \MockControllerFactory();
+		$factory = new \MockControllerResolver();
 		$factory->setReturnReference('createController',$this,array('TestPath'));
 		$factory->expectOnce('createController',array('TestPath'));
 
 		$controller = new Routing\RoutedController();
-		$controller->setControllerFactory($factory);
+		$controller->setControllerResolver($factory);
 		$controller->connect('/test/path','TestPath');
 
 		$response = $controller->execute($this->_createRequest('/test/path'));

@@ -5,7 +5,7 @@ namespace Ergo\Routing;
 /**
  * A match result from a lookup against a {@link Router}
  */
-class RouterMatch extends \ArrayIterator
+class RouteMatch extends \ArrayIterator
 {
 	private $_name;
 	private $_parameters;
