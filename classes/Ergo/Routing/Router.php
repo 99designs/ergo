@@ -3,13 +3,14 @@
 namespace Ergo\Routing;
 
 /**
- *
+ * A router connects requests to controllers via route patterns
  */
 class Router implements Controller
 {
 	private $_routes = array();
 	private $_controllers = array();
 	private $_resolver;
+	private $_prefixes = array();
 
 	/**
 	 * Constructor
@@ -18,6 +19,11 @@ class Router implements Controller
 	public function __construct($resolver=null)
 	{
 		$this->_resolver = $resolver;
+
+		$this
+			->prefix('redirect', function($str){ return new RedirectController($str); })
+			->prefix('alias', function($str, $router){ return $router->controller($str); })
+			;
 	}
 
 	/**
@@ -85,8 +91,12 @@ class Router implements Controller
 
 			if(is_string($controller))
 				return $this->_controllerFromString($controller);
-			if(is_callable($controller))
+
+			else if(is_callable($controller))
 				return new CallbackController($controller);
+
+			else if(is_object($controller))
+				return $controller;
 		}
 		else if($this->_resolver)
 		{
@@ -97,12 +107,25 @@ class Router implements Controller
 	}
 
 	/**
+	 * Register a handler for parsing a controller prefix.
+	 * @chainable
+	 */
+	public function prefix($prefix, $callback)
+	{
+		$this->_prefixes[$prefix] = $callback;
+		return $this;
+	}
+
+	/**
 	 * @return Controller
 	 */
 	private function _controllerFromString($string)
 	{
-		if(preg_match('/^redirect\:(.+?)$/', $string, $matches))
-			return new RedirectController($matches[1]);
+		if(preg_match('/^(.+?)\:(.+?)$/', $string, $m))
+		{
+			if(isset($this->_prefixes[$m[1]]))
+				return call_user_func($this->_prefixes[$m[1]], $m[2], $this);
+		}
 
 		throw new LookupException("Unknown controller string format '$string'");
 	}
