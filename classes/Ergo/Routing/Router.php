@@ -91,10 +91,8 @@ class Router implements Controller
 
 			if(is_string($controller))
 				return $this->_controllerFromString($controller);
-
 			else if(is_callable($controller))
 				return new CallbackController($controller);
-
 			else if(is_object($controller))
 				return $controller;
 		}
@@ -107,7 +105,7 @@ class Router implements Controller
 	}
 
 	/**
-	 * Register a handler for parsing a controller prefix.
+	 * Register a callback for parsing a controller prefix.
 	 * @chainable
 	 */
 	public function prefix($prefix, $callback)
