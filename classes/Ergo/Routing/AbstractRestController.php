@@ -20,7 +20,7 @@ abstract class AbstractRestController extends AbstractController
 			throw new Exception("Unknown HTTP verb");
 		}
 
-		$this->setRouteMap($request->getRouteMap());
+		$this->setRouter($request->getRouter());
 
 		return $this->$method($request);
 	}

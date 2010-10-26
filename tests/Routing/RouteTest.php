@@ -17,166 +17,166 @@ class RouteTest extends \UnitTestCase
 
 	public function testRouteLookup()
 	{
-		$routeMap = new Routing\RouteMap();
-		foreach($this->_exampleRoutes as $template=>$name) $routeMap->map($template, $name);
+		$router = new Routing\Router();
+		foreach($this->_exampleRoutes as $template=>$name) $router->map($template, $name);
 
-		$this->_assertRoute($routeMap,'/fruits','fruits',
+		$this->_assertRoute($router,'/fruits','fruits',
 			array()
 		);
 
-		$this->_assertRoute($routeMap,'/fruits/123','fruit',
+		$this->_assertRoute($router,'/fruits/123','fruit',
 			array('fruitid' => 123)
 		);
 
-		$this->_assertRoute($routeMap,'/fruits/123/flavours/456','flavour',
+		$this->_assertRoute($router,'/fruits/123/flavours/456','flavour',
 			array('fruitid' => 123, 'flavourid' => 456)
 		);
 	}
 
-	public function testRouteMapTrimsTrailingSlashes()
+	public function testRouterTrimsTrailingSlashes()
 	{
-		$routeMap = new Routing\RouteMap();
-		foreach($this->_exampleRoutes as $template=>$name) $routeMap->map($template, $name);
+		$router = new Routing\Router();
+		foreach($this->_exampleRoutes as $template=>$name) $router->map($template, $name);
 
-		$this->_assertRoute($routeMap,'/fruits/','fruits',
+		$this->_assertRoute($router,'/fruits/','fruits',
 			array()
 		);
 	}
 
 	public function testRouteBuild()
 	{
-		$routeMap = new Routing\RouteMap();
-		foreach($this->_exampleRoutes as $template=>$name) $routeMap->map($template, $name);
+		$router = new Routing\Router();
+		foreach($this->_exampleRoutes as $template=>$name) $router->map($template, $name);
 
 		$this->assertEqual(
-			$routeMap->buildUrl('fruits'),
+			$router->buildUrl('fruits'),
 			'/fruits'
 		);
 
 		$this->assertEqual(
-			$routeMap->buildUrl('fruit', array('fruitid' => 234)),
+			$router->buildUrl('fruit', array('fruitid' => 234)),
 			'/fruits/234'
 		);
 
 		$this->assertEqual(
-			$routeMap->buildUrl('flavour', array('fruitid' => 234, 'flavourid' => 456)),
+			$router->buildUrl('flavour', array('fruitid' => 234, 'flavourid' => 456)),
 			'/fruits/234/flavours/456'
 		);
 	}
 
 	public function testRouteLookupFailsOnNonExistentRouteName()
 	{
-		$routeMap = new Routing\RouteMap();
-		foreach($this->_exampleRoutes as $template=>$name) $routeMap->map($template, $name);
+		$router = new Routing\Router();
+		foreach($this->_exampleRoutes as $template=>$name) $router->map($template, $name);
 		$this->expectException('\Ergo\Routing\LookupException');
-		$routeMap->lookup('/blarg');
+		$router->lookup('/blarg');
 	}
 
 	public function testRouteLookupFailsWithEmptyTemplateVars()
 	{
-		$routeMap = new Routing\RouteMap();
-		foreach($this->_exampleRoutes as $template=>$name) $routeMap->map($template, $name);
+		$router = new Routing\Router();
+		foreach($this->_exampleRoutes as $template=>$name) $router->map($template, $name);
 		$this->expectException('\Ergo\Routing\LookupException');
-		$routeMap->lookup('/fruits//flavours/');
+		$router->lookup('/fruits//flavours/');
 	}
 
 	public function testRouteBuildFailsWithExtraParam()
 	{
-		$routeMap = new Routing\RouteMap();
-		foreach($this->_exampleRoutes as $template=>$name) $routeMap->map($template, $name);
+		$router = new Routing\Router();
+		foreach($this->_exampleRoutes as $template=>$name) $router->map($template, $name);
 		$this->expectException('\Ergo\Routing\BuildException');
-		$routeMap->buildUrl('fruits', array('test' => 123));
+		$router->buildUrl('fruits', array('test' => 123));
 	}
 
 	public function testRouteBuildFailsWithMissingParam()
 	{
-		$routeMap = new Routing\RouteMap();
-		foreach($this->_exampleRoutes as $template=>$name) $routeMap->map($template, $name);
+		$router = new Routing\Router();
+		foreach($this->_exampleRoutes as $template=>$name) $router->map($template, $name);
 		$this->expectException('\Ergo\Routing\BuildException');
-		$routeMap->buildUrl('flavours');
+		$router->buildUrl('flavours');
 	}
 
-	public function testRouteMapMatchArrayInterface()
+	public function testRouterMatchArrayInterface()
 	{
-		$match = new Routing\RouteMapMatch('test', array('a' => 'b'));
+		$match = new Routing\RouterMatch('test', array('a' => 'b'));
 		$this->assertEqual($match['a'], 'b');
 	}
 
 
 	public function testRoutesWithStringTypes()
 	{
-		$routeMap = new Routing\RouteMap();
-		$routeMap->map('/fruits/{fruitname:string}','fruit');
+		$router = new Routing\Router();
+		$router->map('/fruits/{fruitname:string}','fruit');
 
-		$this->_assertRoute($routeMap,'/fruits/blargh','fruit',
+		$this->_assertRoute($router,'/fruits/blargh','fruit',
 			array('fruitname'=>'blargh')
 		);
 
-		$this->_assertNoRoute($routeMap,'/fruits/blargh;.');
+		$this->_assertNoRoute($router,'/fruits/blargh;.');
 	}
 
 	public function testRoutesWithIntegerTypes()
 	{
-		$routeMap = new Routing\RouteMap();
-		$routeMap->map('/fruits/{fruitid:int}','fruit');
+		$router = new Routing\Router();
+		$router->map('/fruits/{fruitid:int}','fruit');
 
-		$this->_assertRoute($routeMap,'/fruits/123','fruit',
+		$this->_assertRoute($router,'/fruits/123','fruit',
 			array('fruitid'=>'123')
 		);
 
-		$this->_assertNoRoute($routeMap,'/fruits/123;blargh');
-		$this->_assertNoRoute($routeMap,'/fruits/blargh');
+		$this->_assertNoRoute($router,'/fruits/123;blargh');
+		$this->_assertNoRoute($router,'/fruits/blargh');
 	}
 
 	public function testRoutesWithEnumTypes()
 	{
-		$routeMap = new Routing\RouteMap();
-		$routeMap->map('/fruits/{fruittype:(orange|apple)}','fruit');
+		$router = new Routing\Router();
+		$router->map('/fruits/{fruittype:(orange|apple)}','fruit');
 
-		$this->_assertRoute($routeMap,'/fruits/apple','fruit',
+		$this->_assertRoute($router,'/fruits/apple','fruit',
 			array('fruittype'=>'apple')
 		);
 
-		$this->_assertNoRoute($routeMap,'/fruits/pear');
-		$this->_assertNoRoute($routeMap,'/fruits/llama');
+		$this->_assertNoRoute($router,'/fruits/pear');
+		$this->_assertNoRoute($router,'/fruits/llama');
 	}
 
 	public function testSimpleStarRoutes()
 	{
-		$routeMap = new Routing\RouteMap();
-		$routeMap->map('/fruits/*','fruit');
+		$router = new Routing\Router();
+		$router->map('/fruits/*','fruit');
 
-		$this->_assertRoute($routeMap,'/fruits/this/is/a/test','fruit');
-		$this->_assertNoRoute($routeMap,'/blargh');
+		$this->_assertRoute($router,'/fruits/this/is/a/test','fruit');
+		$this->_assertNoRoute($router,'/blargh');
 	}
 
 	public function testStarRoutesWithParameters()
 	{
-		$routeMap = new Routing\RouteMap();
-		$routeMap->map('/fruits/{fruitid}/*','fruit');
+		$router = new Routing\Router();
+		$router->map('/fruits/{fruitid}/*','fruit');
 
-		$this->_assertRoute($routeMap,'/fruits/5/this/is/a/test','fruit',array(
+		$this->_assertRoute($router,'/fruits/5/this/is/a/test','fruit',array(
 			'fruitid'=>5
 			));
-		$this->_assertNoRoute($routeMap,'/blargh');
+		$this->_assertNoRoute($router,'/blargh');
 	}
 
 	public function testStarRoutesMatchNothing()
 	{
-		$routeMap = new Routing\RouteMap();
-		$routeMap->map('/*','default');
+		$router = new Routing\Router();
+		$router->map('/*','default');
 
-		$this->_assertRoute($routeMap,'/','default');
-		$this->_assertRoute($routeMap,'/this/is/a/test','default');
+		$this->_assertRoute($router,'/','default');
+		$this->_assertRoute($router,'/this/is/a/test','default');
 	}
 
 	public function testInterpolationFailsWithStarRoutes()
 	{
-		$routeMap = new Routing\RouteMap();
-		$routeMap->map('/{fruit}/*','fruit');
+		$router = new Routing\Router();
+		$router->map('/{fruit}/*','fruit');
 
 		$this->expectException();
-		$routeMap->buildUrl('fruit', array('fruit' =>'apple'));
+		$router->buildUrl('fruit', array('fruit' =>'apple'));
 	}
 
 	// ----------------------------------------

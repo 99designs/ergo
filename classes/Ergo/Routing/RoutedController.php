@@ -7,19 +7,19 @@ namespace Ergo\Routing;
  */
 class RoutedController implements Controller
 {
-	private $_routeMap;
+	private $_router;
 	private $_controllerFactory;
 	private $_controllers=array();
 	private $_filterChain;
 
 	/**
-	 * @param RouteMap
+	 * @param Router
 	 */
-	public function __construct($routeMap=null)
+	public function __construct($router=null)
 	{
 		$this->_filterChain = new RequestFilterChain();
-		$this->_routeMap = isset($params['routeMap']) ?
-			$params['routeMap'] : new RouteMap();
+		$this->_router = isset($params['router']) ?
+			$params['router'] : new Router();
 	}
 
 	/**
@@ -79,11 +79,11 @@ class RoutedController implements Controller
 		$url = $request->getUrl();
 		$path = $url->getPath();
 
-		$match = $this->_routeMap->lookup($path);
+		$match = $this->_router->lookup($path);
 		return $this->_controllerFor($match->getName())->execute(
 			new RoutedRequest(
 				$this->_filterChain->filter($request),
-					$match, $this->_routeMap));
+					$match, $this->_router));
 	}
 
 	/**
@@ -94,7 +94,7 @@ class RoutedController implements Controller
 	 */
 	public function connect($url, $name, $controller=null)
 	{
-		$this->_routeMap->map($url, $name, $controller);
+		$this->_router->map($url, $name, $controller);
 
 		// register the controller if one is provided
 		if(!is_null($controller))

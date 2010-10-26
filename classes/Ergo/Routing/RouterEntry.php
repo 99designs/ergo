@@ -3,7 +3,7 @@
 namespace Ergo\Routing;
 
 /**
- * A route entry in a {@link RouteMap}.
+ * A route entry in a {@link Router}.
  *
  * Parses routes with parameters in them e.g
  * <pre>
@@ -13,7 +13,7 @@ namespace Ergo\Routing;
  * http://example.org/{myparam}/{myparam2}?test={myparam3}
  * </pre>
  */
-class RouteMapEntry
+class RouterEntry
 {
 	const REGEX_PARAM = '#{(.+?)(:.+?)?}#';
 	const TYPE_ANY = '([^/]+?)';
@@ -26,23 +26,21 @@ class RouteMapEntry
 	private $_parameters;
 	private $_pattern;
 	private $_interpolate;
-	private $_tags;
 
 	/**
 	 * @param string $name
 	 * @param string $template
 	 */
-	public function __construct($name, $template, $tags=array())
+	public function __construct($name, $template)
 	{
 		$this->_name = $name;
 		$this->_template = $template;
 		$this->_parameters = $this->_getParameterNames($template);
 		$this->_pattern = $this->_getParameterPattern($template);
-		$this->_tags = $tags;
 	}
 
 	/**
-	 * @return RouteMapMatch or null if no match.
+	 * @return RouterMatch or null if no match.
 	 */
 	public function getMatch($path)
 	{
@@ -55,8 +53,7 @@ class RouteMapEntry
 				? array()
 				: array_combine($this->_parameters, $matches);
 
-			return new RouteMapMatch(
-				$this->_name, $parameters, $this->getTags());
+			return new RouterMatch($this->_name, $parameters);
 		}
 		else if(strlen($path) > 1 && substr($path,-1) == '/')
 		{
@@ -105,14 +102,6 @@ class RouteMapEntry
 	public function getName()
 	{
 		return $this->_name;
-	}
-
-	/**
-	 * Returns any tags associated with the entry
-	 */
-	public function getTags()
-	{
-		return $this->_tags;
 	}
 
 	// ----------------------------------------

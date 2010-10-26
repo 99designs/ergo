@@ -3,25 +3,22 @@
 namespace Ergo\Routing;
 
 /**
- * A match result from a lookup against a {@link RouteMap}
+ * A match result from a lookup against a {@link Router}
  */
-class RouteMapMatch extends \ArrayIterator
+class RouterMatch extends \ArrayIterator
 {
 	private $_name;
 	private $_parameters;
-	private $_tags;
 
 	/**
 	 * @param string $name
 	 * @param array $parameters
 	 * @params array $tags
 	 */
-	public function __construct($name, $parameters, $tags=null)
+	public function __construct($name, $parameters)
 	{
 		$this->_name = $name;
 		$this->_parameters = $parameters;
-		$this->_tags = $tags ? $tags : array();
-
 		parent::__construct($parameters);
 	}
 
@@ -47,21 +44,5 @@ class RouteMapMatch extends \ArrayIterator
 	public function parameter($key,$default=false)
 	{
 		return isset($this[$key]) ? $this[$key] : $default;
-	}
-
-	/**
-	 * @return array
-	 */
-	public function getTags()
-	{
-		return $this->_tags;
-	}
-
-	/**
-	 * @return array
-	 */
-	public function hasTag($tag)
-	{
-		return in_array($tag, $this->_tags);
 	}
 }

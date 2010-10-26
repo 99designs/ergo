@@ -9,26 +9,26 @@ class RoutedRequest
 {
 	private $_delegate;
 	private $_routeMatch;
-	private $_routeMap;
+	private $_router;
 
 	/**
 	 * @param Ergo_Http_Request
 	 * @param RouteMatch
-	 * @param RouteMap
+	 * @param Router
 	 */
-	public function __construct($request, $routeMatch, $routeMap)
+	public function __construct($request, $routeMatch, $router)
 	{
 		$this->_delegate = $request;
 		$this->_routeMatch = $routeMatch;
-		$this->_routeMap = $routeMap;
+		$this->_router = $router;
 	}
 
 	/**
-	 * @return RouteMap
+	 * @return Router
 	 */
-	public function getRouteMap()
+	public function getRouter()
 	{
-		return $this->_routeMap;
+		return $this->_router;
 	}
 
 	/**

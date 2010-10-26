@@ -6,7 +6,7 @@ use Ergo\Http;
 
 abstract class AbstractController implements Controller
 {
-	private $_routeMap;
+	private $_router;
 	private $_filterChain;
 	private $_responseBuilder;
 
@@ -35,34 +35,34 @@ abstract class AbstractController implements Controller
 	/**
 	 * Sets a routemap used by the url generating functions
 	 */
-	public function setRouteMap($routeMap)
+	public function setRouter($router)
 	{
-		$this->_routeMap = $routeMap;
+		$this->_router = $router;
 		return $this;
 	}
 
 	/**
-	 * @return RouteMap
+	 * @return Router
 	 */
-	public function getRouteMap()
+	public function getRouter()
 	{
-		if (!isset($this->_routeMap))
+		if (!isset($this->_router))
 		{
 			throw new Exception(
 				"A routemap must be set into the controller first");
 		}
 
-		return $this->_routeMap;
+		return $this->_router;
 	}
 
 	/**
-	 * Uses the RouteMap to build a URL for the given name and parameters.
+	 * Uses the Router to build a URL for the given name and parameters.
 	 * @param string $name
 	 * @param array $parameters
 	 */
 	public function urlFor($name, $parameters = array())
 	{
-		return $this->getRouteMap()->buildUrl($name, $parameters);
+		return $this->getRouter()->buildUrl($name, $parameters);
 	}
 
 	/**

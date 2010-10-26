@@ -6,7 +6,7 @@ namespace Ergo\Routing;
  * Maps URL templates to named routes.
  * Supports url templates.
  */
-class RouteMap
+class Router
 {
 	private $_entries = array();
 
@@ -22,13 +22,13 @@ class RouteMap
 			throw new BuildException("A route named $routeName exists already");
 
 		$this->_entries[$routeName] =
-			new RouteMapEntry($routeName, $template, $tags);
+			new RouterEntry($routeName, $template, $tags);
 
 		return $this;
 	}
 
 	/**
-	 * Look up a RouteMapMatch based on the path of a URL.
+	 * Look up a RouterMatch based on the path of a URL.
 	 * @param string $path
 	 */
 	public function lookup($path)
@@ -43,7 +43,7 @@ class RouteMap
 	}
 
 	/**
-	 * Looks up a RouteMapEntry by name
+	 * Looks up a RouterEntry by name
 	 */
 	public function entry($name)
 	{
