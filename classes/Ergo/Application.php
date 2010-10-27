@@ -127,7 +127,7 @@ class Application implements Plugin
 	 * Creates or sets the logger factory used to create loggers
 	 * @chainable
 	 */
-	public function setLoggerFactory(logger\LoggerFactory $factory)
+	public function setLoggerFactory(Logging\LoggerFactory $factory)
 	{
 		$this->_loggerFactory = $factory;
 		return $this;
@@ -150,11 +150,11 @@ class Application implements Plugin
 	}
 
 	/**
-	 * Returns an applications central controller for executing requests
+	 * Returns an application's central controller for executing requests
 	 */
 	public function controller()
 	{
-		return new Routing\RoutedController();
+		return new Routing\FilteredController($this->router());
 	}
 
 	/**
@@ -258,19 +258,6 @@ class Application implements Plugin
 	}
 
 	/**
-	 * Provides a generic factory method that has a default, an optional
-	 * provided instance to use instead. Objects are stored in the registry.
-	 */
-	protected function genericFactory($key, $default, $provided=null)
-	{
-		$handle = $this->registry()->handle($key);
-
-		if(isset($provided)) $handle->set($provided);
-
-		return $handle->exists() ? $handle->get() : $handle->set($default);
-	}
-
-	/**
 	 * Returns the current timestamp of the instance returned by {@link dateTime()}
 	 * @return int
 	 */
@@ -309,7 +296,7 @@ class Application implements Plugin
 	public function router()
 	{
 		$this->registry()->lookup(self::REGISTRY_ROUTER, function(){
-
+			return new
 		});
 	}
 
