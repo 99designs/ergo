@@ -5,7 +5,7 @@ namespace Ergo\Config;
 /**
  * A configuration object that uses a file with a php array in it
  */
-class FileConfig implements \Ergo\Config, \IteratorAggregate
+class FileConfig implements \Ergo\Config
 {
 	protected $_data=array();
 
@@ -15,7 +15,7 @@ class FileConfig implements \Ergo\Config, \IteratorAggregate
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Configuration::get
+	 * @see \Ergo\Config::get
 	 */
 	function get($key)
 	{
@@ -39,7 +39,7 @@ class FileConfig implements \Ergo\Config, \IteratorAggregate
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Configuration::exists
+	 * @see \Ergo\Config::exists
 	 */
 	function exists($key)
 	{
@@ -47,7 +47,7 @@ class FileConfig implements \Ergo\Config, \IteratorAggregate
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Configuration::getKeys
+	 * @see \Ergo\Config::getKeys
 	 */
 	function keys()
 	{

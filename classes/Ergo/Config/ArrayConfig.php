@@ -5,7 +5,7 @@ namespace Ergo\Config;
 /**
  * A simple array based configuration implementation
  */
-class ArrayConfig implements \Ergo\Config, \IteratorAggregate
+class ArrayConfig implements \Ergo\Config
 {
 	protected $_data=array();
 
@@ -18,7 +18,7 @@ class ArrayConfig implements \Ergo\Config, \IteratorAggregate
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Configuration::get
+	 * @see \Ergo\Config::get
 	 */
 	public function get($key)
 	{
@@ -42,7 +42,7 @@ class ArrayConfig implements \Ergo\Config, \IteratorAggregate
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Configuration::exists
+	 * @see \Ergo\Config::exists
 	 */
 	public function exists($key)
 	{
@@ -50,7 +50,7 @@ class ArrayConfig implements \Ergo\Config, \IteratorAggregate
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Configuration::getKeys
+	 * @see \Ergo\Config::getKeys
 	 */
 	public function keys()
 	{

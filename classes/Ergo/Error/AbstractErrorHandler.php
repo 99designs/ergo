@@ -2,6 +2,7 @@
 
 namespace Ergo\Error;
 
+use Ergo\Logging;
 
 /**
  * A basic handler for PHP errors and exceptions which consolidates errors
@@ -26,7 +27,7 @@ abstract class AbstractErrorHandler implements ErrorHandler
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Error_ErrorHandler::logger()
+	 * @see \Ergo\Error\ErrorHandler::logger()
 	 */
 	public function logger()
 	{
@@ -39,7 +40,7 @@ abstract class AbstractErrorHandler implements ErrorHandler
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Error_ErrorHandler::context()
+	 * @see \Ergo\Error\ErrorHandler::context()
 	 */
 	public function context()
 	{
@@ -52,7 +53,7 @@ abstract class AbstractErrorHandler implements ErrorHandler
 	*/
 	protected function isExceptionRecoverable($e)
 	{
-		if ($e instanceof ErrorException)
+		if ($e instanceof \ErrorException)
 		{
 			$ignore = E_WARNING | E_NOTICE | E_USER_WARNING | E_USER_NOTICE | E_STRICT;
 			return (($ignore & $e->getSeverity()) != 0);

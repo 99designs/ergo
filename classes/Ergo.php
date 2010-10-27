@@ -1,7 +1,7 @@
 <?php
 
 /**
- * The core object used as a locator for the {@link Ergo_Application} object instance
+ * The core object used as a locator for the {@link \Ergo\Application} object instance
  */
 class Ergo
 {

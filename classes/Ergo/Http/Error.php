@@ -2,7 +2,7 @@
 
 namespace Ergo\Http;
 
-class Error extends Ergo_Exception
+class Error extends \Ergo\Exception
 {
 	function getStatusCode()
 	{

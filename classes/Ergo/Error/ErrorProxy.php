@@ -87,9 +87,9 @@ class ErrorProxy
 			{
 				// bit of a hack to consolidate errors to exceptions
 				$message = $this->_errorNumberString($errno).': '.$errstr;
-				throw new ErrorException($message,0,$errno,$errfile,$errline);
+				throw new \ErrorException($message,0,$errno,$errfile,$errline);
 			}
-			catch(ErrorException $e)
+			catch(\ErrorException $e)
 			{
 				$this->_handleException($e);
 			}

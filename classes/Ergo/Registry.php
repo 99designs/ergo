@@ -82,7 +82,7 @@ class Registry
 	/**
 	 * Sets a closure that is called
 	 * @param mixed either a string or an array of keys
-	 * @param callback a php callback or an Ergo_Script object
+	 * @param callback a php callback or an \Ergo\Script object
 	 * @chainable
 	 */
 	public function trigger($keys, $callable)

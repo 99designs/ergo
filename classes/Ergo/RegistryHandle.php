@@ -52,11 +52,11 @@ class RegistryHandle
 
 	/**
 	 * Returns a proxy object to the object refered to by the handle
-	 * @return Ergo_RegistryProxy
+	 * @return \Ergo\RegistryProxy
 	 */
 	public function proxy()
 	{
-		return new Ergo_RegistryProxy($this);
+		return new \Ergo\RegistryProxy($this);
 	}
 }
 

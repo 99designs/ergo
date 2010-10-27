@@ -48,7 +48,7 @@ class Template extends Ergo\Mixin implements Ergo\View, \ArrayAccess
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_View::output()
+	 * @see \Ergo\View::output()
 	 */
 	public function output()
 	{
@@ -67,7 +67,7 @@ class Template extends Ergo\Mixin implements Ergo\View, \ArrayAccess
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_View::stream()
+	 * @see \Ergo\View::stream()
 	 */
 	public function stream()
 	{

@@ -44,7 +44,7 @@ class StackTraceLogger extends AbstractLogger
 	public function logException($exception,$level=\Ergo\Logger::ERROR)
 	{
 		$e = $exception;
-		$type = ($e instanceof ErrorException) ? 'error' : 'exception';
+		$type = ($e instanceof \ErrorException) ? 'error' : 'exception';
 		$header = sprintf('[%s][%s][%s]',date("c"),$type,$e->getMessage());
 
 		$message = $header."\n\n";

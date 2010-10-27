@@ -52,7 +52,7 @@ class Application implements Plugin
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Plugin::start()
+	 * @see \Ergo\Plugin::start()
 	 */
 	public function start()
 	{
@@ -66,7 +66,7 @@ class Application implements Plugin
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Plugin::stop()
+	 * @see \Ergo\Plugin::stop()
 	 */
 	public function stop()
 	{
@@ -143,10 +143,11 @@ class Application implements Plugin
 
 	/**
 	 * Looks up a key in the application's core registry
+	 * @see Ergo\Registry::lookup()
 	 */
-	public function lookup($key)
+	public function lookup($key, $closure=null)
 	{
-		return $this->registry()->lookup($key);
+		return $this->registry()->lookup($key, $closure);
 	}
 
 	/**
@@ -184,7 +185,7 @@ class Application implements Plugin
 	}
 
 	/**
-	 * Returns the Ergo_Error_ErrorProxy for the application
+	 * Returns the \Ergo\Error\ErrorProxy for the application
 	 */
 	public function errorProxy()
 	{
@@ -192,7 +193,7 @@ class Application implements Plugin
 	}
 
 	/**
-	 * Returns the {@link Ergo_Mixin} instance used for plugins
+	 * Returns the {@link \Ergo\Mixin} instance used for plugins
 	 */
 	protected function mixin()
 	{
@@ -213,7 +214,7 @@ class Application implements Plugin
 	}
 
 	/**
-	 * Adds a {@link Ergo_Plugin} to the application
+	 * Adds a {@link \Ergo\Plugin} to the application
 	 */
 	public function plug(\Ergo\Plugin $plugin)
 	{
@@ -295,8 +296,8 @@ class Application implements Plugin
 	 */
 	public function router()
 	{
-		$this->registry()->lookup(self::REGISTRY_ROUTER, function(){
-			return new
+		return $this->registry()->lookup(self::REGISTRY_ROUTER, function(){
+			return new \Ergo\Routing\Router();
 		});
 	}
 

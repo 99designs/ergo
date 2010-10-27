@@ -2,6 +2,9 @@
 
 namespace Ergo\Error;
 
+use \Ergo;
+use \Ergo\Http;
+
 /**
  * A handler that displays an error in a web-friendly way
  */
@@ -57,7 +60,7 @@ class WebErrorHandler extends AbstractErrorHandler
 	protected function buildResponse($e)
 	{
 		// build a response
-		$responseBuilder = new http\ResponseBuilder();
+		$responseBuilder = new Http\ResponseBuilder();
 		return $responseBuilder
 			->setStatusCode(500)
 			->notCachable()
@@ -83,7 +86,7 @@ class WebErrorHandler extends AbstractErrorHandler
 			}
 
 			// send it off
-			$sender = new http\ResponseSender($this->buildResponse($e));
+			$sender = new Http\ResponseSender($this->buildResponse($e));
 			$sender->send();
 
 			if (ob_get_level() > 0) ob_flush();

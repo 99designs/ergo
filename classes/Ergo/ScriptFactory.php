@@ -3,7 +3,7 @@
 namespace Ergo;
 
 /**
- * A factory that uses and Ergo_Script to generate an object
+ * A factory that uses and \Ergo\Script to generate an object
  */
 class ScriptFactory implements Factory
 {

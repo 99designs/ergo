@@ -19,7 +19,7 @@ class LoggerRegistry implements LoggerFactory
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_LoggerFactory::createLogger
+	 * @see \Ergo\LoggerFactory::createLogger
 	 */
 	function createLogger($class)
 	{

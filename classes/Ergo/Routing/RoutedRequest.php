@@ -12,7 +12,7 @@ class RoutedRequest
 	private $_router;
 
 	/**
-	 * @param Ergo_Http_Request
+	 * @param \Ergo\Http\Request
 	 * @param RouteMatch
 	 * @param Router
 	 */
