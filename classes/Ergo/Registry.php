@@ -14,13 +14,13 @@ class Registry
 
 	/**
 	 * Looks up a key in the registry, with an optional closure that that will
-	 * be executed and the result stored if the key doesn't exist.
+	 * be executed and the result stored if the key doesn't exist (and there is no trigger).
 	 * @return Object
 	 */
 	public function lookup($key, $closure=null)
 	{
 		// if a closure was provided and we missed, store it
-		if(!isset($this->_registry[$key]) && !is_null($closure))
+		if(!is_null($closure) && !isset($this->_registry[$key]) && !isset($this->_triggers[$key]))
 		{
 			$this->_registry[$key] = $this->_memoize($closure($key));
 		}
@@ -28,12 +28,12 @@ class Registry
 		// the registry stores closures
 		if(isset($this->_registry[$key]))
 		{
-			return $this->_registry[$key]->__invoke();
+			return call_user_func($this->_registry[$key], $this);
 		}
 		// try any registered triggers
 		else if(isset($this->_triggers[$key]))
 		{
-			$this->_triggers[$key]->__invoke();
+			call_user_func($this->_triggers[$key], $this);
 			unset($this->_triggers[$key]);
 			return $this->lookup($key);
 		}
@@ -80,7 +80,7 @@ class Registry
 	}
 
 	/**
-	 * Sets a closure that is called
+	 * Sets a closure that is called on a lookup miss
 	 * @param mixed either a string or an array of keys
 	 * @param callback a php callback or an \Ergo\Script object
 	 * @chainable

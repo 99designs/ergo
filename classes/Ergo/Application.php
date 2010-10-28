@@ -151,14 +151,6 @@ class Application implements Plugin
 	}
 
 	/**
-	 * Returns an application's central controller for executing requests
-	 */
-	public function controller()
-	{
-		return new Routing\FilteredController($this->router());
-	}
-
-	/**
 	 * Returns a request object for the current http request
 	 */
 	public function request()
@@ -288,6 +280,14 @@ class Application implements Plugin
 	{
 		$this->registry()->register(self::REGISTRY_DATETIME, $dateTime, true);
 		return $this;
+	}
+
+	/**
+	 * Returns an application's central controller for executing requests
+	 */
+	public function controller()
+	{
+		return new Routing\FilteredController($this->router());
 	}
 
 	/**

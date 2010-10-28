@@ -70,7 +70,7 @@ class RegistryTest extends \UnitTestCase
 	{
 		$callcount = 0;
 		$registry = new Registry();
-		$registry->trigger('my_key', function() use($registry, &$callcount) {
+		$registry->trigger('my_key', function($registry) use(&$callcount) {
 			$registry->register('my_key', (object) array('test'=>'blargh'));
 			$callcount++;
 		});
@@ -81,5 +81,19 @@ class RegistryTest extends \UnitTestCase
 		$this->assertEqual($callcount, 1);
 		$this->assertEqual($registry->lookup('my_key')->test, 'blargh');
 		$this->assertEqual($callcount, 1);
+	}
+
+	public function testTriggerTrumpsClosureOnMiss()
+	{
+		$registry = new Registry();
+		$registry->trigger('my_key', function($r) {
+			$r->register('my_key', (object) array('source'=>'trigger'));
+		});
+
+		$result = $registry->lookup('my_key', function(){
+			return (object) array('source'=>'closure');
+		});
+
+		$this->assertEqual($result->source, 'trigger');
 	}
 }
