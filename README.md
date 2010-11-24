@@ -4,6 +4,8 @@ Ergo
 A light-weight library for processing requests and responses in PHP5.3. Provides a
 closure-based infrastructure for routing, controllers and templating.
 
+The name is from the latin, Cogito ergo sum. "I think, therefore I am".
+
 Install
 -------
 
@@ -14,8 +16,8 @@ Ergo is designed to be easy to install and integrate.
 
 Alternately, check it out as a submodule and use your own classloader on the classes dir.
 
-Use
-----
+Basic Usage
+-----------
 
 	require_once('Ergo/ergo.php');
 
@@ -30,10 +32,6 @@ Use
 	});
 
 
-Meaning
--------
-
-From the latin, Cogito ergo sum. "I think, therefore I am".
 
 How to develop
 -----------------
@@ -52,4 +50,9 @@ Run the test suite:
 	$ ./runtests.php
 	OK
 	Test cases run: 14/14, Passes: 206, Failures: 0, Exceptions: 0
+
+Status
+-------
+
+Used in several high-volume production websites, including 99designs.com, flippa.com, learnable.com and sitepoint.com.
 
