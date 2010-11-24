@@ -35,11 +35,21 @@ Meaning
 
 From the latin, Cogito ergo sum. "I think, therefore I am".
 
-Running the tests
+How to develop
 -----------------
 
-	$ ./tests/runtests.php
-	runtests.php
+For running, Ergo has no external dependancies. For development [Pundle](https://github.com/T-Moe/Pundle) is used to pull
+in SimpleTest as a dependancy.
+
+To install dependancies via Pundle:
+
+	$ pear channel-discover pear.webzeile.de
+	$ pear install webzeile/Pundle
+	$ pundle install
+
+Run the test suite:
+
+	$ ./runtests.php
 	OK
 	Test cases run: 14/14, Passes: 206, Failures: 0, Exceptions: 0
 
