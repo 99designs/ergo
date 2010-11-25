@@ -45,7 +45,7 @@ class FilteredController extends AbstractController
 	 * Apply a chain of filters to an object
 	 * @return object
 	 */
-	private function _filter($chain, $object)
+	private function _applyFilter($chain, $object)
 	{
 		foreach($chain as $filter)
 		{
@@ -56,14 +56,23 @@ class FilteredController extends AbstractController
 		return $object;
 	}
 
+	/**
+	 * Filter a request and response and return the response
+	 * @return response
+	 */
+	protected function filter($request)
+	{
+		return $this->_applyFilter($this->_responses,
+			$this->_controller->execute(
+				$this->_applyFilter($this->_requests, $request)
+				));
+	}
+
 	/* (non-phpdoc)
 	 * @see Controller::execute()
 	 */
 	public function execute($request)
 	{
-		return $this->_filter($this->_responses,
-			$this->_controller->execute(
-				$this->_filter($this->_requests, $request)
-				));
+		return $this->filter($request);
 	}
 }

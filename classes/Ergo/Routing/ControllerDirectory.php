@@ -11,11 +11,14 @@ class ControllerDirectory implements ControllerResolver
 	private $_callback;
 
 	/**
-	 * @param DirectoryIterator
-	 * @param callback takes a file and class and returns a controller
+	 * @param mixed either a directory path, or an iterator
+	 * @param callback returns an instance of a controller, given file and controller name
 	 */
 	public function __construct($directoryIterator, $callback=null)
 	{
+		if(is_string($directoryIterator))
+			$directoryIterator = new \DirectoryIterator($directoryIterator);
+
 		$this->_iterator = $directoryIterator;
 		$this->_callback = $callback ?: function($file, $className) {
 			require_once($file);

@@ -56,5 +56,4 @@ class Response
 	{
 		return $this->_body;
 	}
-
 }

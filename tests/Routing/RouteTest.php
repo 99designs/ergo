@@ -4,7 +4,6 @@ namespace Ergo\Tests\Routing;
 
 use Ergo\Http;
 use Ergo\Routing;
-use Ergo\Routing;
 
 \Mock::generate('\Ergo\Routing\Controller','Routing\MockController');
 
@@ -19,7 +18,7 @@ class RouteTest extends \UnitTestCase
 	public function testRouteLookup()
 	{
 		$router = new Routing\Router();
-		foreach($this->_exampleRoutes as $template=>$name) $router->map($template, $name);
+		foreach($this->_exampleRoutes as $template=>$name) $router->connect($template, $name);
 
 		$this->_assertRoute($router,'/fruits','fruits',
 			array()
@@ -37,7 +36,7 @@ class RouteTest extends \UnitTestCase
 	public function testRouterTrimsTrailingSlashes()
 	{
 		$router = new Routing\Router();
-		foreach($this->_exampleRoutes as $template=>$name) $router->map($template, $name);
+		foreach($this->_exampleRoutes as $template=>$name) $router->connect($template, $name);
 
 		$this->_assertRoute($router,'/fruits/','fruits',
 			array()
@@ -47,7 +46,7 @@ class RouteTest extends \UnitTestCase
 	public function testRouteBuild()
 	{
 		$router = new Routing\Router();
-		foreach($this->_exampleRoutes as $template=>$name) $router->map($template, $name);
+		foreach($this->_exampleRoutes as $template=>$name) $router->connect($template, $name);
 
 		$this->assertEqual(
 			$router->buildUrl('fruits'),
@@ -68,7 +67,7 @@ class RouteTest extends \UnitTestCase
 	public function testRouteLookupFailsOnNonExistentRouteName()
 	{
 		$router = new Routing\Router();
-		foreach($this->_exampleRoutes as $template=>$name) $router->map($template, $name);
+		foreach($this->_exampleRoutes as $template=>$name) $router->connect($template, $name);
 		$this->expectException('\Ergo\Routing\LookupException');
 		$router->lookup('/blarg');
 	}
@@ -76,7 +75,7 @@ class RouteTest extends \UnitTestCase
 	public function testRouteLookupFailsWithEmptyTemplateVars()
 	{
 		$router = new Routing\Router();
-		foreach($this->_exampleRoutes as $template=>$name) $router->map($template, $name);
+		foreach($this->_exampleRoutes as $template=>$name) $router->connect($template, $name);
 		$this->expectException('\Ergo\Routing\LookupException');
 		$router->lookup('/fruits//flavours/');
 	}
@@ -84,7 +83,7 @@ class RouteTest extends \UnitTestCase
 	public function testRouteBuildFailsWithExtraParam()
 	{
 		$router = new Routing\Router();
-		foreach($this->_exampleRoutes as $template=>$name) $router->map($template, $name);
+		foreach($this->_exampleRoutes as $template=>$name) $router->connect($template, $name);
 		$this->expectException('\Ergo\Routing\BuildException');
 		$router->buildUrl('fruits', array('test' => 123));
 	}
@@ -92,22 +91,21 @@ class RouteTest extends \UnitTestCase
 	public function testRouteBuildFailsWithMissingParam()
 	{
 		$router = new Routing\Router();
-		foreach($this->_exampleRoutes as $template=>$name) $router->map($template, $name);
-		$this->expectException('\Ergo\Routing\BuildException');
+		foreach($this->_exampleRoutes as $template=>$name) $router->connect($template, $name);
+		$this->expectException('\Ergo\Routing\LookupException');
 		$router->buildUrl('flavours');
 	}
 
-	public function testRouteMatchArrayInterface()
+	public function testRouteMatchGetterInterface()
 	{
 		$match = new Routing\RouteMatch('test', array('a' => 'b'));
-		$this->assertEqual($match['a'], 'b');
+		$this->assertEqual($match->a, 'b');
 	}
-
 
 	public function testRoutesWithStringTypes()
 	{
 		$router = new Routing\Router();
-		$router->map('/fruits/{fruitname:string}','fruit');
+		$router->connect('/fruits/{fruitname:string}','fruit');
 
 		$this->_assertRoute($router,'/fruits/blargh','fruit',
 			array('fruitname'=>'blargh')
@@ -119,7 +117,7 @@ class RouteTest extends \UnitTestCase
 	public function testRoutesWithIntegerTypes()
 	{
 		$router = new Routing\Router();
-		$router->map('/fruits/{fruitid:int}','fruit');
+		$router->connect('/fruits/{fruitid:int}','fruit');
 
 		$this->_assertRoute($router,'/fruits/123','fruit',
 			array('fruitid'=>'123')
@@ -132,7 +130,7 @@ class RouteTest extends \UnitTestCase
 	public function testRoutesWithEnumTypes()
 	{
 		$router = new Routing\Router();
-		$router->map('/fruits/{fruittype:(orange|apple)}','fruit');
+		$router->connect('/fruits/{fruittype:(orange|apple)}','fruit');
 
 		$this->_assertRoute($router,'/fruits/apple','fruit',
 			array('fruittype'=>'apple')
@@ -145,7 +143,7 @@ class RouteTest extends \UnitTestCase
 	public function testSimpleStarRoutes()
 	{
 		$router = new Routing\Router();
-		$router->map('/fruits/*','fruit');
+		$router->connect('/fruits/*','fruit');
 
 		$this->_assertRoute($router,'/fruits/this/is/a/test','fruit');
 		$this->_assertNoRoute($router,'/blargh');
@@ -154,7 +152,7 @@ class RouteTest extends \UnitTestCase
 	public function testStarRoutesWithParameters()
 	{
 		$router = new Routing\Router();
-		$router->map('/fruits/{fruitid}/*','fruit');
+		$router->connect('/fruits/{fruitid}/*','fruit');
 
 		$this->_assertRoute($router,'/fruits/5/this/is/a/test','fruit',array(
 			'fruitid'=>5
@@ -165,7 +163,7 @@ class RouteTest extends \UnitTestCase
 	public function testStarRoutesMatchNothing()
 	{
 		$router = new Routing\Router();
-		$router->map('/*','default');
+		$router->connect('/*','default');
 
 		$this->_assertRoute($router,'/','default');
 		$this->_assertRoute($router,'/this/is/a/test','default');
@@ -174,7 +172,7 @@ class RouteTest extends \UnitTestCase
 	public function testInterpolationFailsWithStarRoutes()
 	{
 		$router = new Routing\Router();
-		$router->map('/{fruit}/*','fruit');
+		$router->connect('/{fruit}/*','fruit');
 
 		$this->expectException();
 		$router->buildUrl('fruit', array('fruit' =>'apple'));
@@ -182,18 +180,18 @@ class RouteTest extends \UnitTestCase
 
 	// ----------------------------------------
 
-	private function _assertRoute($map, $template, $name, $parameters=false)
+	private function _assertRoute($connect, $template, $name, $parameters=false)
 	{
-		$match = $map->lookup($template);
+		$match = $connect->lookup($template);
 		$this->assertEqual($match->getName(), $name);
 		if($parameters) $this->assertEqual($match->getParameters(), $parameters);
 	}
 
-	private function _assertNoRoute($map, $template)
+	private function _assertNoRoute($connect, $template)
 	{
 		try
 		{
-			$map->lookup($template);
+			$connect->lookup($template);
 			$this->fail("should fail route lookup for $template");
 		}
 		catch(Routing\LookupException $e)

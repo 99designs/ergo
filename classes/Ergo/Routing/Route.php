@@ -42,7 +42,7 @@ class Route
 	/**
 	 * @return RouteMatch or null if no match.
 	 */
-	public function getMatch($path)
+	public function getMatch($path, $metadata=null)
 	{
 		if (preg_match($this->_pattern, $path, $matches))
 		{
@@ -53,11 +53,11 @@ class Route
 				? array()
 				: array_combine($this->_parameters, $matches);
 
-			return new RouteMatch($this->_name, $parameters);
+			return new RouteMatch($this->_name, $parameters, $metadata);
 		}
 		else if(strlen($path) > 1 && substr($path,-1) == '/')
 		{
-			return $this->getMatch(rtrim($path,'/'));
+			return $this->getMatch(rtrim($path,'/'), $metadata);
 		}
 
 		return null;

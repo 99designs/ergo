@@ -4,7 +4,7 @@
 define('BASEDIR',dirname(__FILE__));
 require_once(BASEDIR.'/classes/Ergo/ClassLoader.php');
 
-$classloader = new Ergo_ClassLoader();
+$classloader = new \Ergo\ClassLoader();
 $classloader->register()->includePaths(array(
 	BASEDIR."/classes",
 	BASEDIR."/vendor/simpletest",

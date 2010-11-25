@@ -9,8 +9,10 @@ class Router implements Controller
 {
 	private $_routes = array();
 	private $_controllers = array();
+	private $_defaultMetadata = array();
+	private $_metadata = array();
 	private $_resolver;
-	private $_prefixes = array();
+	private $_baseUrl;
 
 	/**
 	 * Constructor
@@ -19,27 +21,75 @@ class Router implements Controller
 	public function __construct($resolver=null)
 	{
 		$this->_resolver = $resolver;
-
-		$this
-			->prefix('redirect', function($str){ return new RedirectController($str); })
-			->prefix('alias', function($str, $router){ return $router->controller($str); })
-			;
 	}
 
 	/**
-	 * Connects a route template to
-	 * @param string a url template
-	 * @param string a unique name for the route
+	 * Sets a base url for url building
 	 * @chainable
 	 */
-	public function connect($template, $name, $controller=null)
+	public function setBaseUrl($url)
+	{
+		$this->_baseUrl = $url;
+		return $this;
+	}
+
+	/**
+	 * Sets the default metadata to be set into routes
+	 */
+	public function setDefaultMetadata($metadata)
+	{
+		$this->_defaultMetadata = $metadata;
+		return $this;
+	}
+
+	/**
+	 * Configures the routemap from a php file
+	 * @chainable
+	 */
+	public function configure($file)
+	{
+		require($file);
+		return $this;
+	}
+
+	/**
+	 * Gives a route template a unique name and a controller to route to
+	 * @param string a url template
+	 * @param string a unique name for the route
+	 * @param mixed a controller, either a class, a string or a callback
+	 * @chainable
+	 */
+	public function connect($template, $name, $controller=null, $metadata=array())
 	{
 		$this->_routes[$name] = new Route($name, $template);
+
+		if($metadata)
+			$this->_metadata[$name] = $metadata;
 
 		if($controller)
 			$this->_controllers[$name] = $controller;
 
 		return $this;
+	}
+
+	/**
+	 * Create a redirect from a particular route name to another
+	 * @chainable
+	 */
+	public function redirect($template, $name, $to)
+	{
+		return $this->connect($template, $name, new RedirectController($to));
+	}
+
+	/**
+	 * Register an alias from one route name to another
+	 */
+	public function alias($template, $name, $to)
+	{
+		$router = $this;
+		return $this->connect($template, $name, function($request) use($router, $to) {
+			return $router->controller($to)->execute($request);
+		});
 	}
 
 	/**
@@ -51,11 +101,23 @@ class Router implements Controller
 	{
 		foreach ($this->_routes as $route)
 		{
-			if ($match = $route->getMatch($path))
+			if ($match = $route->getMatch($path, $this->metadata($route->getName())))
 				return $match;
 		}
 
 		throw new LookupException("No route matches path '$path'");
+	}
+
+	/**
+	 * Looks up metadata for a route name
+	 * @return array
+	 */
+	public function metadata($routeName)
+	{
+		return isset($this->_metadata[$routeName])
+			? array_merge($this->_defaultMetadata, $this->_metadata[$routeName])
+			: $this->_defaultMetadata
+			;
 	}
 
 	/**
@@ -75,9 +137,16 @@ class Router implements Controller
 	 * @param string $name
 	 * @param array $parameters
 	 */
-	public function buildUrl($name, $parameters = array())
+	public function buildUrl($name, $parameters=array(), $baseUrl=null)
 	{
-		return $this->routeByName($name)->interpolate($parameters);
+		$url = $this->routeByName($name)->interpolate($parameters);
+
+		if($baseUrl)
+			return (string) $baseUrl->relative($url);
+		else if(isset($this->_baseUrl))
+			return $this->_baseUrl->relative($url);
+		else
+			return $url;
 	}
 
 	/**
@@ -85,47 +154,18 @@ class Router implements Controller
 	 */
 	public function controller($name)
 	{
-		if(isset($this->_controllers[$name]))
+		if(isset($this->_controllers[$name]) && ($controller = $this->_controllers[$name]))
 		{
-			$controller = $this->_controllers[$name];
+			return is_callable($controller)
+				? new CallbackController($controller)
+				: $controller
+				;
+		}
 
-			if(is_string($controller))
-				return $this->_controllerFromString($controller);
-			else if(is_callable($controller))
-				return new CallbackController($controller);
-			else if(is_object($controller))
-				return $controller;
-		}
-		else if($this->_resolver)
-		{
+		if($this->_resolver)
 			return $this->_resolver->resolve($name);
-		}
 
 		throw new LookupException("No controller defined for route '$name'");
-	}
-
-	/**
-	 * Register a callback for parsing a controller prefix.
-	 * @chainable
-	 */
-	public function prefix($prefix, $callback)
-	{
-		$this->_prefixes[$prefix] = $callback;
-		return $this;
-	}
-
-	/**
-	 * @return Controller
-	 */
-	private function _controllerFromString($string)
-	{
-		if(preg_match('/^(.+?)\:(.+?)$/', $string, $m))
-		{
-			if(isset($this->_prefixes[$m[1]]))
-				return call_user_func($this->_prefixes[$m[1]], $m[2], $this);
-		}
-
-		throw new LookupException("Unknown controller string format '$string'");
 	}
 
 	/* (non-phpdoc)

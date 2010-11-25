@@ -46,7 +46,7 @@ class RouterTest extends \UnitTestCase
 	{
 		$router = new Router();
 		$router->connect('/user/{userid}', 'User.view');
-		$router->connect('/user/alias/{userid}', 'Alias.view', 'redirect:User.view');
+		$router->redirect('/user/alias/{userid}', 'Alias.view', 'User.view');
 
 		$response = $router->execute(new Http\Request('GET','/user/alias/24'));
 		$this->assertResponse($response, NULL, 302);
@@ -63,27 +63,21 @@ class RouterTest extends \UnitTestCase
 
 		$router = new Router();
 		$router->connect('/user/{userid}', 'User.view', $controller);
-		$router->connect('/user/alias/{userid}', 'Alias.view', 'alias:User.view');
+		$router->alias('/user/alias/{userid}', 'Alias.view', 'User.view');
 
 		$response = $router->execute(new Http\Request('GET','/user/alias/24'));
 		$this->assertResponse($response, 'Alias.view');
 	}
 
-	public function testCustomControllerPrefix()
+	public function testRouteMetadata()
 	{
 		$router = new Router();
 		$router
-			->connect('/user/{userid}', 'Alias.view', 'llama:test')
-			->prefix('llama', function($string) {
-				return new Routing\CallbackController(function($request, $builder) use($string) {
-					return $builder
-						->setBody($string)
-						->build();
-					});
-				});
+			->connect('/user/{userid}', 'User.view', 'User', array('https'=>true))
+			;
 
-		$response = $router->execute(new Http\Request('GET','/user/24'));
-		$this->assertResponse($response, 'test');
+		$route = $router->lookup('/user/24');
+		$this->assertEqual($route->getMetadata(), array('https'=>true));
 	}
 
 	private function assertResponse($response, $body, $status=200)
