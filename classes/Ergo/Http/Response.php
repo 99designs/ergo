@@ -19,10 +19,9 @@ class Response
 	 */
 	public function __construct($status, $headers, $body=null)
 	{
-		if (is_numeric($status)) $status = new Status($status);
-		$this->_status = $status;
-		$this->_headers = new HeaderCollection($headers);
-		$this->_body = $body;
+		$this->_status = is_numeric($status) ? new Status($status) : $status;
+		$this->_headers = is_object($headers) ? $headers : new HeaderCollection($headers);
+		$this->_body = is_string($body) ? new ResponseBody($body) : $body;
 	}
 
 	/**

@@ -19,6 +19,7 @@ class Application implements Plugin
 	private $_errorHandler;
 	private $_errorProxy;
 	private $_classLoader;
+	private $_middleware=array();
 
 	/**
 	 * Constructor
@@ -85,6 +86,7 @@ class Application implements Plugin
 		unset($this->_registry);
 		unset($this->_mixin);
 		unset($this->_errorHandler);
+		unset($this->_middleware);
 		return $this;
 	}
 
@@ -313,5 +315,35 @@ class Application implements Plugin
 		}
 
 		return $this->_classLoader;
+	}
+
+	/**
+	 * Adds a middleware to the end of the middleware stack
+	 * @chainable
+	 */
+	public function middleware($className)
+	{
+		$this->_middleware []= $className;
+		return $this;
+	}
+
+	/**
+	 * Processes an HTTP request, copies response to STDOUT
+	 * @return void
+	 */
+	public function run($server=null, $stream=null)
+	{
+		$server = $server ?: $_SERVER;
+		$stream = $stream ?: fopen('php://output','w');
+		$controller = $this->controller();
+
+		// build up wrappers of middleware
+		foreach($this->_middleware as $middleware)
+			$controller = new $middleware($controller, $this);
+
+		$requestFactory = new Http\RequestFactory($server);
+		$response = $controller->execute($requestFactory->create());
+		$sender = new Http\ResponseSender($response, $stream);
+		$sender->send();
 	}
 }

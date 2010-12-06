@@ -27,13 +27,44 @@ class HeaderCollection implements \IteratorAggregate
 	{
 		// convert to object form
 		if(is_string($header))
-		{
 			$header = HeaderField::fromString($header);
-		}
 
 		$this->_headers[] = $header;
+		return $this;
+	}
+
+	/**
+	 * Remove a header by name
+	 * @chainable
+	 */
+	function remove($header)
+	{
+		$normalizer = new HeaderCaseNormalizer();
+		$name = $normalizer->normalize($header);
+
+		foreach($this->_headers as $idx=>$header)
+		{
+			if($header->getName() == $name)
+				unset($this->_headers[$idx]);
+		}
 
 		return $this;
+	}
+
+	/**
+	 * Replaces a header in the collection, either in "Header: Value" format
+	 * or an {@link HeaderField} object.
+	 * @chainable
+	 */
+	function replace($header)
+	{
+		if(is_string($header))
+			$header = HeaderField::fromString($header);
+
+		return $this
+			->remove($header->getName())
+			->add($header)
+			;
 	}
 
 	/**
