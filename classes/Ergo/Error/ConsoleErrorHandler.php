@@ -48,6 +48,7 @@ class Ergo_Error_ConsoleErrorHandler extends Ergo_Error_AbstractErrorHandler
 
 		if ($this->isExceptionHalting($e))
 		{
+			if (ob_get_contents() !== false) ob_end_flush();
 			if($this->_showStackTrace) echo "\n".$e->__toString()."\n\n";
 			exit(self::EXIT_CODE);
 		}
