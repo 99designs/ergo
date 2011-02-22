@@ -114,8 +114,8 @@ class Ergo_Http_Status
 		return $this->getStatusLine();
 	}
 
-	// ----------------------------------------
-
-
-
+	public function isOk()
+	{
+		return $this->getCode() == 200;
+	}
 }
