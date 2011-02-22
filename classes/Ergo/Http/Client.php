@@ -58,7 +58,7 @@ class Ergo_Http_Client
 		$this->_proxy = $url;
 		return $this;
 	}
-	
+
 	/**
 	 *	Sets HTTP authentication credentials
 	 */
@@ -72,18 +72,22 @@ class Ergo_Http_Client
 	 * Sends a POST request
 	 * @return Ergo_Http_Response
 	 */
-	function post($path, $body)
+	function post($path, $body, $contentType = null)
 	{
-		return $this->_dispatchRequest($this->_buildRequest('POST',$path,$body));
+		return $this->_dispatchRequest(
+			$this->_buildRequest('POST', $path, $body, $contentType)
+		);
 	}
 
 	/**
 	 * Sends a PUT request
 	 * @return Ergo_Http_Response
 	 */
-	function put($path, $body)
+	function put($path, $body, $contentType = null)
 	{
-		return $this->_dispatchRequest($this->_buildRequest('PUT',$path,$body));
+		return $this->_dispatchRequest(
+			$this->_buildRequest('PUT', $path, $body, $contentType)
+		);
 	}
 
 	/**
@@ -108,7 +112,7 @@ class Ergo_Http_Client
 	 * Parses a response into headers and a body
 	 */
 	private function _buildResponse($response)
-	{		
+	{
 		$sections = explode("\r\n\r\n", $response,2);
 		$body = isset($sections[1]) ? $sections[1] : NULL;
 		$headers = array();
@@ -137,11 +141,21 @@ class Ergo_Http_Client
 	/**
 	 * Builds an Ergo_Http_Request object
 	 */
-	private function _buildRequest($method,$path,$body=null)
+	private function _buildRequest($method, $path, $body = null, $contentType = null)
 	{
+		// copy default headers
+		$headers = $this->_headers;
+
+		// add Content-Type header if provided
+		if ($contentType)
+			$headers []= new Ergo_Http_HeaderField('Content-Type', $contentType);
+
 		$request = new Ergo_Http_Request(
-			$method, $this->_url->getUrlForRelativePath($path),
-			$this->_headers, $body);
+			$method,
+			$this->_url->getUrlForRelativePath($path),
+			$headers,
+			$body
+		);
 
 		return $request;
 	}
@@ -244,7 +258,7 @@ class Ergo_Http_Client
 		{
 			curl_setopt($curl, CURLOPT_PROXY, $this->_proxy);
 		}
-		
+
 		// enable http authentication
 		if(isset($this->_auth))
 		{
