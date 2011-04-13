@@ -42,7 +42,7 @@ class Ergo
 	/**
 	 * Called as a shutdown function, calls stop() if required
 	 */
-	public function shutdown()
+	public static function shutdown()
 	{
 		if(self::$_started)
 			self::stop();
