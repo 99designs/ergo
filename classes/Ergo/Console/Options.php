@@ -240,7 +240,7 @@ class Ergo_Console_Options
 	// parses an options definition into a struct
 	private function _parseOption($option)
 	{
-		if(preg_match('/^((?:--?|:)[\w-]+)([*?+])?(=.*?)?$/',$option,$m))
+		if(preg_match('/^((?:--?|:)[\w-]+)([*?+!])?(=.*?)?$/',$option,$m))
 		{
 			return (object) array(
 				'name'=>$m[1],
@@ -281,5 +281,11 @@ class Ergo_Console_Options
 		}
 
 		return false;
+	}
+
+	// helper to allow shorthand access
+	public function __get($prop)
+	{
+		return $this->value($prop);
 	}
 }
