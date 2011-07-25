@@ -32,7 +32,6 @@ class Ergo_ClassLoader
 	 */
 	protected function classFile($className)
 	{
-		$className = str_replace('\\', '/', $className);
 		$classFile = preg_replace('#[_\\\]#', '/', $className).'.php';
 
 		foreach ($this->_paths as $path)
