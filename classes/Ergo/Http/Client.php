@@ -76,18 +76,22 @@ class Client
 	 * Sends a POST request
 	 * @return Response
 	 */
-	function post($path, $body)
+	function post($path, $body, $contentType = null)
 	{
-		return $this->_dispatchRequest($this->_buildRequest('POST',$path,$body));
+		return $this->_dispatchRequest(
+			$this->_buildRequest('POST', $path, $body, $contentType)
+		);
 	}
 
 	/**
 	 * Sends a PUT request
 	 * @return Response
 	 */
-	function put($path, $body)
+	function put($path, $body, $contentType = null)
 	{
-		return $this->_dispatchRequest($this->_buildRequest('PUT',$path,$body));
+		return $this->_dispatchRequest(
+			$this->_buildRequest('PUT', $path, $body, $contentType)
+		);
 	}
 
 	/**
@@ -141,11 +145,21 @@ class Client
 	/**
 	 * Builds an Request object
 	 */
-	private function _buildRequest($method,$path,$body=null)
+	private function _buildRequest($method, $path, $body = null, $contentType = null)
 	{
+		// copy default headers
+		$headers = $this->_headers;
+
+		// add Content-Type header if provided
+		if ($contentType)
+			$headers []= new HeaderField('Content-Type', $contentType);
+
 		$request = new Request(
-			$method, $this->_url->getUrlForRelativePath($path),
-			$this->_headers, $body);
+			$method,
+			$this->_url->getUrlForRelativePath($path),
+			$headers,
+			$body
+		);
 
 		return $request;
 	}

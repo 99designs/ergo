@@ -116,5 +116,8 @@ class Status
 		return $this->getStatusLine();
 	}
 
-	// ----------------------------------------
+	public function isOk()
+	{
+		return $this->getCode() == 200;
+	}
 }

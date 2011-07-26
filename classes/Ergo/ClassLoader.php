@@ -35,7 +35,7 @@ class ClassLoader
 	 */
 	protected function classFile($className)
 	{
-		$classFile = preg_replace('#(_|\\\\)#', '/', $className).'.php';
+		$classFile = preg_replace('#[_\\\]#', '/', $className).'.php';
 
 		foreach ($this->_paths as $path)
 		{
