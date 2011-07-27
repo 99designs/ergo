@@ -21,7 +21,7 @@ class Response
 	{
 		$this->_status = is_numeric($status) ? new Status($status) : $status;
 		$this->_headers = is_object($headers) ? $headers : new HeaderCollection($headers);
-		$this->_body = is_string($body) ? new ResponseBody($body) : $body;
+		$this->_body = is_string($body) && !empty($body) ? new ResponseBody($body) : $body;
 	}
 
 	/**

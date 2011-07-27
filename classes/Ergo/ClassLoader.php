@@ -65,7 +65,7 @@ class ClassLoader
 			return true;
 		}
 
-		throw new Exception("Unable to load $className");
+		return false;
 	}
 
 	/**

@@ -48,6 +48,14 @@ class RouteMatch implements \IteratorAggregate
 	}
 
 	/**
+	 * @return bool
+	 */
+	public function hasMetadata($key)
+	{
+		return isset($this->_metadata[$key]) && $this->_metadata[$key];
+	}
+
+	/**
 	 * @return string
 	 */
 	public function parameter($key,$default=false)

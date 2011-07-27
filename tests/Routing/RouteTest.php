@@ -5,8 +5,6 @@ namespace Ergo\Tests\Routing;
 use Ergo\Http;
 use Ergo\Routing;
 
-\Mock::generate('\Ergo\Routing\Controller','Routing\MockController');
-
 class RouteTest extends \UnitTestCase
 {
 	private $_exampleRoutes = array(

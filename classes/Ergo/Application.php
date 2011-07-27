@@ -91,6 +91,14 @@ class Application implements Plugin
 	}
 
 	/**
+	 * A shortcut for registering an object in the registry
+	 */
+	public function register($key, $object)
+	{
+		return $this->registry()->register($key, $object);
+	}
+
+	/**
 	 * Gets the application's core registry
 	 */
 	public function registry()

@@ -28,7 +28,9 @@ class Registry
 		// the registry stores closures
 		if(isset($this->_registry[$key]))
 		{
-			return call_user_func($this->_registry[$key], $this);
+			$result = call_user_func($this->_registry[$key], $this);
+			$this->_registry[$key] = $this->_memoize($result);
+			return $result;
 		}
 		// try any registered triggers
 		else if(isset($this->_triggers[$key]))
