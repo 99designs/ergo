@@ -1,9 +1,11 @@
 <?php
 
+namespace Ergo;
+
 /**
  * A handle to a specific registry key
  */
-class Ergo_RegistryHandle
+class RegistryHandle
 {
 	private $_registry, $_key;
 
@@ -50,11 +52,11 @@ class Ergo_RegistryHandle
 
 	/**
 	 * Returns a proxy object to the object refered to by the handle
-	 * @return Ergo_RegistryProxy
+	 * @return \Ergo\RegistryProxy
 	 */
 	public function proxy()
 	{
-		return new Ergo_RegistryProxy($this);
+		return new \Ergo\RegistryProxy($this);
 	}
 }
 

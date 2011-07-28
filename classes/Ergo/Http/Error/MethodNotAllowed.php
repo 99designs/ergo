@@ -1,6 +1,10 @@
 <?php
 
-class Ergo_Http_Error_MethodNotAllowed extends Ergo_Http_Error
+namespace Ergo\Http\Error;
+
+use \Ergo\Http\Error;
+
+class MethodNotAllowed extends Error
 {
 	const STATUS_CODE=405;
 

@@ -1,9 +1,11 @@
 <?php
 
+namespace Ergo;
+
 /**
  * A view represents a component which has a user-facing "view"
  */
-interface Ergo_View
+interface View
 {
 	/**
 	 * Returns the contents of the view as a string

@@ -1,10 +1,14 @@
 <?php
 
-class Ergo_Console_OptionsTest extends UnitTestCase
+namespace Ergo\Tests\Console;
+
+use \Ergo\Console\Options;
+
+class OptionsTest extends \UnitTestCase
 {
 	public function testBasicApi()
 	{
-		$options = new Ergo_Console_Options(array('testscript.php','-v','--after','2008-01-01'));
+		$options = new Options(array('testscript.php','-v','--after','2008-01-01'));
 		$options->define(array('--after=2009-01-01','-v','--flag'));
 
 		$this->assertTrue($options->has('-v'));
@@ -17,7 +21,7 @@ class Ergo_Console_OptionsTest extends UnitTestCase
 
 	public function testDefaultValue()
 	{
-		$options = new Ergo_Console_Options(array('z.php'));
+		$options = new Options(array('z.php'));
 		$options->define(array('--blargh=24'));
 
 		$this->assertFalse($options->has('--blargh'));
@@ -28,7 +32,7 @@ class Ergo_Console_OptionsTest extends UnitTestCase
 
 	public function testBareParameters()
 	{
-		$options = new Ergo_Console_Options(array('testscript.php','-v','myfilename'));
+		$options = new Options(array('testscript.php','-v','myfilename'));
 		$options->define(array('-v','--flag', ':filename'));
 
 		$this->assertTrue($options->has('-v'));
@@ -39,7 +43,7 @@ class Ergo_Console_OptionsTest extends UnitTestCase
 
 	public function testShortParametersCanBeAggregated()
 	{
-		$options = new Ergo_Console_Options(array('testscript.php','-vz','-q'));
+		$options = new Options(array('testscript.php','-vz','-q'));
 		$options->define(array('-v','-x','-z','-q'));
 
 		$this->assertTrue($options->has('-v'));
@@ -51,7 +55,7 @@ class Ergo_Console_OptionsTest extends UnitTestCase
 
 	public function testShortParametersWithValues()
 	{
-		$options = new Ergo_Console_Options(array('testscript.php','-v', 'blargh','-v=meep'));
+		$options = new Options(array('testscript.php','-v', 'blargh','-v=meep'));
 		$options->define(array('-v*=null'));
 
 		$this->assertTrue($options->has('-v'));
@@ -61,7 +65,7 @@ class Ergo_Console_OptionsTest extends UnitTestCase
 
 	public function testShortParametersWithValuesAndAggregates()
 	{
-		$options = new Ergo_Console_Options(array('testscript.php','-vxz','-r=meep'));
+		$options = new Options(array('testscript.php','-vxz','-r=meep'));
 		$options->define(array('-r=false*','-v','-x','-z'));
 
 		$this->assertTrue($options->has('-v'));
@@ -69,7 +73,7 @@ class Ergo_Console_OptionsTest extends UnitTestCase
 		$this->assertTrue($options->has('-z'));
 		$this->assertEqual($options->values('-r'), array('meep'));
 
-		$options = new Ergo_Console_Options(array('x.php','-vrz'));
+		$options = new Options(array('x.php','-vrz'));
 		$options
 			->define(array('-v*=false','-x','-z','-r'))
 			->parse()
@@ -80,7 +84,7 @@ class Ergo_Console_OptionsTest extends UnitTestCase
 
 	public function testMultipleParamsToHas()
 	{
-		$options = new Ergo_Console_Options(array('x.php','file'));
+		$options = new Options(array('x.php','file'));
 		$options->define(array('--blargh',':file'));
 
 		$this->assertFalse($options->has('-v'));
@@ -91,7 +95,7 @@ class Ergo_Console_OptionsTest extends UnitTestCase
 
 	public function testRequiredParameters()
 	{
-		$options = new Ergo_Console_Options(array('x.php','-v'));
+		$options = new Options(array('x.php','-v'));
 		$options->define(array('--blargh+','-v'));
 
 		$this->assertFalse($options->has('--blargh'));
@@ -104,7 +108,7 @@ class Ergo_Console_OptionsTest extends UnitTestCase
 
 	public function testOptionsWithEmptyDefaults()
 	{
-		$options = new Ergo_Console_Options(array('x.php'));
+		$options = new Options(array('x.php'));
 		$options->define(array('--blargh='));
 
 		$this->assertFalse($options->has('--blargh'));
@@ -115,7 +119,7 @@ class Ergo_Console_OptionsTest extends UnitTestCase
 
 	public function testOptionsWithNoValues()
 	{
-		$options = new Ergo_Console_Options(array('x.php'));
+		$options = new Options(array('x.php'));
 		$options->define(array('--blargh'));
 
 		$this->assertFalse($options->has('--blargh'));
@@ -126,7 +130,7 @@ class Ergo_Console_OptionsTest extends UnitTestCase
 
 	public function testOptionsValuesStartingWithDashes()
 	{
-		$options = new Ergo_Console_Options(array('x.php','-xv','-a','-3months'));
+		$options = new Options(array('x.php','-xv','-a','-3months'));
 		$options->define(array('-x','-v','-a='));
 
 		$this->assertTrue($options->has('-x'));

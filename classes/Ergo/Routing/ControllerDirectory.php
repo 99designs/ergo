@@ -1,42 +1,40 @@
 <?php
 
+namespace Ergo\Routing;
+
 /**
- * A controller factory that uses a directory of controller files. Files should be named without
- * a Controller suffix. Note that underscores in controller names are translated to subdirectories
+ * A controller factory that uses a directory of controller files.
  */
-class Ergo_Routing_ControllerDirectory implements Ergo_Routing_ControllerFactory
+class ControllerDirectory implements ControllerResolver
 {
-	function __construct($dir)
-	{
-		$this->_dir = rtrim($dir, '/');
-	}
+	private $_iterator;
+	private $_callback;
 
 	/**
-	 * @param $name
-	 * @return Ergo_Routing_Controller
+	 * @param mixed either a directory path, or an iterator
+	 * @param callback returns an instance of a controller, given file and controller name
 	 */
-	public function createController($name)
+	public function __construct($directoryIterator, $callback=null)
 	{
-		$className = sprintf('%sController',$name);
-		$fileName = str_replace('_','/',"$this->_dir/$className.php");
+		if(is_string($directoryIterator))
+			$directoryIterator = new \DirectoryIterator($directoryIterator);
 
-		if(!is_file($fileName) && !class_exists($className, false))
-		{
-			throw new Ergo_Exception("Missing controller file $fileName");
-		}
+		$this->_iterator = $directoryIterator;
+		$this->_callback = $callback ?: function($file, $className) {
+			require_once($file);
+			return new $className();
+		};
+	}
 
-		if(!class_exists($className, false))
-		{
-			require($fileName);
+	/* (non-phpdoc)
+	 * @see ControllerResolver::resolve()
+	 */
+	public function resolve($name)
+	{
+		foreach($this->_iterator as $file)
+			if($file->getFilename() == "$name.php")
+				return call_user_func($this->_callback, (string) $file, $name);
 
-			/*
-			if(!class_exists($className))
-			{
-				throw new Ergo_Exception("File $fileName doesn't contain $className");
-			}
-			*/
-		}
-
-		return new $className();
+		throw new \Ergo\Exception("Unable to find a file for controller $name");
 	}
 }

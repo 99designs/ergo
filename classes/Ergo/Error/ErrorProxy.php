@@ -1,10 +1,12 @@
 <?php
 
+namespace Ergo\Error;
+
 /**
  * A basic handler for PHP errors and exceptions which consolidates errors
  * into error exceptions provides for simple logging and error formatting.
  */
-class Ergo_Error_ErrorProxy
+class ErrorProxy
 {
 	private $_application;
 	private $_inError=false;
@@ -12,7 +14,7 @@ class Ergo_Error_ErrorProxy
 
 	/**
 	 * Constructor
-	 * @param object Ergo_Error_ErrorHandler
+	 * @param object ErrorHandler
 	 */
 	public function __construct($application)
 	{
@@ -85,9 +87,9 @@ class Ergo_Error_ErrorProxy
 			{
 				// bit of a hack to consolidate errors to exceptions
 				$message = $this->_errorNumberString($errno).': '.$errstr;
-				throw new ErrorException($message,0,$errno,$errfile,$errline);
+				throw new \ErrorException($message,0,$errno,$errfile,$errline);
 			}
-			catch(ErrorException $e)
+			catch(\ErrorException $e)
 			{
 				$this->_handleException($e);
 			}

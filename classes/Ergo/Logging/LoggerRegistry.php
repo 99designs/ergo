@@ -1,10 +1,11 @@
 <?php
 
+namespace Ergo\Logging;
 
 /**
  * A logger factory that can have implementations registered
  */
-class Ergo_Logging_LoggerRegistry implements Ergo_Logging_LoggerFactory
+class LoggerRegistry implements LoggerFactory
 {
 	private $_default;
 	private $_loggers;
@@ -12,13 +13,13 @@ class Ergo_Logging_LoggerRegistry implements Ergo_Logging_LoggerFactory
 	/**
 	 * Constructor
 	 */
-	function __construct(Ergo_Logger $defaultLogger)
+	function __construct(\Ergo\Logger $defaultLogger)
 	{
 		$this->_default = $defaultLogger;
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_LoggerFactory::createLogger
+	 * @see \Ergo\LoggerFactory::createLogger
 	 */
 	function createLogger($class)
 	{
@@ -39,8 +40,8 @@ class Ergo_Logging_LoggerRegistry implements Ergo_Logging_LoggerFactory
 	 * Register a logger for a specific class name, at present this classname
 	 * must match exactly
 	 */
-	function registerLogger($class, Ergo_Logger $defaultLogger)
+	function registerLogger($class, \Ergo\Logger $defaultLogger)
 	{
-		throw new BadMethodCallException("Not implemented");
+		throw new \BadMethodCallException("Not implemented");
 	}
 }

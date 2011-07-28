@@ -1,106 +1,95 @@
 <?php
 
+namespace Ergo;
+
 /**
- * A locator that associates objects with string keys. Objects can either
- * be registered, or a factory can be provided and the object can be created
- * the first time it is requested.
+ * A service locator object that maps keys to object instances. Can either
+ * store actual instances, or lazily create objects when provided with a closure
+ * or a {@link Factory} object.
  */
-class Ergo_Registry
+class Registry
 {
-	private $_instances;
-	private $_factories;
-	private $_triggers;
+	private $_registry=array();
+	private $_triggers=array();
 
 	/**
-	 * @param string
-	 * @return object
+	 * Looks up a key in the registry, with an optional closure that that will
+	 * be executed and the result stored if the key doesn't exist (and there is no trigger).
+	 * @return Object
 	 */
-	function lookup($key)
+	public function lookup($key, $closure=null)
 	{
-		// return fast if the instance exists
-		if (isset($this->_instances[$key]))
+		// if a closure was provided and we missed, store it
+		if(!is_null($closure) && !isset($this->_registry[$key]) && !isset($this->_triggers[$key]))
 		{
-			return $this->_instances[$key];
-		}
-		// otherwise check factories
-		else if(isset($this->_factories[$key]))
-		{
-			$this->register($key, $this->_factories[$key]->create());
+			$this->_registry[$key] = $this->_memoize($closure($key));
 		}
 
-		// if it still doesn't exist, check triggers
-		if(!isset($this->_instances[$key]) && isset($this->_triggers[$key]))
+		// the registry stores closures
+		if(isset($this->_registry[$key]))
 		{
-			call_user_func($this->_triggers[$key]);
-
-			if(!isset($this->_instances[$key]) && isset($this->_factories[$key]))
-			{
-				$this->register($key, $this->_factories[$key]->create());
-			}
+			$result = call_user_func($this->_registry[$key], $this);
+			$this->_registry[$key] = $this->_memoize($result);
+			return $result;
 		}
-
-		// try again, if not, give up
-		if(!isset($this->_instances[$key]))
+		// try any registered triggers
+		else if(isset($this->_triggers[$key]))
 		{
-			throw new Ergo_RegistryException("No entry for key '$key'");
+			call_user_func($this->_triggers[$key], $this);
+			unset($this->_triggers[$key]);
+			return $this->lookup($key);
 		}
-
-		return $this->_instances[$key];
+		else
+		{
+			throw new RegistryException("No entry for key '$key'");
+		}
 	}
 
 	/**
-	 * @param string $key
-	 * @param object $object
+	 * Registers an object for later retrieval by key. Any existing key is overwritten.
+	 * @chainable
 	 */
-	function register($key, $object)
+	public function register($key, $object)
 	{
-		$this->_instances[$key] = $object;
+		$this->_registry[$key] = $this->_memoize($object);
 		return $this;
 	}
 
 	/**
-	 * @param string $key
-	 * @param Ergo_Factory $factory
+	 * Registers a {@link Factory} or closure to be invoked on the first lookup
+	 * @param string
+	 * @param mixed Factory or Closure
 	 */
-	function factory($key, Ergo_Factory $factory)
+	function factory($key, $factory)
 	{
-		$this->_factories[$key] = $factory;
+		if($factory instanceof Factory)
+		{
+			$this->_registry[$key] = function() use($factory) {
+				return $factory->create();
+			};
+		}
+		else if(is_callable($factory))
+		{
+			$this->_registry[$key] = $factory;
+		}
+		else
+		{
+			throw new RegistryException(
+				"Parameter must be a Factory or Closure");
+		}
+
 		return $this;
 	}
 
 	/**
-	 * Creates a handle to a particular registry key
-	 */
-	public function handle($key)
-	{
-		return new Ergo_RegistryHandle($this, $key);
-	}
-
-	/**
-	 * @param string
-	 * @return bool
-	 */
-	public function isRegistered($key)
-	{
-		return isset($this->_instances[$key]) ||
-			isset($this->_factories[$key]);
-	}
-
-	/**
-	 * Sets a callback to be called when a lookup fails
+	 * Sets a closure that is called on a lookup miss
 	 * @param mixed either a string or an array of keys
-	 * @param callback a php callback or an Ergo_Script object
+	 * @param callback a php callback or an \Ergo\Script object
 	 * @chainable
 	 */
 	public function trigger($keys, $callable)
 	{
 		$keys = is_array($keys) ? $keys : array($keys);
-
-		// convert objects with an execute method into php callback
-		if(is_object($callable) && method_exists($callable,'execute'))
-		{
-			$callable = array($callable,'execute');
-		}
 
 		// add triggers for all arguments
 		foreach($keys as $key)
@@ -109,5 +98,46 @@ class Ergo_Registry
 		}
 
 		return $this;
+	}
+
+	/**
+	 * Creates a handle to a particular registry key
+	 */
+	public function handle($key)
+	{
+		return new RegistryHandle($this, $key);
+	}
+
+	/**
+	 * Returns a closure that returns an object.
+	 * @return Closure
+	 */
+	private function _memoize($object)
+	{
+		return function() use($object) { return $object; };
+	}
+
+	/**
+	 * Returns whether an object
+	 */
+	public function isRegistered($key)
+	{
+		return isset($this->_registry[$key]);
+	}
+
+	/**
+	 * Magic property access
+	 */
+	public function __get($key)
+	{
+		return $this->lookup($key);
+	}
+
+	/**
+	 * Magic property access for isset
+	 */
+	public function __isset($key)
+	{
+		return $this->isRegistered($key);
 	}
 }

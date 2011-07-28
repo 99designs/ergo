@@ -1,9 +1,13 @@
 <?php
 
+namespace Ergo\View;
+
+use \Ergo;
+
 /**
  * A simple php-based template
  */
-class Ergo_View_Template extends Ergo_Mixin implements Ergo_View, ArrayAccess
+class Template extends Ergo\Mixin implements Ergo\View, \ArrayAccess
 {
 	private $_include=array();
 	private $_vars=array();
@@ -37,20 +41,20 @@ class Ergo_View_Template extends Ergo_Mixin implements Ergo_View, ArrayAccess
 	 * Defines the template file to be used
 	 * @chainable
 	 */
-	public function template($filename)
+	public function file($filename)
 	{
 		$this->_template = $filename;
 		return $this;
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_View::output()
+	 * @see \Ergo\View::output()
 	 */
 	public function output()
 	{
 		if(!isset($this->_template))
 		{
-			throw new Ergo_Exception("Not template file has been assigned");
+			throw new Ergo\Exception("Not template file has been assigned");
 		}
 
 		$oldInclude = get_include_path();
@@ -63,7 +67,7 @@ class Ergo_View_Template extends Ergo_Mixin implements Ergo_View, ArrayAccess
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_View::stream()
+	 * @see \Ergo\View::stream()
 	 */
 	public function stream()
 	{
@@ -133,7 +137,7 @@ class Ergo_View_Template extends Ergo_Mixin implements Ergo_View, ArrayAccess
 	public function offsetSet($offset, $value)
 	{
 		if (is_null($offset))
-			throw new InvalidArgumentException('Append not supported for template');
+			throw new \InvalidArgumentException('Append not supported for template');
 
 		$this->_vars[$offset] = $value;
 	}

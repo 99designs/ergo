@@ -1,5 +1,7 @@
 <?php
 
-class Ergo_Http_UrlException extends Ergo_Exception
+namespace Ergo\Http;
+
+class UrlException extends \Ergo\Exception
 {
 }

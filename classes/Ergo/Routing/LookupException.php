@@ -1,8 +1,10 @@
 <?php
 
+namespace Ergo\Routing;
+
 /**
- * An exception related to {@link Ergo_Routing_RouteMap}
+ * An exception related to {@link Router}
  */
-class Ergo_Routing_LookupException extends Ergo_Routing_Exception
+class LookupException extends Exception
 {
 }

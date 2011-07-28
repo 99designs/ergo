@@ -1,43 +1,46 @@
 <?php
 
+namespace Ergo\Error;
+
+use Ergo\Logging;
+
 /**
  * A basic handler for PHP errors and exceptions which consolidates errors
  * into error exceptions provides for simple logging and error formatting.
  */
-abstract class Ergo_Error_AbstractErrorHandler
-	implements Ergo_Error_ErrorHandler
+abstract class AbstractErrorHandler implements ErrorHandler
 {
 	private $_proxy;
 	private $_logger;
 
 	/**
 	 * Constructor
-	 * @param object an optional Ergo_Logger instance
+	 * @param object an optional \Ergo\Logger instance
 	 */
 	public function __construct($logger=null)
 	{
 		if(is_object($logger))
 		{
-			$this->_logger = new Ergo_Logging_LoggerMultiplexer();
+			$this->_logger = new Logging\LoggerMultiplexer();
 			$this->_logger->addLoggers($logger);
 		}
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Error_ErrorHandler::logger()
+	 * @see \Ergo\Error\ErrorHandler::logger()
 	 */
 	public function logger()
 	{
 		if(!isset($this->_logger))
 		{
-			$this->_logger = new Ergo_Logging_LoggerMultiplexer();
+			$this->_logger = new Logging\LoggerMultiplexer();
 		}
 
 		return $this->_logger;
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Error_ErrorHandler::context()
+	 * @see \Ergo\Error\ErrorHandler::context()
 	 */
 	public function context()
 	{
@@ -50,7 +53,7 @@ abstract class Ergo_Error_AbstractErrorHandler
 	*/
 	protected function isExceptionRecoverable($e)
 	{
-		if ($e instanceof ErrorException)
+		if ($e instanceof \ErrorException)
 		{
 			$ignore = E_WARNING | E_NOTICE | E_USER_WARNING | E_USER_NOTICE | E_STRICT;
 			return (($ignore & $e->getSeverity()) != 0);

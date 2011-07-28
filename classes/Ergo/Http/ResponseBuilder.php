@@ -1,9 +1,11 @@
 <?php
 
+namespace Ergo\Http;
+
 /**
- * Builds up data for, and then creates, a Ergo_Http_Response
+ * Builds up data for, and then creates, a Response
  */
-class Ergo_Http_ResponseBuilder
+class ResponseBuilder
 {
 	private $_status;
 	private $_headerFields = array();
@@ -17,7 +19,7 @@ class Ergo_Http_ResponseBuilder
 	 */
 	public function setStatusCode($code)
 	{
-		$this->_status = new Ergo_Http_Status($code);
+		$this->_status = new Status($code);
 		return $this;
 	}
 
@@ -28,7 +30,7 @@ class Ergo_Http_ResponseBuilder
 	 */
 	public function addHeader($name, $value)
 	{
-		$this->_headerFields []= new Ergo_Http_HeaderField($name, $value);
+		$this->_headerFields []= new HeaderField($name, $value);
 		return $this;
 	}
 
@@ -48,14 +50,14 @@ class Ergo_Http_ResponseBuilder
 	 * @param string $view
 	 * @chainable
 	 */
-	public function view(Ergo_View $view)
+	public function view(\Ergo\View $view)
 	{
 		$this->_view = $view;
 		return $this;
 	}
 
 	/**
-	 * @return Ergo_Http_Response
+	 * @return Response
 	 */
 	public function build()
 	{
@@ -72,7 +74,7 @@ class Ergo_Http_ResponseBuilder
 
 		$this->addHeader('Content-Length', strlen($this->_body));
 
-		return new Ergo_Http_Response(
+		return new Response(
 			$this->_status,
 			$this->_headerFields,
 			$this->_body
@@ -170,7 +172,7 @@ class Ergo_Http_ResponseBuilder
 	{
 		if(!empty($time) && is_string($time) && !$timestamp = strtotime($time))
 		{
-			throw new Ergo_Routing_Exception("Invalid expiry time: $timestamp");
+			throw new \Ergo\Routing\Exception("Invalid expiry time: $timestamp");
 		}
 		else if(is_numeric($time))
 		{

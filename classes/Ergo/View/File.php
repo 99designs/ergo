@@ -1,9 +1,11 @@
 <?php
 
+namespace Ergo\View;
+
 /**
  * A file based view
  */
-class Ergo_View_File implements Ergo_View
+class File implements \Ergo\View
 {
 	private $_file;
 
@@ -16,7 +18,7 @@ class Ergo_View_File implements Ergo_View
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_View::output()
+	 * @see \Ergo\View::output()
 	 */
 	public function output()
 	{
@@ -24,7 +26,7 @@ class Ergo_View_File implements Ergo_View
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_View::stream()
+	 * @see \Ergo\View::stream()
 	 */
 	public function stream()
 	{

@@ -1,11 +1,15 @@
 <?php
 
+namespace Ergo\Tests\Http;
+
+use Ergo\Http;
+
 /**
  * @author Paul Annesley <paul@annesley.cc>
  * @licence http://www.opensource.org/licenses/mit-license.php
  * @see http://github.com/pda/phool
  */
-class Ergo_Http_UrlTest extends UnitTestCase
+class UrlTest extends \UnitTestCase
 {
 	private $_sampleData = array(
 		'scheme' => 'http',
@@ -18,7 +22,7 @@ class Ergo_Http_UrlTest extends UnitTestCase
 
 	public function testVerboseHttpUrlUsage()
 	{
-		$url = new Ergo_Http_Url('http://example.org:80/path?a=b&c=d#fragment');
+		$url = new Http\Url('http://example.org:80/path?a=b&c=d#fragment');
 		$this->_assertExpectedValues($url);
 		$this->assertEqual($url->getHostRelativeUrl(), '/path?a=b&c=d#fragment');
 		$this->assertEqual($url->getSchemeRelativeUrl(), '//example.org/path?a=b&c=d#fragment');
@@ -26,14 +30,14 @@ class Ergo_Http_UrlTest extends UnitTestCase
 
 	public function testBriefHttpUrlUsage()
 	{
-		$url = new Ergo_Http_Url('http://example.org/');
+		$url = new Http\Url('http://example.org/');
 		$this->assertEqual($url->getHostRelativeUrl(), '/');
 		$this->assertEqual($url->getSchemeRelativeUrl(), '//example.org/');
 	}
 
 	public function testHasMethods()
 	{
-		$url = new Ergo_Http_Url('http://example.org/?query#fragment');
+		$url = new Http\Url('http://example.org/?query#fragment');
 		$this->assertTrue($url->hasHost(), 'URL should have host');
 		$this->assertTrue($url->hasScheme(), 'URL should have scheme');
 		$this->assertTrue($url->hasQueryString(), 'URL should have query string');
@@ -41,7 +45,7 @@ class Ergo_Http_UrlTest extends UnitTestCase
 		$this->assertTrue($url->hasPort(), 'URL should have port');
 		$this->assertTrue($url->hasDefaultPort(), 'URL should have default port');
 
-		$url = new Ergo_Http_Url('/');
+		$url = new Http\Url('/');
 		$this->assertFalse($url->hasHost(), 'URL should not have host');
 		$this->assertFalse($url->hasScheme(), 'URL should not have scheme');
 		$this->assertFalse($url->hasQueryString(), 'URL should not have query string');
@@ -52,19 +56,19 @@ class Ergo_Http_UrlTest extends UnitTestCase
 
 	public function testExceptionsThrown()
 	{
-		$url = new Ergo_Http_Url('/');
+		$url = new Http\Url('/');
 
 		try {
 			$url->getScheme();
 			$this->fail('getScheme() should throw exception');
-		} catch (Ergo_Http_UrlException $e) {
+		} catch (Http\UrlException $e) {
 			$this->pass('getScheme() should throw exception');
 		}
 
 		try {
 			$url->getHost();
 			$this->fail('getHost() should throw exception');
-		} catch (Ergo_Http_UrlException $e) {
+		} catch (Http\UrlException $e) {
 			$this->pass('getHost() should throw exception');
 		}
 
@@ -73,7 +77,7 @@ class Ergo_Http_UrlTest extends UnitTestCase
 	public function testBasicHttpsUsage()
 	{
 		$this->_assertExpectedValues(
-			new Ergo_Http_Url('https://example.org/path?a=b&c=d#fragment'),
+			new Http\Url('https://example.org/path?a=b&c=d#fragment'),
 			array('scheme' => 'https', 'port' => 443)
 		);
 	}
@@ -81,11 +85,11 @@ class Ergo_Http_UrlTest extends UnitTestCase
 	public function testCustomPort()
 	{
 		// http
-		$url = new Ergo_Http_Url('http://example.org:81/path?a=b&c=d#fragment');
+		$url = new Http\Url('http://example.org:81/path?a=b&c=d#fragment');
 		$this->_assertExpectedValues($url, array('port' => 81));
 
 		// https
-		$url = new Ergo_Http_Url('https://example.org:82/path?a=b&c=d#fragment');
+		$url = new Http\Url('https://example.org:82/path?a=b&c=d#fragment');
 		$this->_assertExpectedValues($url, array('port' => 82, 'scheme' => 'https'));
 	}
 
@@ -107,14 +111,14 @@ class Ergo_Http_UrlTest extends UnitTestCase
 
 		foreach ($defaultPortUrls as $urlString)
 		{
-			$url = new Ergo_Http_Url($urlString);
+			$url = new Http\Url($urlString);
 			$this->assertTrue($url->isPortDefault(),
 				"port should be default in $urlString");
 		}
 
 		foreach ($customPortUrls as $urlString)
 		{
-			$url = new Ergo_Http_Url($urlString);
+			$url = new Http\Url($urlString);
 			$this->assertFalse($url->isPortDefault(),
 				"port should not be default in $urlString");
 		}
@@ -123,7 +127,7 @@ class Ergo_Http_UrlTest extends UnitTestCase
 
 	public function testWithoutPath()
 	{
-		$url = new Ergo_Http_Url('http://example.org');
+		$url = new Http\Url('http://example.org');
 		$this->assertEqual($url->getPath(), '/');
 	}
 
@@ -170,7 +174,7 @@ class Ergo_Http_UrlTest extends UnitTestCase
 			$in = $pair[0];
 			$expect = isset($pair[1]) ? $pair[1] : $pair[0];
 
-			$url = new Ergo_Http_Url($in);
+			$url = new Http\Url($in);
 			$this->assertEqual("$url", $expect,
 				"For input [$in] %s");
 		}
@@ -178,21 +182,21 @@ class Ergo_Http_UrlTest extends UnitTestCase
 
 	public function testGettingUrlForASimplePath()
 	{
-		$url = new Ergo_Http_Url('http://example.org/');
+		$url = new Http\Url('http://example.org/');
 		$relative = $url->getUrlForPath('/test/path');
 		$this->assertEqual($relative->__toString(), 'http://example.org/test/path');
 	}
 
 	public function testGettingUrlForPathTrimsQueryString()
 	{
-		$url = new Ergo_Http_Url('http://example.org/my/path?test=1');
+		$url = new Http\Url('http://example.org/my/path?test=1');
 		$relative = $url->getUrlForPath('/test/path');
 		$this->assertEqual($relative->__toString(), 'http://example.org/test/path');
 	}
 
 	public function testGetUrlForRelativePath()
 	{
-		$url = new Ergo_Http_Url('http://example.org/my');
+		$url = new Http\Url('http://example.org/my');
 		$relative = $url->getUrlForRelativePath('/path');
 		$this->assertEqual($relative->__toString(),
 			'http://example.org/my/path');
@@ -200,7 +204,7 @@ class Ergo_Http_UrlTest extends UnitTestCase
 
 	public function testGetForRelativePathWithTrailingSlash()
 	{
-		$url = new Ergo_Http_Url('http://example.org/my/path/?test=1');
+		$url = new Http\Url('http://example.org/my/path/?test=1');
 		$relative = $url->getUrlForRelativePath('/sub/path/');
 		$this->assertEqual($relative->__toString(),
 			'http://example.org/my/path/sub/path/');
@@ -208,7 +212,7 @@ class Ergo_Http_UrlTest extends UnitTestCase
 
 	public function testGetForRelativePathWithNoLeadingSlash()
 	{
-		$url = new Ergo_Http_Url('http://example.org/my/path?test=1');
+		$url = new Http\Url('http://example.org/my/path?test=1');
 		$relative = $url->getUrlForRelativePath('sub/path/');
 		$this->assertEqual($relative->__toString(),
 			'http://example.org/my/path/sub/path/');
@@ -216,7 +220,7 @@ class Ergo_Http_UrlTest extends UnitTestCase
 
 	public function testGetForRelativePathWithOnlyQueryString()
 	{
-		$url = new Ergo_Http_Url('http://example.org/test');
+		$url = new Http\Url('http://example.org/test');
 		$relative = $url->getUrlForRelativePath('?blargh=1');
 		$this->assertEqual($relative->__toString(),
 			'http://example.org/test?blargh=1');
@@ -224,7 +228,7 @@ class Ergo_Http_UrlTest extends UnitTestCase
 
 	public function testGetForRelativePathWithOnlySlash()
 	{
-		$url = new Ergo_Http_Url('http://example.org/test');
+		$url = new Http\Url('http://example.org/test');
 		$relative = $url->getUrlForRelativePath('/');
 		$this->assertEqual($relative->__toString(),
 			'http://example.org/test');
@@ -232,7 +236,7 @@ class Ergo_Http_UrlTest extends UnitTestCase
 
 	public function testGetUrlForParameters()
 	{
-		$url = new Ergo_Http_Url('http://example.org/test');
+		$url = new Http\Url('http://example.org/test');
 		$relative = $url->getUrlForParameters(array('a'=>1,'b'=>2,'c'=>'test'));
 		$this->assertEqual($relative->__toString(),
 			'http://example.org/test?a=1&b=2&c=test');
@@ -241,26 +245,26 @@ class Ergo_Http_UrlTest extends UnitTestCase
 	public function testGetUrlForScheme()
 	{
 		// implicit default port
-		$url = new Ergo_Http_Url('http://example.org');
+		$url = new Http\Url('http://example.org');
 		$this->assertEqual('https://example.org/', (string)$url->getUrlForScheme('https'));
 
 		// explicit default port
-		$url = new Ergo_Http_Url('http://example.org:80');
+		$url = new Http\Url('http://example.org:80');
 		$this->assertEqual('https://example.org/', (string)$url->getUrlForScheme('https'));
 
 		// explicit non standard port
-		$url = new Ergo_Http_Url('http://example.org:123');
+		$url = new Http\Url('http://example.org:123');
 		$this->assertEqual('https://example.org:123/', (string)$url->getUrlForScheme('https'));
 	}
 
 	public function testGetUrlForFragment()
 	{
 		// url without a fragment currently
-		$url = new Ergo_Http_Url('http://example.org/');
+		$url = new Http\Url('http://example.org/');
 		$this->assertEqual('http://example.org/#blarg', (string)$url->getUrlForFragment('blarg'));
 
 		// url with a fragment loses current fragment
-		$url = new Ergo_Http_Url('http://example.org/#blarg');
+		$url = new Http\Url('http://example.org/#blarg');
 		$this->assertEqual('http://example.org/#gralb', (string)$url->getUrlForFragment('gralb'));
 	}
 

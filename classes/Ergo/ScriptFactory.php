@@ -1,9 +1,11 @@
 <?php
 
+namespace Ergo;
+
 /**
- * A factory that uses and Ergo_Script to generate an object
+ * A factory that uses and \Ergo\Script to generate an object
  */
-class Ergo_ScriptFactory implements Ergo_Factory
+class ScriptFactory implements Factory
 {
 	private $_script;
 

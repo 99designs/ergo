@@ -1,6 +1,10 @@
 <?php
 
-class Ergo_Http_Error_NotFound extends Ergo_Http_Error
+namespace Ergo\Http\Error;
+
+use \Ergo\Http\Error;
+
+class NotFound extends Error
 {
 	const STATUS_CODE=404;
 

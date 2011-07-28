@@ -1,9 +1,11 @@
 <?php
 
+namespace Ergo\Config;
+
 /**
  * A simple array based configuration implementation
  */
-class Ergo_Config_ArrayConfig implements Ergo_Config
+class ArrayConfig implements \Ergo\Config
 {
 	protected $_data=array();
 
@@ -16,13 +18,13 @@ class Ergo_Config_ArrayConfig implements Ergo_Config
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Configuration::get
+	 * @see \Ergo\Config::get
 	 */
 	public function get($key)
 	{
 		if(!$this->exists($key))
 		{
-			throw new Ergo_Config_MissingKeyException("No config key '$key'");
+			throw new MissingKeyException("No config key '$key'");
 		}
 
 		return $this->_data[$key];
@@ -40,7 +42,7 @@ class Ergo_Config_ArrayConfig implements Ergo_Config
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Configuration::exists
+	 * @see \Ergo\Config::exists
 	 */
 	public function exists($key)
 	{
@@ -48,7 +50,7 @@ class Ergo_Config_ArrayConfig implements Ergo_Config
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Configuration::getKeys
+	 * @see \Ergo\Config::getKeys
 	 */
 	public function keys()
 	{
@@ -60,7 +62,7 @@ class Ergo_Config_ArrayConfig implements Ergo_Config
 	 */
 	public function getIterator()
 	{
-		return new ArrayIterator($this->_data);
+		return new \ArrayIterator($this->_data);
 	}
 }
 

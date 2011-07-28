@@ -1,28 +1,29 @@
 <?php
 
+namespace Ergo\Logging;
 
 /**
  * A simple logger for the console
  *
  * @author Lachlan Donald <lachlan@99designs.com>
  */
-class Ergo_Logging_ConsoleLogger extends Ergo_Logging_AbstractLogger
+class ConsoleLogger extends AbstractLogger
 {
 	private $_ansi;
 
 	/**
 	 * Construct a logger with a default level of trace
 	 */
-	function __construct($ansi=false, $level=Ergo_Logger::INFO)
+	function __construct($ansi=false, $level=\Ergo\Logger::INFO)
 	{
 		parent::__construct($level);
 		$this->_ansi = $ansi;
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Logger::log()
+	 * @see \Ergo\Logger::log()
 	 */
-	function log($message,$level=Ergo_Logger::INFO)
+	function log($message,$level=\Ergo\Logger::INFO)
 	{
 		if($this->_isLevelEnabled($level))
 		{
@@ -78,8 +79,8 @@ class Ergo_Logging_ConsoleLogger extends Ergo_Logging_AbstractLogger
 	{
 		switch($level)
 		{
-			case Ergo_Logger::ERROR: return 31;
-			case Ergo_Logger::WARN: return 33;
+			case \Ergo\Logger::ERROR: return 31;
+			case \Ergo\Logger::WARN: return 33;
 			default: return 39;
 		}
 	}

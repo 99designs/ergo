@@ -1,10 +1,12 @@
 <?php
 
+namespace Ergo;
+
 /**
- * A plugin is a component that is used to extend an {@link Ergo_Application}
+ * A plugin is a component that is used to extend an {@link Application}
  * in a modular way
  */
-interface Ergo_Plugin
+interface Plugin
 {
 	/**
 	 * Called at the start of the application lifecycle

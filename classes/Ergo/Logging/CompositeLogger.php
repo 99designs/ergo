@@ -1,9 +1,11 @@
 <?php
 
+namespace Ergo\Logging;
+
 /**
  * A logger that is composed of other loggers
  */
-interface Ergo_Logging_CompositeLogger extends Ergo_Logger
+interface CompositeLogger extends \Ergo\Logger
 {
 	/**
 	 * Adds either a single logger, an array of loggers or multiple logger

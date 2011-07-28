@@ -1,15 +1,17 @@
 <?php
 
+namespace Ergo\Http;
+
 /**
  * Sends an HTTP response using PHP methods.
  * @see http://tools.ietf.org/html/rfc2616#section-6
  */
-class Ergo_Http_ResponseSender
+class ResponseSender
 {
 	private $_response;
 
 	/**
-	 * @param Ergo_Http_Response $response
+	 * @param Response $response
 	 */
 	public function __construct($response)
 	{

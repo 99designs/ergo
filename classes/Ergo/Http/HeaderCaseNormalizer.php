@@ -1,5 +1,7 @@
 <?php
 
+namespace Ergo\Http;
+
 /**
  * Normalizes the capitalization of HTTP header names e.g. Content-Type.
  *
@@ -7,7 +9,7 @@
  * @licence http://www.opensource.org/licenses/mit-license.php
  * @see http://github.com/pda/phool
  */
-class Ergo_Http_HeaderCaseNormalizer
+class HeaderCaseNormalizer
 {
 	/**
 	 * @param string $string

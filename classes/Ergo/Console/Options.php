@@ -1,11 +1,13 @@
 <?php
 
+namespace Ergo\Console;
+
 /**
  * A command line options parser. Takes a specification and then an array of tokens from the
  * command line to parse. Errors are captured silently for missing parameters, flags that require
  * values, etc.
  */
-class Ergo_Console_Options
+class Options
 {
 	const LOOP_LIMIT=100;
 
@@ -252,7 +254,7 @@ class Ergo_Console_Options
 		}
 		else
 		{
-			throw new InvalidArgumentException("Failed to parse $option");
+			throw new \InvalidArgumentException("Failed to parse $option");
 		}
 	}
 

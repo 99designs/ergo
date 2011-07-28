@@ -1,17 +1,19 @@
 <?php
+
+namespace Ergo\Logging;
+
 /**
  * A logger that writes to an internal array
- *
  * @author Lachlan Donald <lachlan@99designs.com>
  */
-class Ergo_Logging_ArrayLogger extends Ergo_Logging_AbstractLogger
+class ArrayLogger extends AbstractLogger
 {
 	private $_array;
 
 	/* (non-phpdoc)
-	 * @see Ergo_Logger::log()
+	 * @see \Ergo\Logger::log()
 	 */
-	public function log($message, $level=Ergo_Logger::INFO)
+	public function log($message, $level=\Ergo\Logger::INFO)
 	{
 		$this->_array[] = array($message, $level, time());
 		return $this;

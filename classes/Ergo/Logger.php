@@ -1,9 +1,11 @@
 <?php
 
+namespace Ergo;
+
 /**
  * A simple logging interface
  */
-interface Ergo_Logger
+interface Logger
 {
 	/**
 	 * These imply a hierarchy
@@ -18,13 +20,13 @@ interface Ergo_Logger
 	 * Logs a message
 	 * @chainable
 	 */
-	function log($message,$level=Ergo_Logger::INFO);
+	function log($message,$level=\Ergo\Logger::INFO);
 
 	/**
 	 * Logs an exception
 	 * @chainable
 	 */
-	function logException($exception,$level=Ergo_Logger::ERROR);
+	function logException($exception,$level=\Ergo\Logger::ERROR);
 
 	/**
 	 * Sets the log level to display equal to and above

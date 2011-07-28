@@ -1,11 +1,14 @@
 <?php
 
-class Ergo_Http_ResponseTest extends UnitTestCase
-{
+namespace Ergo\Tests\Http;
 
+use Ergo\Http;
+
+class ResponseTest extends \UnitTestCase
+{
 	public function testEmptyOkResponse()
 	{
-		$response = new Ergo_Http_Response(200, array(), null);
+		$response = new Http\Response(200, array(), null);
 
 		$this->assertEqual($response->getStatus()->getCode(), 200);
 		$this->assertEqual($response->getHeaders()->toArray(), array());
@@ -15,11 +18,11 @@ class Ergo_Http_ResponseTest extends UnitTestCase
 	public function testResponseWithBody()
 	{
 		$headers = array(
-			new Ergo_Http_HeaderField('Content-Length', 6),
-			new Ergo_Http_HeaderField('Content-Type', 'text/plain')
+			new Http\HeaderField('Content-Length', 6),
+			new Http\HeaderField('Content-Type', 'text/plain')
 		);
 
-		$response = new Ergo_Http_Response(200, $headers, 'abcdef');
+		$response = new Http\Response(200, $headers, 'abcdef');
 
 		$this->assertEqual($response->getStatus()->getCode(), 200);
 		$this->assertEqual($response->getHeaders()->value('Content-Length'), 6);
@@ -31,11 +34,11 @@ class Ergo_Http_ResponseTest extends UnitTestCase
 	public function testGettingAResponseHeader()
 	{
 		$headers = array(
-			new Ergo_Http_HeaderField('Content-Length', 6),
-			new Ergo_Http_HeaderField('Content-Type', 'text/plain')
+			new Http\HeaderField('Content-Length', 6),
+			new Http\HeaderField('Content-Type', 'text/plain')
 		);
 
-		$response = new Ergo_Http_Response(200, $headers, 'abcdef');
+		$response = new Http\Response(200, $headers, 'abcdef');
 		$this->assertEqual($response->getHeaders()->value('Content-Length'),6);
 	}
 

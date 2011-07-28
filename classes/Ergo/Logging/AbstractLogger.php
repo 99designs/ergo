@@ -1,27 +1,31 @@
 <?php
 
+namespace Ergo\Logging;
+
+use \Ergo\Logger;
+
 /**
  * An abstract logger that provides named logging methods and basic level
  * filtering
  *
  * @author Lachlan Donald <lachlan@99designs.com>
  */
-abstract class Ergo_Logging_AbstractLogger implements Ergo_Logger
+abstract class AbstractLogger implements Logger
 {
 	private $_loglevel;
 
 	/**
 	 * Construct a logger with a default level of trace
 	 */
-	public function __construct($level=Ergo_Logger::INFO)
+	public function __construct($level=Logger::INFO)
 	{
 		$this->_loglevel = $level;
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Logger::logException()
+	 * @see Logger::logException()
 	 */
-	function logException($exception,$level=Ergo_Logger::ERROR)
+	function logException($exception, $level=Logger::ERROR)
 	{
 		$this->log(sprintf(
 			"%s '%s' in %s:%d",
@@ -33,7 +37,7 @@ abstract class Ergo_Logging_AbstractLogger implements Ergo_Logger
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Logger::setLogLevel()
+	 * @see Logger::setLogLevel()
 	 */
 	function setLogLevel($level)
 	{
@@ -56,11 +60,11 @@ abstract class Ergo_Logging_AbstractLogger implements Ergo_Logger
 	{
 		switch($level)
 		{
-			case Ergo_Logger::TRACE: return 1;
-			case Ergo_Logger::INFO: return 2;
-			case Ergo_Logger::WARN: return 3;
-			case Ergo_Logger::ERROR: return 4;
-			case Ergo_Logger::FATAL: return 5;
+			case Logger::TRACE: return 1;
+			case Logger::INFO: return 2;
+			case Logger::WARN: return 3;
+			case Logger::ERROR: return 4;
+			case Logger::FATAL: return 5;
 		}
 	}
 
@@ -84,7 +88,7 @@ abstract class Ergo_Logging_AbstractLogger implements Ergo_Logger
 	{
 		$args = func_get_args();
 		$message = (count($args) > 1) ? call_user_func_array('sprintf',$args) : $message;
-		$this->log($message, Ergo_Logger::INFO);
+		$this->log($message, Logger::INFO);
 		return $this;
 	}
 
@@ -95,7 +99,7 @@ abstract class Ergo_Logging_AbstractLogger implements Ergo_Logger
 	{
 		$args = func_get_args();
 		$message = (count($args) > 1) ? call_user_func_array('sprintf',$args) : $message;
-		$this->log($message, Ergo_Logger::TRACE);
+		$this->log($message, Logger::TRACE);
 		return $this;
 	}
 
@@ -106,7 +110,7 @@ abstract class Ergo_Logging_AbstractLogger implements Ergo_Logger
 	{
 		$args = func_get_args();
 		$message = (count($args) > 1) ? call_user_func_array('sprintf',$args) : $message;
-		$this->log($message, Ergo_Logger::WARN);
+		$this->log($message, Logger::WARN);
 		return $this;
 	}
 
@@ -117,7 +121,7 @@ abstract class Ergo_Logging_AbstractLogger implements Ergo_Logger
 	{
 		$args = func_get_args();
 		$message = (count($args) > 1) ? call_user_func_array('sprintf',$args) : $message;
-		$this->log($message, Ergo_Logger::ERROR);
+		$this->log($message, Logger::ERROR);
 		return $this;
 	}
 
@@ -128,7 +132,7 @@ abstract class Ergo_Logging_AbstractLogger implements Ergo_Logger
 	{
 		$args = func_get_args();
 		$message = (count($args) > 1) ? call_user_func_array('sprintf',$args) : $message;
-		$this->log($message, Ergo_Logger::FATAL);
+		$this->log($message, Logger::FATAL);
 		return $this;
 	}
 
@@ -143,7 +147,7 @@ abstract class Ergo_Logging_AbstractLogger implements Ergo_Logger
 		// ignore suppressed errors
 		if (error_reporting() === 0) return;
 
-		$error = new Ergo_Logging_Error($errno);
+		$error = new Error($errno);
 		$this->error("PHP Error $error: $errstr in $errfile:$errline");
 	}
 }

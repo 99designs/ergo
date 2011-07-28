@@ -1,6 +1,8 @@
 <?php
 
-class Ergo_View_ViewTest extends UnitTestCase
+namespace Ergo\Tests\View;
+
+class ViewTest extends \UnitTestCase
 {
 	public function setUp()
 	{
@@ -26,11 +28,11 @@ class Ergo_View_ViewTest extends UnitTestCase
 	{
 		$this->_createTemplate('test.php', 'echo $myvar;');
 
-		$view = new Ergo_View_Template();
+		$view = new \Ergo\View\Template();
 		$view
 			->includePaths($this->_dirname)
 			->assign(array('myvar'=>'test'))
-			->template('test.php')
+			->file('test.php')
 			;
 
 		$this->assertEqual($view->output(), 'test');
@@ -40,8 +42,8 @@ class Ergo_View_ViewTest extends UnitTestCase
 	{
 		$tpl = $this->_createTemplate('exception.php', 'throw new Exception("blargh");');
 
-		$view = new Ergo_View_Template();
-		$view->template($tpl);
+		$view = new \Ergo\View\Template();
+		$view->file($tpl);
 
 		$this->expectException();
 		$view->output();
@@ -51,10 +53,10 @@ class Ergo_View_ViewTest extends UnitTestCase
 	{
 		$this->_createTemplate('test.php', 'echo $myvar;');
 
-		$view = new Ergo_View_Template();
+		$view = new \Ergo\View\Template();
 		$view
 			->includePaths($this->_dirname)
-			->template('test.php')
+			->file('test.php')
 			;
 
 		$view['myvar'] = 'test';
@@ -68,11 +70,11 @@ class Ergo_View_ViewTest extends UnitTestCase
 		$this->_createTemplate('test2.php',
 			'echo $myvar1; echo $myvar2;');
 
-		$view = new Ergo_View_Template();
+		$view = new \Ergo\View\Template();
 		$view
 			->includePaths($this->_dirname)
 			->assign(array('myvar1'=>'hello '))
-			->template('test1.php')
+			->file('test1.php')
 			;
 
 		$this->assertEqual($view->output(), 'hello world');
@@ -82,10 +84,10 @@ class Ergo_View_ViewTest extends UnitTestCase
 	{
 		$tpl = $this->_createTemplate('test.php','echo $myvar;');
 
-		$view = new Ergo_View_Template($file);
+		$view = new \Ergo\View\Template($file);
 		$view
 			->assign(array('myvar'=>'hello world'))
-			->template($tpl)
+			->file($tpl)
 			;
 
 		$this->assertEqual(stream_get_contents($view->stream()),
@@ -94,7 +96,7 @@ class Ergo_View_ViewTest extends UnitTestCase
 
 	public function testStringViews()
 	{
-		$view = new Ergo_View_String('hello world');
+		$view = new \Ergo\View\String('hello world');
 
 		$this->assertEqual(stream_get_contents($view->stream()),'hello world');
 		$this->assertEqual($view->output(),'hello world');

@@ -1,6 +1,10 @@
 <?php
 
-class Ergo_Http_Error_BadRequest extends Ergo_Http_Error
+namespace Ergo\Http\Error;
+
+use \Ergo\Http\Error;
+
+class BadRequest extends Error
 {
 	const STATUS_CODE=400;
 

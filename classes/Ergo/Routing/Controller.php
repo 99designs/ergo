@@ -1,14 +1,16 @@
 <?php
 
+namespace Ergo\Routing;
+
 /**
  * A controller for handling a routed request
  */
-interface Ergo_Routing_Controller
+interface Controller
 {
 	/**
-	* Handles a {@link Ergo_Routing_RoutedHttpRequest}, returns a response
-	 * @param Ergo_Routing_RoutedHttpRequest
-	 * @return Ergo_Http_Response
+	 * Handles a {@link RoutedHttpRequest}, returns a response
+	 * @param Ergo\Http\RoutedHttpRequest
+	 * @return Ergo\Http\Response
 	 */
 	public function execute($request);
 }

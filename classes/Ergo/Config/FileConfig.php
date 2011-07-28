@@ -1,9 +1,11 @@
 <?php
 
+namespace Ergo\Config;
+
 /**
  * A configuration object that uses a file with a php array in it
  */
-class Ergo_Config_FileConfig implements Ergo_Config
+class FileConfig implements \Ergo\Config
 {
 	protected $_data=array();
 
@@ -13,13 +15,13 @@ class Ergo_Config_FileConfig implements Ergo_Config
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Configuration::get
+	 * @see \Ergo\Config::get
 	 */
 	function get($key)
 	{
 		if(!$this->exists($key))
 		{
-			throw new Ergo_Config_MissingKeyException("No config key '$key'");
+			throw new MissingKeyException("No config key '$key'");
 		}
 
 		return $this->_data[$key];
@@ -37,7 +39,7 @@ class Ergo_Config_FileConfig implements Ergo_Config
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Configuration::exists
+	 * @see \Ergo\Config::exists
 	 */
 	function exists($key)
 	{
@@ -45,7 +47,7 @@ class Ergo_Config_FileConfig implements Ergo_Config
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Configuration::getKeys
+	 * @see \Ergo\Config::getKeys
 	 */
 	function keys()
 	{
@@ -62,7 +64,7 @@ class Ergo_Config_FileConfig implements Ergo_Config
 	function loadFile($file, $optional=false, $varname=false)
 	{
 		if(!is_file($file) && !$optional)
-			throw new Ergo_Config_Exception("Failed to read config file '$file'");
+			throw new Exception("Failed to read config file '$file'");
 
 		$newConfig = @include($file);
 
@@ -70,7 +72,7 @@ class Ergo_Config_FileConfig implements Ergo_Config
 			$newConfig = $$varname;
 
 		if(!is_array($newConfig) && !$optional)
-			throw new Ergo_Config_Exception("Config file '$file' doesn't contain a config");
+			throw new Exception("Config file '$file' doesn't contain a config");
 		else if(is_array($newConfig))
 			$this->_data = array_merge($this->_data, $newConfig);
 
@@ -78,12 +80,12 @@ class Ergo_Config_FileConfig implements Ergo_Config
 	}
 
 	/**
-	 * Converts the config to an Ergo_Config_ArrayConfig, which is mutable
-	 * @return Ergo_Config_ArrayConfig
+	 * Converts the config to an ArrayConfig, which is mutable
+	 * @return ArrayConfig
 	 */
 	function toArrayConfig()
 	{
-		return new Ergo_Config_ArrayConfig($this->_data);
+		return new ArrayConfig($this->_data);
 	}
 
 	/* (non-phpdoc)
@@ -91,7 +93,7 @@ class Ergo_Config_FileConfig implements Ergo_Config
 	 */
 	public function getIterator()
 	{
-		return new ArrayIterator($this->_data);
+		return new \ArrayIterator($this->_data);
 	}
 }
 

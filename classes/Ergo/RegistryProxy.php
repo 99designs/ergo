@@ -1,9 +1,11 @@
 <?php
 
+namespace Ergo;
+
 /**
  * A proxy for an item in the registry, looked up on each call
  */
-class Ergo_RegistryProxy
+class RegistryProxy
 {
 	private $_handle;
 
@@ -40,7 +42,7 @@ class Ergo_RegistryProxy
 		}
 		else
 		{
-			throw new BadMethodCallException(sprintf(
+			throw new \BadMethodCallException(sprintf(
 				'%s::%s() is not callable',
 				get_class($this->__instance),
 				$method

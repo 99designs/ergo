@@ -1,9 +1,11 @@
 <?php
 
+namespace Ergo;
+
 /**
  * A factory that returns a clone of an object
  */
-class Ergo_Prototype implements Ergo_Factory
+class Prototype implements Factory
 {
 	private $_object;
 
@@ -16,7 +18,7 @@ class Ergo_Prototype implements Ergo_Factory
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Factory::create()
+	 * @see Factory::create()
 	 */
 	public function create()
 	{

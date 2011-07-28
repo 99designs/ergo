@@ -1,20 +1,33 @@
 <?php
 
+namespace Ergo;
+
 /**
  * The foundation and central lookup mechanism for a web application, reference
  * by the static {@link Ergo} object
  */
-class Ergo_Application implements Ergo_Plugin
+class Application implements Plugin
 {
 	const REQUEST_FACTORY='request_factory';
 	const LOGGER_FACTORY='logger_factory';
 	const REGISTRY_DATETIME='datetime';
+	const REGISTRY_ROUTER='router';
 
 	protected $_registry;
 	private $_mixin;
 	private $_started=false;
 	private $_errorHandler;
 	private $_errorProxy;
+	private $_classLoader;
+	private $_middleware=array();
+
+	/**
+	 * Constructor
+	 */
+	public function __construct($classLoader=null)
+	{
+		$this->_classLoader = $classLoader;
+	}
 
 	/**
 	 * Template method, called when the application starts
@@ -40,13 +53,13 @@ class Ergo_Application implements Ergo_Plugin
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Plugin::start()
+	 * @see \Ergo\Plugin::start()
 	 */
 	public function start()
 	{
 		if($this->_started==false)
 		{
-			$this->_errorProxy = new Ergo_Error_ErrorProxy($this);
+			$this->_errorProxy = new Error\ErrorProxy($this);
 			$this->onStart();
 			foreach($this->plugins() as $plugin) $plugin->start();
 			$this->_started = true;
@@ -54,7 +67,7 @@ class Ergo_Application implements Ergo_Plugin
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_Plugin::stop()
+	 * @see \Ergo\Plugin::stop()
 	 */
 	public function stop()
 	{
@@ -73,7 +86,16 @@ class Ergo_Application implements Ergo_Plugin
 		unset($this->_registry);
 		unset($this->_mixin);
 		unset($this->_errorHandler);
+		unset($this->_middleware);
 		return $this;
+	}
+
+	/**
+	 * A shortcut for registering an object in the registry
+	 */
+	public function register($key, $object)
+	{
+		return $this->registry()->register($key, $object);
 	}
 
 	/**
@@ -83,7 +105,7 @@ class Ergo_Application implements Ergo_Plugin
 	{
 		if(!isset($this->_registry))
 		{
-			$this->_registry = new Ergo_Registry();
+			$this->_registry = new Registry();
 		}
 
 		return $this->_registry;
@@ -105,7 +127,7 @@ class Ergo_Application implements Ergo_Plugin
 	{
 		if(!isset($this->_loggerFactory))
 		{
-			$this->_loggerFactory = new Ergo_Logging_DefaultLoggerFactory();
+			$this->_loggerFactory = new Logging\DefaultLoggerFactory();
 		}
 
 		return $this->_loggerFactory;
@@ -115,7 +137,7 @@ class Ergo_Application implements Ergo_Plugin
 	 * Creates or sets the logger factory used to create loggers
 	 * @chainable
 	 */
-	public function setLoggerFactory(Ergo_Logging_LoggerFactory $factory)
+	public function setLoggerFactory(Logging\LoggerFactory $factory)
 	{
 		$this->_loggerFactory = $factory;
 		return $this;
@@ -131,18 +153,11 @@ class Ergo_Application implements Ergo_Plugin
 
 	/**
 	 * Looks up a key in the application's core registry
+	 * @see Ergo\Registry::lookup()
 	 */
-	public function lookup($key)
+	public function lookup($key, $closure=null)
 	{
-		return $this->registry()->lookup($key);
-	}
-
-	/**
-	 * Returns an applications central controller for executing requests
-	 */
-	public function controller()
-	{
-		return new Ergo_Routing_RoutedController();
+		return $this->registry()->lookup($key, $closure);
 	}
 
 	/**
@@ -158,24 +173,21 @@ class Ergo_Application implements Ergo_Plugin
 	 */
 	public function requestFactory()
 	{
-		return $this->genericFactory(self::REQUEST_FACTORY,
-			new Ergo_Http_RequestFactory()
-			);
+		return $this->lookup(self::REQUEST_FACTORY, function() {
+			return new Http\RequestFactory($_SERVER);
+		});
 	}
 
 	/**
 	 * Creates or sets the logger factory used to create loggers
 	 */
-	public function setRequestFactory(Ergo_Factory $factory)
+	public function setRequestFactory(Factory $factory)
 	{
-		return $this->genericFactory(self::REQUEST_FACTORY,
-			new Ergo_Http_RequestFactory(),
-			$factory
-			);
+		$this->register(self::REQUEST_FACTORY, $factory);
 	}
 
 	/**
-	 * Returns the Ergo_Error_ErrorProxy for the application
+	 * Returns the \Ergo\Error\ErrorProxy for the application
 	 */
 	public function errorProxy()
 	{
@@ -183,13 +195,13 @@ class Ergo_Application implements Ergo_Plugin
 	}
 
 	/**
-	 * Returns the {@link Ergo_Mixin} instance used for plugins
+	 * Returns the {@link \Ergo\Mixin} instance used for plugins
 	 */
 	protected function mixin()
 	{
 		if(!isset($this->_mixin))
 		{
-			$this->_mixin = new Ergo_Mixin();
+			$this->_mixin = new Mixin();
 		}
 
 		return $this->_mixin;
@@ -204,9 +216,9 @@ class Ergo_Application implements Ergo_Plugin
 	}
 
 	/**
-	 * Adds a {@link Ergo_Plugin} to the application
+	 * Adds a {@link \Ergo\Plugin} to the application
 	 */
-	public function plug(Ergo_Plugin $plugin)
+	public function plug(\Ergo\Plugin $plugin)
 	{
 		$this->mixin()->addDelegate($plugin);
 		return $this;
@@ -249,19 +261,6 @@ class Ergo_Application implements Ergo_Plugin
 	}
 
 	/**
-	 * Provides a generic factory method that has a default, an optional
-	 * provided instance to use instead. Objects are stored in the registry.
-	 */
-	protected function genericFactory($key, $default, $provided=null)
-	{
-		$handle = $this->registry()->handle($key);
-
-		if(isset($provided)) $handle->set($provided);
-
-		return $handle->exists() ? $handle->get() : $handle->set($default);
-	}
-
-	/**
 	 * Returns the current timestamp of the instance returned by {@link dateTime()}
 	 * @return int
 	 */
@@ -276,9 +275,9 @@ class Ergo_Application implements Ergo_Plugin
 	 */
 	public function dateTime()
 	{
-		return $this->registry()->isRegistered(Ergo_Application::REGISTRY_DATETIME)
-			? $this->lookup(Ergo_Application::REGISTRY_DATETIME)
-			: new DateTime('now')
+		return $this->registry()->isRegistered(self::REGISTRY_DATETIME)
+			? $this->lookup(self::REGISTRY_DATETIME)
+			: new \DateTime('now')
 			;
 	}
 
@@ -289,7 +288,70 @@ class Ergo_Application implements Ergo_Plugin
 	 */
 	public function setDateTime($dateTime)
 	{
-		$this->registry()->register(Ergo_Application::REGISTRY_DATETIME, $dateTime, true);
+		$this->registry()->register(self::REGISTRY_DATETIME, $dateTime, true);
 		return $this;
+	}
+
+	/**
+	 * Returns an application's central controller for executing requests
+	 */
+	public function controller()
+	{
+		return new Routing\FilteredController($this->router());
+	}
+
+	/**
+	 * Returns a request router
+	 * @return Router
+	 */
+	public function router()
+	{
+		return $this->registry()->lookup(self::REGISTRY_ROUTER, function(){
+			return new \Ergo\Routing\Router();
+		});
+	}
+
+	/**
+	 * Returns the class loader associateds with the application
+	 * @return Router
+	 */
+	public function classLoader()
+	{
+		if(!isset($this->_classLoader))
+		{
+			$this->_classLoader = new ClassLoader();
+		}
+
+		return $this->_classLoader;
+	}
+
+	/**
+	 * Adds a middleware to the end of the middleware stack
+	 * @chainable
+	 */
+	public function middleware($className)
+	{
+		$this->_middleware []= $className;
+		return $this;
+	}
+
+	/**
+	 * Processes an HTTP request, copies response to STDOUT
+	 * @return void
+	 */
+	public function run($server=null, $stream=null)
+	{
+		$server = $server ?: $_SERVER;
+		$stream = $stream ?: fopen('php://output','w');
+		$controller = $this->controller();
+
+		// build up wrappers of middleware
+		foreach($this->_middleware as $middleware)
+			$controller = new $middleware($controller, $this);
+
+		$requestFactory = new Http\RequestFactory($server);
+		$response = $controller->execute($requestFactory->create());
+		$sender = new Http\ResponseSender($response, $stream);
+		$sender->send();
 	}
 }

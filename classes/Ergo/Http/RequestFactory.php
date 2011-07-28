@@ -1,21 +1,33 @@
 <?php
 
+namespace Ergo\Http;
+
 /**
- * Creates a Ergo_Http_Request from environment data.
+ * Creates a Request from environment data.
  */
-class Ergo_Http_RequestFactory implements Ergo_SingletonFactory
+class RequestFactory implements \Ergo\SingletonFactory
 {
 	private $_instance;
 	private $_schemaHeader;
+	private $_server;
 
 	/**
-	 * @return Ergo_Http_Request
+	 * Constructor
+	 * @param array the $_SERVER parameters
+	 */
+	public function __construct($server)
+	{
+		$this->_server = $server;
+	}
+
+	/**
+	 * @return Request
 	 */
 	public function create()
 	{
 		if(!isset($this->_instance))
 		{
-			$this->_instance = new Ergo_Http_Request(
+			$this->_instance = new Request(
 				$this->_getRequestMethod(),
 				$this->_getUrl(),
 				$this->_getHeaders(),
@@ -50,12 +62,12 @@ class Ergo_Http_RequestFactory implements Ergo_SingletonFactory
 
 	private function _getUrl()
 	{
-		return new Ergo_Http_Url(sprintf(
+		return new Url(sprintf(
 			'%s://%s:%d%s',
 			$this->_getScheme(),
-			$_SERVER['SERVER_NAME'],
+			$this->_server['SERVER_NAME'],
 			$this->_getPort(),
-			$this->_uriRelativeToHost($_SERVER['REQUEST_URI'])
+			$this->_uriRelativeToHost($this->_server['REQUEST_URI'])
 		));
 	}
 
@@ -63,7 +75,7 @@ class Ergo_Http_RequestFactory implements Ergo_SingletonFactory
 	{
 		return $this->_getSchemeHeader() == 'https'
 			? '443'
-			: $_SERVER['SERVER_PORT']
+			: $this->_server['SERVER_PORT']
 			;
 	}
 
@@ -74,7 +86,7 @@ class Ergo_Http_RequestFactory implements Ergo_SingletonFactory
 			$header = strtr(sprintf('HTTP_%s',
 				strtoupper($this->_schemaHeader)),'-','_');
 
-			return isset($_SERVER[$header]) ? $_SERVER[$header] : null;
+			return isset($this->_server[$header]) ? $this->_server[$header] : null;
 		}
 	}
 
@@ -86,7 +98,7 @@ class Ergo_Http_RequestFactory implements Ergo_SingletonFactory
 		}
 		else
 		{
-			$requestUrl = new Ergo_Http_Url($_SERVER['REQUEST_URI']);
+			$requestUrl = new Url($this->_server['REQUEST_URI']);
 			return $requestUrl->hasScheme()
 				? $requestUrl->getScheme()
 				: 'http'
@@ -99,7 +111,7 @@ class Ergo_Http_RequestFactory implements Ergo_SingletonFactory
 	 */
 	private function _getRequestMethod()
 	{
-		return $_SERVER['REQUEST_METHOD'];
+		return $this->_server['REQUEST_METHOD'];
 	}
 
 	/**
@@ -110,7 +122,7 @@ class Ergo_Http_RequestFactory implements Ergo_SingletonFactory
 		if (!function_exists('apache_request_headers')) return array();
 
 		foreach (apache_request_headers() as $name => $value)
-			$headers []= new Ergo_Http_HeaderField($name, $value);
+			$headers []= new HeaderField($name, $value);
 
 		return $headers;
 	}
@@ -130,7 +142,7 @@ class Ergo_Http_RequestFactory implements Ergo_SingletonFactory
 	 */
 	private function _uriRelativeToHost($uri)
 	{
-		$uri = new Ergo_Http_Url($uri);
+		$uri = new Url($uri);
 		return $uri->getHostRelativeUrl();
 	}
 }

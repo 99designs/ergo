@@ -1,10 +1,11 @@
 <?php
 
+namespace Ergo\Logging;
+
 /**
  * A default logger factory that returns a logger multiplexer with no loggers
  */
-class Ergo_Logging_DefaultLoggerFactory
-	implements Ergo_Logging_LoggerFactory
+class DefaultLoggerFactory implements LoggerFactory
 {
 	private $_logger;
 
@@ -15,14 +16,14 @@ class Ergo_Logging_DefaultLoggerFactory
 	{
 		if(!isset($this->_logger))
 		{
-			$this->_logger = new Ergo_Logging_LoggerMultiplexer();
+			$this->_logger = new LoggerMultiplexer();
 		}
 
 		return $this->_logger;
 	}
 
 	/* (non-phpdoc)
-	 * @see Ergo_LoggerFactory::createLogger
+	 * @see LoggerFactory::createLogger
 	 */
 	public function createLogger($class)
 	{

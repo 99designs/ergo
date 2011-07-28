@@ -1,16 +1,21 @@
 <?php
 
-class Ergo_Http_RequestTest extends UnitTestCase
+namespace Ergo\Tests\Http;
+
+use Ergo\Http;
+use Ergo\Http\Request;
+
+class RequestTest extends \UnitTestCase
 {
 	public function testSimpleUsage()
 	{
 		$headers = array(
-			new Ergo_Http_HeaderField('Content-Length', 9)
+			new Http\HeaderField('Content-Length', 9)
 		);
 
-		$request = new Ergo_Http_Request(
-			Ergo_Http_Request::METHOD_GET,
-			new Ergo_Http_Url('http://example.org/test/123?a=b'),
+		$request = new Http\Request(
+			Request::METHOD_GET,
+			new Http\Url('http://example.org/test/123?a=b'),
 			$headers,
 			'test data'
 		);
@@ -25,7 +30,7 @@ class Ergo_Http_RequestTest extends UnitTestCase
 
 	public function testRequestFactoryWithAbsoluteUrlInEnvironment()
 	{
-		$_SERVER = array(
+		$server = array(
 			'SERVER_NAME' => 'example.com', // .com
 			'HTTP_HOST' => 'example.com', // .com
 			'SERVER_PORT' => '80',
@@ -33,7 +38,7 @@ class Ergo_Http_RequestTest extends UnitTestCase
 			'REQUEST_METHOD' => 'GET',
 			);
 
-		$factory = new Ergo_Http_RequestFactory();
+		$factory = new Http\RequestFactory($server);
 		$request = $factory->create();
 
 		// I'm not sure exactly what the URL should be, but
@@ -48,7 +53,7 @@ class Ergo_Http_RequestTest extends UnitTestCase
 
 	public function testRequestFactorySchemeHeader()
 	{
-		$_SERVER = array(
+		$server = array(
 			'SERVER_NAME' => 'example.com', // .com
 			'HTTP_HOST' => 'example.com', // .com
 			'SERVER_PORT' => '80',
@@ -57,7 +62,7 @@ class Ergo_Http_RequestTest extends UnitTestCase
 			'HTTP_X_FORWARDED_PROTO' => 'https',
 			);
 
-		$factory = new Ergo_Http_RequestFactory();
+		$factory = new Http\RequestFactory($server);
 		$factory->setSchemeHeader('X-Forwarded-Proto');
 		$request = $factory->create();
 

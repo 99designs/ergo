@@ -1,44 +1,58 @@
 Ergo
 ==========
 
-A micro-library for request/response routing and HTTP interaction in PHP5. Designed to support barebones
-PHP webapplication development on 99designs.com.
+A light-weight library for processing requests and responses in PHP5.3. Provides a
+closure-based infrastructure for routing, controllers and templating.
 
-Example
+The name is from the latin, Cogito ergo sum. "I think, therefore I am".
+
+Install
 -------
 
-Building an Application Object
+Ergo is designed to be easy to install and integrate.
 
-	class MyApp extends Ergo_Application
-	{
-		public function onStart()
-		{
-			// set up a central registry for core objects
-			$this->registry()
-				->register('db', new MyDatabaseConnection())
-				->register('routes', new MyRouteMap())
-				;
-		}
-	}
+	$ pear channel-discover pearhub.org
+	$ pear install pearhub/Ergo
 
-	Ergo::start(new MyApp());
+Alternately, check it out as a submodule and use your own classloader on the classes dir.
+
+Basic Usage
+-----------
+
+	require_once('Ergo/ergo.php');
+
+	Ergo::router()->connect('/helloworld', 'helloworld', function() {
+		return Ergo::template('helloworld.tpl.php', array(
+		  'greeting'=>'Hello World'
+		));
+	});
+
+	Ergo::router()->connect('/*', 'any', function() {
+		throw new \Ergo\Http\NotFound("Not implemented yet");
+	});
 
 
-Meaning
--------
 
-The name Ergo was chosen for it's meaning "therefore". One of the core functions of the library is to provide
-a central registry for applications and a way of writing applications with low coupling and easy testability.
-
-Running the tests
+How to develop
 -----------------
 
-<pre><code>
+For running, Ergo has no external dependancies. For development [Pundle](https://github.com/T-Moe/Pundle) is used to pull
+in SimpleTest as a dependancy.
 
-$ ./tests/runtests.php
-runtests.php
-OK
-Test cases run: 14/14, Passes: 206, Failures: 0, Exceptions: 0
+To install dependancies via Pundle:
 
-</code></pre>
+	$ pear channel-discover pear.webzeile.de
+	$ pear install webzeile/Pundle
+	$ pundle install
+
+Run the test suite:
+
+	$ ./runtests.php
+	OK
+	Test cases run: 14/14, Passes: 206, Failures: 0, Exceptions: 0
+
+Status
+-------
+
+Used in several high-volume production websites, including 99designs.com, flippa.com, learnable.com and sitepoint.com.
 

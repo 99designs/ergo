@@ -1,10 +1,12 @@
 <?php
 
+namespace Ergo\Http;
+
 /**
  * An HTTP request.
  * @see http://tools.ietf.org/html/rfc2616#section-5
  */
-class Ergo_Http_Request
+class Request
 {
 	const METHOD_GET = 'GET';
 	const METHOD_HEAD = 'HEAD';
@@ -20,13 +22,13 @@ class Ergo_Http_Request
 
 	/**
 	 * @param string $method
-	 * @param Ergo_Http_Url $url
+	 * @param Url $url
 	 */
-	public function __construct($method, $url, $headers, $body=null)
+	public function __construct($method, $url, $headers=array(), $body=null)
 	{
 		$this->_method = $method;
-		$this->_url = $url;
-		$this->_headers = new Ergo_Http_HeaderCollection($headers);
+		$this->_url = is_string($url) ? new Url($url) : $url;
+		$this->_headers = new HeaderCollection($headers);
 		$this->_body = $body;
 	}
 
@@ -39,7 +41,7 @@ class Ergo_Http_Request
 	}
 
 	/**
-	 * @return Ergo_Http_Url
+	 * @return Url
 	 */
 	public function getUrl()
 	{
@@ -47,13 +49,13 @@ class Ergo_Http_Request
 	}
 
 	/**
-	 * @return Ergo_Http_QueryString
+	 * @return QueryString
 	 */
 	public function getQueryString()
 	{
 		if(!isset($this->_querystring))
 		{
-			$this->_querystring = new Ergo_Http_QueryString(
+			$this->_querystring = new QueryString(
 				$this->getUrl()->hasQueryString() ?
 				$this->getUrl()->getQueryString() : ''
 				);
@@ -63,7 +65,7 @@ class Ergo_Http_Request
 	}
 
 	/**
-	 * @return Ergo_Http_HeaderCollection
+	 * @return HeaderCollection
 	 */
 	public function getHeaders()
 	{
@@ -87,7 +89,7 @@ class Ergo_Http_Request
 	{
 		$copy = clone $this;
 
-		if($headers !== false) $copy->_headers = new Ergo_Http_HeaderCollection($headers);
+		if($headers !== false) $copy->_headers = new HeaderCollection($headers);
 		if($body !== false) $copy->_body = $body;
 		if($url !== false) $copy->_url = $url;
 		if($method !== false) $copy->_method = $method;

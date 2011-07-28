@@ -1,17 +1,20 @@
 <?php
 
+namespace Ergo;
+
 /**
  * Basic SPL class loader
  */
-class Ergo_ClassLoader
+class ClassLoader
 {
 	private $_paths = array();
 
 	/**
 	 * Registers this class as an SPL class loader.
 	 */
-	public function register()
+	public function register($paths=array())
 	{
+		$this->_paths = $paths;
 		spl_autoload_register(array($this, 'loadClass'));
 		return $this;
 	}
