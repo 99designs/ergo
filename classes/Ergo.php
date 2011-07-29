@@ -82,11 +82,7 @@ class Ergo
 	 */
 	static function __callStatic($method, $arguments)
 	{
-		if(!method_exists(self::application(), $method))
-			throw new \InvalidArgumentException("Application doesn't implement $method()");
-
 		return call_user_func_array(
 			array(self::application(), $method), $arguments);
 	}
-
 }
