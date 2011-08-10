@@ -12,38 +12,13 @@ class WebErrorHandler extends AbstractErrorHandler
 {
 	const EXIT_CODE = 2;
 
-	/* (non-phpdoc)
-	 * @see ErrorHandler::context()
-	 */
-	public function context()
-	{
-		$request = Ergo::request();
-		$headers = $request->getHeaders();
-		$hostname = $headers->value('Host');
-		$requestStr = sprintf('%s %s',
-			$request->getRequestMethod(),
-			$request->getUrl()
-		);
-
-		// add some metadata
-		return array(
-			'Environment'=>'Web',
-			'Request' => $requestStr,
-			'Server Name' => $this->_server('SERVER_NAME', 'unknown'),
-			'Host' => $hostname,
-			'Referer' => $this->_server('HTTP_REFERER', 'unknown'),
-			'User IP' => $this->_server('REMOTE_ADDR', 'unknown'),
-			'User Agent' => $this->_server('HTTP_USER_AGENT', 'unknown'),
-		);
-	}
-
 	/**
 	 * Builds a response object
 	 */
 	protected function buildResponseBody($e)
 	{
 		$context = '';
-		foreach($this->context() as $key=>$value)
+		foreach(Ergo::errorContext()->export() as $key=>$value)
 		{
 			$context .= "$key: $value\n";
 		}
@@ -92,10 +67,5 @@ class WebErrorHandler extends AbstractErrorHandler
 			if (ob_get_level() > 0) ob_flush();
 			exit(self::EXIT_CODE);
 		}
-	}
-
-	private function _server($var, $default)
-	{
-		return isset($_SERVER[$var]) ? $_SERVER[$var] : $default;
 	}
 }

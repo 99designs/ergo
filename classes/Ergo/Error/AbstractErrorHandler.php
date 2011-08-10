@@ -39,14 +39,6 @@ abstract class AbstractErrorHandler implements ErrorHandler
 		return $this->_logger;
 	}
 
-	/* (non-phpdoc)
-	 * @see \Ergo\Error\ErrorHandler::context()
-	 */
-	public function context()
-	{
-		return array();
-	}
-
 	/**
 	* Determines whether an exception is recoverable
 	* @return bool

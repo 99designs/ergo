@@ -23,24 +23,6 @@ class ConsoleErrorHandler extends AbstractErrorHandler
 	}
 
 	/* (non-phpdoc)
-	 * @see ErrorHandler::context()
-	 */
-	public function context()
-	{
-		$hostname = isset($_SERVER['HOSTNAME']) ? $_SERVER['HOSTNAME'] : 'unknown';
-		$user = isset($_SERVER['USER']) ? $_SERVER['USER'] : 'unknown';
-
-		return array(
-			'Environment'=>'Console',
-			'Host'=>$hostname,
-			'User'=>$user,
-			'Script'=>$_SERVER['SCRIPT_FILENAME'],
-			'Working Dir'=>getcwd(),
-			'Umask'=>sprintf("%04o", umask()),
-		);
-	}
-
-	/* (non-phpdoc)
 	 * @see ErrorHandler::handle()
 	 */
 	public function handle($e)

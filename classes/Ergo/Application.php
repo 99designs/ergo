@@ -2,6 +2,8 @@
 
 namespace Ergo;
 
+use Ergo\Error\ErrorContext;
+
 /**
  * The foundation and central lookup mechanism for a web application, reference
  * by the static {@link Ergo} object
@@ -18,6 +20,7 @@ class Application implements Plugin
 	private $_started=false;
 	private $_errorHandler;
 	private $_errorProxy;
+	private $_errorContext;
 	private $_classLoader;
 	private $_middleware=array();
 
@@ -86,6 +89,7 @@ class Application implements Plugin
 		unset($this->_registry);
 		unset($this->_mixin);
 		unset($this->_errorHandler);
+		unset($this->_errorContext);
 		unset($this->_middleware);
 		return $this;
 	}
@@ -231,6 +235,22 @@ class Application implements Plugin
 	public function isConsole()
 	{
 		return (php_sapi_name() == 'cli');
+	}
+
+	/**
+	 * Gets the error context for the application
+	 */
+	public function errorContext()
+	{
+		if (!isset($this->_errorContext))
+			$this->_errorContext = new ErrorContext();
+
+		return $this->_errorContext;
+	}
+
+	public function setErrorContext($context)
+	{
+		$this->_errorContext = $context;
 	}
 
 	/**

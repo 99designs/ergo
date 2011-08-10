@@ -9,17 +9,14 @@ namespace Ergo\Logging;
 class StackTraceLogger extends AbstractLogger
 {
 	private $_filepath;
-	private $_context;
 
 	/**
 	 * Construct
 	 * @param $filepath string the path to the logfile
-	 * @param $context object an optional object with a context() method that returns an array
 	 */
-	function __construct($filepath, $context=null)
+	function __construct($filepath)
 	{
 		$this->_filepath = $filepath;
-		$this->_context = $context;
 	}
 
 	/* (non-phpdoc)
@@ -28,14 +25,6 @@ class StackTraceLogger extends AbstractLogger
 	function log($message,$level=\Ergo\Logger::INFO)
 	{
 		return $this;
-	}
-
-	/**
-	 * Helper method to render the internal context object
-	 */
-	private function _context()
-	{
-		return is_object($this->_context) ? $this->_context->context() : array();
 	}
 
 	/**
@@ -61,7 +50,7 @@ class StackTraceLogger extends AbstractLogger
 		}
 
 		// add any other context
-		foreach($this->_context() as $key=>$value)
+		foreach(Ergo::errorContext()->export() as $key=>$value)
 		{
 			$message .= "$key: $value\n";
 		}

@@ -17,11 +17,5 @@ interface ErrorHandler
 	 * @return object an \Ergo\Logging\CompositeLogger
 	 */
 	public function logger();
-
-	/**
-	 * Returns an array of key value pairs describing the error context
-	 * @return array
-	 */
-	public function context();
 }
 
