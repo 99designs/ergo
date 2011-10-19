@@ -121,6 +121,7 @@ class RequestFactory implements \Ergo\SingletonFactory
 	{
 		if (!function_exists('apache_request_headers')) return array();
 
+		$headers = array();
 		foreach (apache_request_headers() as $name => $value)
 			$headers []= new HeaderField($name, $value);
 
