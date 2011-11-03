@@ -34,6 +34,11 @@ class Url
 		}
 	}
 
+	public static function construct($urlString)
+	{
+		return new self($urlString);
+	}
+
 	/**
 	 * Scheme, either http or https
 	 * @return string
