@@ -78,7 +78,7 @@ class Client
 	 */
 	public function setHttpAuth($user, $pass)
 	{
-		self::transport()->setHttpAuth();
+		self::transport()->setHttpAuth($user, $pass);
 		return $this;
 	}
 
