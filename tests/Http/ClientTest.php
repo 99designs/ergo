@@ -44,4 +44,25 @@ class ClientTest extends \UnitTestCase
 
 		$this->client()->get('/hello');
 	}
+
+	public function testSetTimeoutDelegatesToTransport()
+	{
+		$this->transport()->expectOnce('setTimeout', array(4));
+
+		$this->client()->setTimeout(4);
+	}
+
+	public function testSetHttpProxyDelegatesToTransport()
+	{
+		$this->transport()->expectOnce('setHttpProxy', array('http://my.proxy.url'));
+
+		$this->client()->setHttpProxy('http://my.proxy.url');
+	}
+
+	public function testSetHttpAuthDelegatesToTransport()
+	{
+		$this->transport()->expectOnce('setHttpAuth', array('username', 'password'));
+
+		$this->client()->setHttpAuth('username', 'password');
+	}
 }
