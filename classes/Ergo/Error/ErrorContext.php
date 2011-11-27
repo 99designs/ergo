@@ -28,12 +28,11 @@ class ErrorContext
 
 	protected function _consoleContext()
 	{
-		$hostname = isset($_SERVER['HOSTNAME']) ? $_SERVER['HOSTNAME'] : 'unknown';
 		$user = isset($_SERVER['USER']) ? $_SERVER['USER'] : 'unknown';
 
 		return array(
 			'Environment'=>'Console',
-			'Host'=>$hostname,
+			'HostName'=>gethostname(),
 			'User'=>$user,
 			'Script'=>$_SERVER['SCRIPT_FILENAME'],
 			'Working Dir'=>getcwd(),
