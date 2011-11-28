@@ -14,6 +14,7 @@ class Application implements Plugin
 	const LOGGER_FACTORY='logger_factory';
 	const REGISTRY_DATETIME='datetime';
 	const REGISTRY_ROUTER='router';
+	const REGISTRY_RAND='rand';
 
 	protected $_registry;
 	private $_mixin;
@@ -309,6 +310,31 @@ class Application implements Plugin
 	public function setDateTime($dateTime)
 	{
 		$this->registry()->register(self::REGISTRY_DATETIME, $dateTime, true);
+		return $this;
+	}
+
+
+	/**
+	 * Returns the current random number in the registry, or generates a new one
+	 * @return int
+	 */
+	public function rand($min = 0, $max = 0)
+	{
+		if (!$max)
+			$max = getrandmax();
+
+		return $this->registry()->isRegistered(self::REGISTRY_RAND)
+			? $this->lookup(self::REGISTRY_RAND)
+			: rand($min, $max);
+	}
+
+	/**
+	 *
+	 * @chainable
+	 */
+	public function setRand($rand)
+	{
+		$this->registry()->register(self::REGISTRY_RAND, $rand, true);
 		return $this;
 	}
 
