@@ -23,6 +23,7 @@ class Application implements Plugin
 	private $_errorContext;
 	private $_classLoader;
 	private $_middleware=array();
+	private $_shuffle;
 
 	/**
 	 * Constructor
@@ -91,6 +92,7 @@ class Application implements Plugin
 		unset($this->_errorHandler);
 		unset($this->_errorContext);
 		unset($this->_middleware);
+		unset($this->_shuffle);
 		return $this;
 	}
 
@@ -310,6 +312,23 @@ class Application implements Plugin
 	{
 		$this->registry()->register(self::REGISTRY_DATETIME, $dateTime, true);
 		return $this;
+	}
+
+	/**
+	 * Returns a new, shuffled array.
+	 */
+	public function shuffle($array)
+	{
+		if (isset($this->_shuffle))
+			return call_user_func($this->_shuffle, $array);
+
+		shuffle($array); // NEVER fails
+		return $array;
+	}
+
+	public function setShuffle($callback)
+	{
+		$this->_shuffle = $callback;
 	}
 
 	/**
