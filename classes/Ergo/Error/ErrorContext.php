@@ -32,7 +32,7 @@ class ErrorContext
 
 		return array(
 			'Environment'=>'Console',
-			'HostName'=>gethostname(),
+			'Host Name'=>gethostname(),
 			'User'=>$user,
 			'Script'=>$_SERVER['SCRIPT_FILENAME'],
 			'Working Dir'=>getcwd(),
@@ -54,6 +54,7 @@ class ErrorContext
 		return array(
 			'Environment'=>'Web',
 			'Request' => $requestStr,
+			'Host Name' => gethostname(),
 			'Server Name' => isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : 'unknown',
 			'Host' => $hostname,
 			'Referer' => isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'unknown',
