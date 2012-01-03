@@ -79,10 +79,11 @@ class Ergo_Routing_RoutedController
 		$path = $url->getPath();
 
 		$match = $this->_routeMap->lookup($path);
+		$routedRequest = new Ergo_Routing_RoutedRequest($request, $match, $this->_routeMap);
+
 		return $this->_controllerFor($match->getName())->execute(
-			new Ergo_Routing_RoutedRequest(
-				$this->_filterChain->filter($request),
-					$match, $this->_routeMap));
+			$this->_filterChain->filter($routedRequest)
+		);
 	}
 
 	/**
