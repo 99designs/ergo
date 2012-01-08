@@ -28,6 +28,26 @@ class RequestTest extends \UnitTestCase
 			));
 	}
 
+	public function testExport()
+	{
+		$request = new Request(
+			Request::METHOD_GET,
+			'http://example.org',
+			array('Accept: text/html'),
+			'test data'
+		);
+
+		$this->assertEqual(
+			$request->export(),
+			array(
+				'GET',
+				'http://example.org/',
+				array('Accept: text/html'),
+				'test data',
+			)
+		);
+	}
+
 	public function testRequestFactoryWithAbsoluteUrlInEnvironment()
 	{
 		$server = array(

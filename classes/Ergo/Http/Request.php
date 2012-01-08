@@ -98,4 +98,17 @@ class Request
 
 		return $copy;
 	}
+
+	/**
+	 * @return array
+	 */
+	public function export()
+	{
+		return array(
+			$this->getRequestMethod(),
+			(string)$this->getUrl(),
+			$this->getHeaders()->toArray($crlf = false),
+			$this->getBody()
+		);
+	}
 }

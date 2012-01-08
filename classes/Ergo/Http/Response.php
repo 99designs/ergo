@@ -55,4 +55,16 @@ class Response
 	{
 		return $this->_body;
 	}
+
+	/**
+	 * @return array
+	 */
+	public function export()
+	{
+		return array(
+			$this->getStatus()->getCode(),
+			$this->getHeaders()->toArray($crlf = false),
+			(string)$this->getBody()
+		);
+	}
 }
