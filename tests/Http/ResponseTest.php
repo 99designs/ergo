@@ -42,5 +42,20 @@ class ResponseTest extends \UnitTestCase
 		$this->assertEqual($response->getHeaders()->value('Content-Length'),6);
 	}
 
+	public function testExport()
+	{
+		$response = new Http\Response(
+			200, array('Content-Type: text/html'), 'Food goes in here'
+		);
+
+		$this->assertEqual(
+			$response->export(),
+			array(
+				200,
+				array('Content-Type: text/html'),
+				'Food goes in here',
+			)
+		);
+	}
 
 }
