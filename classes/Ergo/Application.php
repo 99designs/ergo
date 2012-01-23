@@ -178,9 +178,7 @@ class Application implements Plugin
 	 */
 	public function requestFactory()
 	{
-		return $this->lookup(self::REQUEST_FACTORY, function() {
-			return new Http\RequestFactory($_SERVER);
-		});
+		return new Http\RequestFactory($_SERVER);
 	}
 
 	/**
