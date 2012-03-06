@@ -218,7 +218,12 @@ class Route
 	 */
 	private function _isMatch($path)
 	{
-		if(is_callable(array($this->_routeMatchCallbackClassName,'routeMatch'), true))
+		$basicMatch = $this->_isBasicMatch($path);
+
+		if(
+			is_callable(array($this->_routeMatchCallbackClassName,'routeMatch'), true) &&
+			$basicMatch
+		)
 		{
 			return call_user_func(
 				array(new $this->_routeMatchCallbackClassName,'routeMatch'),
@@ -227,7 +232,17 @@ class Route
 		}
 		else
 		{
-			return preg_match($this->_pattern, $path, $this->_pathMatches);
+			return $basicMatch;
 		}
+	}
+
+	/**
+	 * Basic regular expression path match.
+	 * @param string $path
+	 * @return boolean
+	 */
+	private function _isBasicMatch($path)
+	{
+		return preg_match($this->_pattern, $path, $this->_pathMatches);
 	}
 }
