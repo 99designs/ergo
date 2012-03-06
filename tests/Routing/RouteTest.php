@@ -176,6 +176,23 @@ class RouteTest extends \UnitTestCase
 		$router->buildUrl('fruit', array('fruit' =>'apple'));
 	}
 
+	public function testCustomRouteCallbackCatchall()
+	{
+		$router = new Routing\Router();
+		$router->connect('/{everything}', 'test', null, array(), 'Ergo\Tests\Routing\CustomRouteCallback');
+		$this->_assertRoute($router,'/test','test');
+		$this->_assertNoRoute($router,'/test2','test');
+	}
+
+	public function testCustomRouteCallbackLimited()
+	{
+		$router = new Routing\Router();
+		$router->connect('/test*', 'test', null, array(), 'Ergo\Tests\Routing\CustomRouteCallback');
+		$this->_assertRoute($router,'/test','test');
+		$this->_assertNoRoute($router,'/test/blah','test');
+		$this->_assertNoRoute($router,'/test2','test');
+	}
+
 	// ----------------------------------------
 
 	private function _assertRoute($connect, $template, $name, $parameters=false)
@@ -198,4 +215,15 @@ class RouteTest extends \UnitTestCase
 		}
 	}
 
+}
+
+class CustomRouteCallback implements \Ergo\Routing\CustomRouteMatch
+{
+	public function routeMatch($url)
+	{
+		if($url == '/test')
+			return true;
+
+		return false;
+	}
 }
