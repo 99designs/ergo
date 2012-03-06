@@ -26,17 +26,21 @@ class Route
 	private $_parameters;
 	private $_pattern;
 	private $_interpolate;
+	private $_routeMatchCallbackClassName;
+	private $_pathMatches;
 
 	/**
 	 * @param string $name
 	 * @param string $template
 	 */
-	public function __construct($name, $template)
+	public function __construct($name, $template, $routeMatchCallbackClassName=null)
 	{
 		$this->_name = $name;
 		$this->_template = $template;
 		$this->_parameters = $this->_getParameterNames($template);
 		$this->_pattern = $this->_getParameterPattern($template);
+		$this->_routeMatchCallbackClassName = $routeMatchCallbackClassName;
+		$this->_pathMatches = array();
 	}
 
 	/**
@@ -44,14 +48,14 @@ class Route
 	 */
 	public function getMatch($path, $metadata=null)
 	{
-		if (preg_match($this->_pattern, $path, $matches))
+		if ($this->_isMatch($path))
 		{
-			array_shift($matches);
+			array_shift($this->_pathMatches);
 
-			$matches = array_map('urldecode', $matches);
-			$parameters = empty($matches)
+			$this->_pathMatches = array_map('urldecode', $this->_pathMatches);
+			$parameters = empty($this->_pathMatches)
 				? array()
-				: array_combine($this->_parameters, $matches);
+				: array_combine($this->_parameters, $this->_pathMatches);
 
 			return new RouteMatch($this->_name, $parameters, $metadata);
 		}
@@ -205,5 +209,25 @@ class Route
 			array('{', '}'),
 			preg_quote($template, '#')
 		);
+	}
+
+	/**
+	 * Determines if this route matches the given path.
+	 * @param string $path
+	 * @return boolean
+	 */
+	private function _isMatch($path)
+	{
+		if(is_callable(array($this->_routeMatchCallbackClassName,'routeMatch'), true))
+		{
+			return call_user_func(
+				array(new $this->_routeMatchCallbackClassName,'routeMatch'),
+				$path
+			);
+		}
+		else
+		{
+			return preg_match($this->_pattern, $path, $this->_pathMatches);
+		}
 	}
 }

@@ -59,9 +59,9 @@ class Router implements Controller
 	 * @param mixed a controller, either a class, a string or a callback
 	 * @chainable
 	 */
-	public function connect($template, $name, $controller=null, $metadata=array())
+	public function connect($template, $name, $controller=null, $metadata=array(), $routeMatchCallbackClassName=null)
 	{
-		$this->_routes[$name] = new Route($name, $template);
+		$this->_routes[$name] = new Route($name, $template, $routeMatchCallbackClassName);
 
 		if($metadata)
 			$this->_metadata[$name] = $metadata;
