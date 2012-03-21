@@ -61,7 +61,10 @@ class Router implements Controller
 	 */
 	public function connect($template, $name, $controller=null, $metadata=array())
 	{
-		$this->_routes[$name] = new Route($name, $template);
+		if($template instanceof Route)
+			$this->_routes[$name] = $template;
+		else
+			$this->_routes[$name] = new Route($name, $template);
 
 		if($metadata)
 			$this->_metadata[$name] = $metadata;
