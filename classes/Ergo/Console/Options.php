@@ -224,7 +224,7 @@ class Options
 		if(!isset($this->_parsed)) $this->parse($this->_args);
 
 		if(!isset($this->_options[$arg]) && !isset($this->_parsed[$arg]))
-			throw new InvalidArgumentException("Unknown argument $arg");
+			throw new \InvalidArgumentException("Unknown argument $arg");
 
 		if($this->_options[$arg]->type == 'flag' && !$this->_options[$arg]->needsValue)
 		{
