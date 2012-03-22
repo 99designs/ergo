@@ -7,6 +7,7 @@ use Ergo\Routing\Router;
 use Ergo\Http;
 
 \Mock::generate('\Ergo\Routing\ControllerResolver', 'MockControllerResolver');
+\Mock::generate('\Ergo\Routing\Route', 'MockRoute');
 
 class RouterTest extends \UnitTestCase
 {
@@ -78,6 +79,20 @@ class RouterTest extends \UnitTestCase
 
 		$route = $router->lookup('/user/24');
 		$this->assertEqual($route->getMetadata(), array('https'=>true));
+	}
+
+	public function testCustomRoute()
+	{
+		$urlPath = '/user/24';
+
+		$mockRoute = new \MockRoute();
+		$mockRoute->setReturnValue('getMatch',true);
+		$mockRoute->expectOnce('getMatch',array($urlPath,array()));
+
+		$router = new Router();
+		$router->connect($mockRoute, 'Custom.view');
+
+		$route = $router->lookup($urlPath);
 	}
 
 	private function assertResponse($response, $body, $status=200)

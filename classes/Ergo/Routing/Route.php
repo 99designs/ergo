@@ -108,6 +108,11 @@ class Route
 
 	// ----------------------------------------
 
+	/**
+	* Determines if this route matches the given path.
+	* @param string $path
+	* @return boolean
+	*/
 	protected function _isMatch($path)
 	{
 		return preg_match($this->_pattern, $path, $this->_pathMatches);
