@@ -26,7 +26,6 @@ class Route
 	private $_parameters;
 	private $_pattern;
 	private $_interpolate;
-	private $_pathMatches;
 
 	/**
 	 * @param string $name
@@ -38,7 +37,6 @@ class Route
 		$this->_template = $template;
 		$this->_parameters = $this->_getParameterNames($template);
 		$this->_pattern = $this->_getParameterPattern($template);
-		$this->_pathMatches = array();
 	}
 
 	/**
@@ -46,14 +44,14 @@ class Route
 	 */
 	public function getMatch($path, $metadata=null)
 	{
-		if($this->_isMatch($path))
+		if($matches = $this->_getMatches($path))
 		{
-			array_shift($this->_pathMatches);
+			array_shift($matches);
 
-			$this->_pathMatches = array_map('urldecode', $this->_pathMatches);
-			$parameters = empty($this->_pathMatches)
+			$matches = array_map('urldecode', $matches);
+			$parameters = empty($matches)
 				? array()
-				: array_combine($this->_parameters, $this->_pathMatches);
+				: array_combine($this->_parameters, $matches);
 
 			return new RouteMatch($this->_name, $parameters, $metadata);
 		}
@@ -109,13 +107,16 @@ class Route
 	// ----------------------------------------
 
 	/**
-	* Determines if this route matches the given path.
+	* Finds route pattern matches for the given path.
+	* Returns empty array if no matches found (indicating route doesn't match $path).
+	*
 	* @param string $path
-	* @return boolean
+	* @return array
 	*/
-	protected function _isMatch($path)
+	protected function _getMatches($path)
 	{
-		return preg_match($this->_pattern, $path, $this->_pathMatches);
+		preg_match($this->_pattern, $path, $matches);
+		return $matches;
 	}
 
 	/**
