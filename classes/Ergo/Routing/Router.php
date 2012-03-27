@@ -103,17 +103,11 @@ class Router implements Controller
 	 */
 	public function lookup($path)
 	{
-		foreach ($this->_routes as $route)
-		{
-			if ($match = $route->getMatch($path, $this->metadata($route->getName())))
-				return $match;
-		}
+		if($match = $this->_getRouteMatch($path,$this->_routes))
+			return $match;
 
-		foreach ($this->_customRoutes as $route)
-		{
-			if ($match = $route->getMatch($path, $this->metadata($route->getName())))
-				return $match;
-		}
+		if($match = $this->_getRouteMatch($path,$this->_customRoutes))
+			return $match;
 
 		throw new LookupException("No route matches path '$path'");
 	}
@@ -196,5 +190,21 @@ class Router implements Controller
 	private function _getAllRoutes()
 	{
 		return array_merge($this->_routes,$this->_customRoutes);
+	}
+
+	/**
+	 * Look for a matching route in provided route list.
+	 * @param string $path
+	 * @param array $routes
+	 * return mixed Ergo\Routing\Route or boolean
+	 */
+	private function _getRouteMatch($path,$routes)
+	{
+		foreach ($routes as $route)
+		{
+			if ($match = $route->getMatch($path, $this->metadata($route->getName())))
+				return $match;
+		}
+		return false;
 	}
 }
