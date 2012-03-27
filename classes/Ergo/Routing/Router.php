@@ -8,6 +8,7 @@ namespace Ergo\Routing;
 class Router implements Controller
 {
 	private $_routes = array();
+	private $_customRoutes = array();
 	private $_controllers = array();
 	private $_defaultMetadata = array();
 	private $_metadata = array();
@@ -62,7 +63,7 @@ class Router implements Controller
 	public function connect($template, $name, $controller=null, $metadata=array())
 	{
 		if($template instanceof Route)
-			$this->_routes[$name] = $template;
+			$this->_customRoutes[$name] = $template;
 		else
 			$this->_routes[$name] = new Route($name, $template);
 
@@ -108,6 +109,12 @@ class Router implements Controller
 				return $match;
 		}
 
+		foreach ($this->_customRoutes as $route)
+		{
+			if ($match = $route->getMatch($path, $this->metadata($route->getName())))
+				return $match;
+		}
+
 		throw new LookupException("No route matches path '$path'");
 	}
 
@@ -129,10 +136,11 @@ class Router implements Controller
 	 */
 	public function routeByName($name)
 	{
-		if(!isset($this->_routes[$name]))
+		$routes = $this->_getAllRoutes();
+		if(!isset($routes[$name]))
 			throw new LookupException("No route named '$name'");
 
-		return $this->_routes[$name];
+		return $routes[$name];
 	}
 
 	/**
@@ -179,5 +187,14 @@ class Router implements Controller
 		$match = $this->lookup($request->getUrl()->getPath());
 		$controller = $this->controller($match->getName());
 		return $controller->execute(new RoutedRequest($request, $match, $this));
+	}
+
+	/**
+	 * Get all standard and custom routes combined.
+	 * @return array
+	 */
+	private function _getAllRoutes()
+	{
+		return array_merge($this->_routes,$this->_customRoutes);
 	}
 }

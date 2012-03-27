@@ -92,7 +92,7 @@ class RouterTest extends \UnitTestCase
 		$router = new Router();
 		$router->connect($mockRoute, 'Custom.view');
 
-		$route = $router->lookup($urlPath);
+		$this->assertEqual($mockRoute,$router->lookup($urlPath));
 	}
 
 	private function assertResponse($response, $body, $status=200)
