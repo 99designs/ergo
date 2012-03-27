@@ -196,7 +196,7 @@ class Router implements Controller
 	 * Look for a matching route in provided route list.
 	 * @param string $path
 	 * @param array $routes
-	 * return mixed Ergo\Routing\Route or boolean
+	 * @return mixed Ergo\Routing\Route or boolean
 	 */
 	private function _getRouteMatch($path,$routes)
 	{
