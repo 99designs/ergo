@@ -189,6 +189,15 @@ class Options
 	}
 
 	/**
+	 * Retreives the value of the specified key, or returns the default if it
+	 * doesn't exist
+	 */
+	public function fetch($key, $default)
+	{
+		return $this->has($key) ? $this->value($key) : $default;
+	}
+
+	/**
 	 * Determines if the specific key has been set. If multiple parameters are passed
 	 * it checks if at least one of the parameters is set.
 	 * @return bool

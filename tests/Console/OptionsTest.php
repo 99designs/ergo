@@ -141,6 +141,15 @@ class OptionsTest extends \UnitTestCase
 		$this->assertNoErrors($options);
 	}
 
+	public function testFetch()
+	{
+		$options = new Options(array('x.php', '-b=gralb'));
+		$options->define(array('-b='));
+
+		$this->assertEqual($options->fetch('-b', 'hello'), 'gralb');
+		$this->assertEqual($options->fetch('-y', 'blarg'), 'blarg');
+	}
+
 	private function assertNoErrors($options)
 	{
 		$this->assertEqual(count($options->errors()), 0);
