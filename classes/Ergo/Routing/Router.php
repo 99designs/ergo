@@ -130,11 +130,13 @@ class Router implements Controller
 	 */
 	public function routeByName($name)
 	{
-		$routes = $this->_getAllRoutes();
-		if(!isset($routes[$name]))
-			throw new LookupException("No route named '$name'");
+		if (isset($this->_routes[$name]))
+				return $this->_routes[$name];
 
-		return $routes[$name];
+		if (isset($this->_customRoutes[$name]))
+				return $this->_customRoutes[$name];
+
+		throw new LookupException("No route named '$name'");
 	}
 
 	/**
@@ -181,15 +183,6 @@ class Router implements Controller
 		$match = $this->lookup($request->getUrl()->getPath());
 		$controller = $this->controller($match->getName());
 		return $controller->execute(new RoutedRequest($request, $match, $this));
-	}
-
-	/**
-	 * Get all standard and custom routes combined.
-	 * @return array
-	 */
-	private function _getAllRoutes()
-	{
-		return array_merge($this->_routes,$this->_customRoutes);
 	}
 
 	/**
