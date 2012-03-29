@@ -44,7 +44,7 @@ class Route
 	 */
 	public function getMatch($path, $metadata=null)
 	{
-		if (preg_match($this->_pattern, $path, $matches))
+		if($matches = $this->_getMatches($path))
 		{
 			array_shift($matches);
 
@@ -105,6 +105,19 @@ class Route
 	}
 
 	// ----------------------------------------
+
+	/**
+	* Finds route pattern matches for the given path.
+	* Returns empty array if no matches found (indicating route doesn't match $path).
+	*
+	* @param string $path
+	* @return array
+	*/
+	protected function _getMatches($path)
+	{
+		preg_match($this->_pattern, $path, $matches);
+		return $matches;
+	}
 
 	/**
 	 * A callback for preg_replace_callback() that returns interpolation parameters

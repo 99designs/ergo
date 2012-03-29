@@ -8,6 +8,7 @@ namespace Ergo\Routing;
 class Router implements Controller
 {
 	private $_routes = array();
+	private $_customRoutes = array();
 	private $_controllers = array();
 	private $_defaultMetadata = array();
 	private $_metadata = array();
@@ -61,7 +62,10 @@ class Router implements Controller
 	 */
 	public function connect($template, $name, $controller=null, $metadata=array())
 	{
-		$this->_routes[$name] = new Route($name, $template);
+		if($template instanceof Route)
+			$this->_customRoutes[$name] = $template;
+		else
+			$this->_routes[$name] = new Route($name, $template);
 
 		if($metadata)
 			$this->_metadata[$name] = $metadata;
@@ -99,11 +103,11 @@ class Router implements Controller
 	 */
 	public function lookup($path)
 	{
-		foreach ($this->_routes as $route)
-		{
-			if ($match = $route->getMatch($path, $this->metadata($route->getName())))
-				return $match;
-		}
+		if($match = $this->_getRouteMatch($path,$this->_routes))
+			return $match;
+
+		if($match = $this->_getRouteMatch($path,$this->_customRoutes))
+			return $match;
 
 		throw new LookupException("No route matches path '$path'");
 	}
@@ -126,10 +130,13 @@ class Router implements Controller
 	 */
 	public function routeByName($name)
 	{
-		if(!isset($this->_routes[$name]))
-			throw new LookupException("No route named '$name'");
+		if (isset($this->_routes[$name]))
+				return $this->_routes[$name];
 
-		return $this->_routes[$name];
+		if (isset($this->_customRoutes[$name]))
+				return $this->_customRoutes[$name];
+
+		throw new LookupException("No route named '$name'");
 	}
 
 	/**
@@ -176,5 +183,21 @@ class Router implements Controller
 		$match = $this->lookup($request->getUrl()->getPath());
 		$controller = $this->controller($match->getName());
 		return $controller->execute(new RoutedRequest($request, $match, $this));
+	}
+
+	/**
+	 * Look for a matching route in provided route list.
+	 * @param string $path
+	 * @param array $routes
+	 * @return mixed Ergo\Routing\Route or boolean
+	 */
+	private function _getRouteMatch($path,$routes)
+	{
+		foreach ($routes as $route)
+		{
+			if ($match = $route->getMatch($path, $this->metadata($route->getName())))
+				return $match;
+		}
+		return false;
 	}
 }
