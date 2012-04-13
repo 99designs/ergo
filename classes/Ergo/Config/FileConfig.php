@@ -63,8 +63,13 @@ class FileConfig implements \Ergo\Config
 	 */
 	function loadFile($file, $optional=false, $varname=false)
 	{
-		if(!is_file($file) && !$optional)
-			throw new Exception("Failed to read config file '$file'");
+		if (!is_file($file))
+		{
+			if ($optional)
+				return $this;
+			else
+				throw new Exception("Failed to read config file '$file'");
+		}
 
 		$newConfig = @include($file);
 
