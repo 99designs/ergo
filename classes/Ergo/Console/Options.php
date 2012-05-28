@@ -272,7 +272,7 @@ class Options
 	{
 		if($value === 'true')
 			return true;
-		if($value === '')
+		if($value === '' || strcasecmp($value,'null') === 0)
 			return NULL;
 		else if($value === 'false')
 			return false;
