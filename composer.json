@@ -1,5 +1,5 @@
 {
-    "name": "ergo/ergo",
+    "name": "99designs/ergo",
     "type": "library",
     "description": "Micro-framework for routing and request/response handling in PHP 5.3",
     "keywords": ["request", "response", "routing", "99designs"],
