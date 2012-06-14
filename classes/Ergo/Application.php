@@ -278,7 +278,14 @@ class Application implements Plugin
 	 */
 	public function __call($method, $parameters)
 	{
-		return $this->mixin()->__call($method, $parameters);
+		if($this->registry()->isRegistered($method))
+		{
+			return $this->registry()->lookup($method);
+		}
+		else
+		{
+			return $this->mixin()->__call($method, $parameters);
+		}
 	}
 
 	/**
