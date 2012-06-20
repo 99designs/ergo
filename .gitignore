@@ -1,2 +1,2 @@
-.pear.tmp
-vendor/simpletest
+/composer.lock
+/vendor

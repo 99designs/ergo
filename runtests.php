@@ -7,7 +7,7 @@ require_once(BASEDIR.'/classes/Ergo/ClassLoader.php');
 $classloader = new \Ergo\ClassLoader();
 $classloader->register()->includePaths(array(
 	BASEDIR."/classes",
-	BASEDIR."/vendor/simpletest",
+	BASEDIR."/vendor/lastcraft/simpletest",
 	));
 
 $options = new \Ergo\Console\Options($argv, array(

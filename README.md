@@ -36,14 +36,12 @@ Basic Usage
 How to develop
 -----------------
 
-For running, Ergo has no external dependancies. For development [Pundle](https://github.com/T-Moe/Pundle) is used to pull
-in SimpleTest as a dependancy.
+For running, Ergo has no external dependancies. For development [Composer][1] is
+used to pull in SimpleTest as a dependancy.
 
-To install dependancies via Pundle:
+To install dependancies via Composer:
 
-	$ pear channel-discover pear.webzeile.de
-	$ pear install webzeile/Pundle
-	$ pundle install
+	$ composer install --dev
 
 Run the test suite:
 
@@ -56,3 +54,4 @@ Status
 
 Used in several high-volume production websites, including 99designs.com, flippa.com, learnable.com and sitepoint.com.
 
+[1]: https://github.com/composer/composer
