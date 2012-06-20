@@ -54,4 +54,4 @@ Status
 
 Used in several high-volume production websites, including 99designs.com, flippa.com, learnable.com and sitepoint.com.
 
-[1](https://github.com/composer/composer)
+[1]: https://github.com/composer/composer
