@@ -1,11 +1,16 @@
 <?php
 
 namespace Ergo\Tests\Console;
-
 use \Ergo\Console\Options;
 
 class OptionsTest extends \UnitTestCase
 {
+	private function assertNoErrors($options)
+	{
+		$this->assertEqual(count($options->errors()), 0,
+			"There shouldn't be any parsing errors");
+	}
+
 	public function testBasicApi()
 	{
 		$options = new Options(array('testscript.php','-v','--after','2008-01-01'));
@@ -113,7 +118,7 @@ class OptionsTest extends \UnitTestCase
 
 		$this->assertFalse($options->has('--blargh'));
 		$this->assertNull($options->value('--blargh'));
-		$this->assertEqual($options->values('--blargh'), array(NULL));
+		$this->assertEqual($options->values('--blargh'), array());
 		$this->assertNoErrors($options);
 	}
 
@@ -150,8 +155,29 @@ class OptionsTest extends \UnitTestCase
 		$this->assertEqual($options->fetch('-y', 'blarg'), 'blarg');
 	}
 
-	private function assertNoErrors($options)
+	public function testAliases()
 	{
-		$this->assertEqual(count($options->errors()), 0);
+		$options = new Options(array('x.php', '-s'));
+		$options->define(array('-s,--long'));
+
+		$this->assertTrue($options->has('-s'));
+		$this->assertTrue($options->has('--long'));
+
+		$options = new Options(array('x.php', '--long'));
+		$options->define(array('--long,-s'));
+
+		$this->assertTrue($options->has('-s'));
+		$this->assertTrue($options->has('--long'));
+	}
+
+	public function testAliasesWithDefaults()
+	{
+		$options = new Options(array('x.php'));
+		$options->define(array('-s,--long=llamas'));
+
+		$this->assertFalse($options->has('-s'));
+		$this->assertFalse($options->has('--long'));
+		$this->assertEqual($options->value('-s'), 'llamas');
+		$this->assertEqual($options->value('--long'),'llamas');
 	}
 }

@@ -9,13 +9,11 @@ namespace Ergo\Console;
  */
 class Options
 {
-	const LOOP_LIMIT=100;
-
 	private
 		$_args,
 		$_options=array(),
 		$_errors=array(),
-		$_parsed
+		$_parsed=false
 		;
 
 	/**
@@ -36,6 +34,8 @@ class Options
 	 * -v
 	 * --flag
 	 * --flag=withvalue
+	 * --flag= (require an argument)
+	 * -f,--flag=value (either, or)
 	 *
 	 * Bare parameters without a prefix can be captured as :alias
 	 *
@@ -57,20 +57,20 @@ class Options
 		{
 			$option = $this->_parseOption($option);
 			$this->_options[$option->name] = $option;
+
+			foreach($option->aliases as $alias)
+				$this->_options[$alias] =& $this->_options[$option->name];
 		}
 
 		return $this;
 	}
 
 	/**
-	 * Either returns the definition for a passed flag (-s or --short), or returns false
+	 * Either returns the definition for the given option or returns false
 	 * @return mixed
 	 */
-	private function _flag($token)
+	private function _option($token)
 	{
-		if(!preg_match('/^--?([\w-]+)/', $token, $m))
-			return false;
-
 		if(!isset($this->_options[$token]))
 			return false;
 
@@ -86,18 +86,14 @@ class Options
 		$args = is_null($args) ? $this->_args : $args;
 		$tokens = array_slice($args,1);
 		$needsValue = false;
-		$i = self::LOOP_LIMIT;
 
 		// reset global state
-		$this->_parsed = array();
+		$this->_parsed = true;
 		$this->_errors = array();
 
 		// process a FIFO stack of tokens
 		while($token = array_shift($tokens))
 		{
-			// FIXME: when this is stable, remove this
-			if(--$i <- 0) throw new OutOfBoundsException('Exceeded loop limit, there is a bug');
-
 			if(!$needsValue && !isset($this->_options[$token]))
 			{
 				// short arguments with multiple letters need expanding
@@ -114,22 +110,24 @@ class Options
 				}
 			}
 
-			if($flag = $this->_flag($token))
+			if($option = $this->_option($token))
 			{
 				if($needsValue)
-					$this->_errors[] = "Flag $needsValue needs a value";
-
-				if($flag->needsValue)
+				{
+					$this->_errors[] = "Option $needsValue needs a value";
+					$needsValue = false;
+				}
+				else if($option->needsValue)
 					$needsValue = $token;
 				else
-					$this->_parsed[$flag->name][] = NULL;
+					$option->values []= NULL;
 			}
 			else
 			{
 				if($needsValue)
-					$this->_parsed[$needsValue][] = $token;
+					$this->_options[$needsValue]->values []= $token;
 				else if($param = $this->_nextParameter())
-					$this->_parsed[$param][] = $token;
+					$this->_options[$param]->values []= $token;
 				else
 					$this->_errors[] = "Unknown parameter $token";
 
@@ -138,9 +136,9 @@ class Options
 		}
 
 		if($needsValue)
-			$this->_errors[] = "Flag $needsValue needs a value";
+			$this->_errors[] = "Option $needsValue needs a value";
 
-		// check required params
+		// post-process to check recurrance
 		foreach($this->_options as $option=>$config)
 		{
 			if(in_array($config->recurrance, array('+', '!')) && !$this->has($option))
@@ -159,7 +157,7 @@ class Options
 	 */
 	public function errors()
 	{
-		if(!isset($this->_parsed)) $this->parse($this->_args);
+		if(!$this->_parsed) $this->parse($this->_args);
 
 		return $this->_errors;
 	}
@@ -202,12 +200,15 @@ class Options
 	 * it checks if at least one of the parameters is set.
 	 * @return bool
 	 */
-	public function has($key)
+	public function has($arg)
 	{
-		if(!isset($this->_parsed)) $this->parse($this->_args);
+		if(!$this->_parsed) $this->parse($this->_args);
 
 		foreach(func_get_args() as $arg)
-			if(isset($this->_parsed[$arg])) return true;
+		{
+			if(isset($this->_options[$arg])
+				&& count($this->_option($arg)->values)) return true;
+		}
 
 		return false;
 	}
@@ -230,35 +231,38 @@ class Options
 	 */
 	public function values($arg)
 	{
-		if(!isset($this->_parsed)) $this->parse($this->_args);
+		if(!$this->_parsed) $this->parse($this->_args);
 
-		if(!isset($this->_options[$arg]) && !isset($this->_parsed[$arg]))
+		if(($option = $this->_option($arg)) == false)
 			throw new \InvalidArgumentException("Unknown argument $arg");
 
-		if($this->_options[$arg]->type == 'flag' && !$this->_options[$arg]->needsValue)
-		{
-			return array();
-		}
-		else
-		{
-			return isset($this->_parsed[$arg])
-				? $this->_parsed[$arg]
-				: array($this->_options[$arg]->value)
-				;
-		}
+		return ($option->hasDefault && empty($option->values))
+			? array($option->default)
+			: $option->values
+			;
 	}
 
 	// parses an options definition into a struct
 	private function _parseOption($option)
 	{
-		if(preg_match('/^((?:--?|:)[\w-]+)([*?+!])?(=.*?)?$/',$option,$m))
+		$regex = '/^
+			(?<option>(?:--?|\:)[\w-]+)
+			(?<alias>,(?:--?)[\w-]+)*
+			(?<recurrance>[*?+!])?
+			(?<needsvalue>=(?<default>.*?))?
+			$/x';
+
+		if(preg_match($regex,$option,$m))
 		{
 			return (object) array(
-				'name'=>$m[1],
-				'recurrance'=>empty($m[2])?'?':$m[2],
-				'value'=>empty($m[3])?null:$this->_parseOptionValue(ltrim($m[3],'=')),
-				'needsValue'=>empty($m[3])?false:true,
-				'type'=>$option[0] == ':' ? 'param' : 'flag',
+				'name' => $m['option'],
+				'recurrance' => !empty($m['recurrance']) ? $m['recurrance'] : '?',
+				'hasDefault' => !empty($m['default']),
+				'default' => isset($m['default']) ? $this->_parseOptionValue($m['default']) : null,
+				'needsValue' => !empty($m['needsvalue']),
+				'type' => $m['option'][0] == ':' ? 'param' : 'flag',
+				'aliases' => !empty($m['alias']) ? array_filter(explode(',', $m['alias'])) : array(),
+				'values' => array(),
 				);
 		}
 		else
