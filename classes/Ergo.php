@@ -9,6 +9,16 @@ class Ergo
 	private static $_starting;
 	private static $_started;
 	private static $_shutdownRegistered=false;
+	private static $_autostart;
+
+	/**
+	 * Registers an application to be started when it's
+	 * first called
+	 */
+	public static function autostart($application)
+	{
+		self::$_autostart = $application;
+	}
 
 	/**
 	 * Starts a particular application instance
@@ -21,6 +31,7 @@ class Ergo
 		$application->start();
 		self::$_starting = false;
 		self::$_started = true;
+		self::$_autostart = null;
 
 		// callback to clean up on process shutdown
 		if(!self::$_shutdownRegistered)
@@ -71,7 +82,14 @@ class Ergo
 	{
 		if(!isset(self::$_application))
 		{
-			throw new Exception('No application initialized');
+			if(!empty(self::$_autostart))
+			{
+				self::start(self::$_autostart);
+			}
+			else
+			{
+				throw new Exception('No application initialized');
+			}
 		}
 
 		return self::$_application;
