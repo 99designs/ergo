@@ -180,4 +180,27 @@ class OptionsTest extends \UnitTestCase
 		$this->assertEqual($options->value('-s'), 'llamas');
 		$this->assertEqual($options->value('--long'),'llamas');
 	}
+
+	public function testMultipleOptionalParams()
+	{
+		$options = new Options(array('x.php', 'test1', 'test2'));
+		$options->define(array(':param1', ':param2'));
+
+		$this->assertTrue($options->has(':param1'));
+		$this->assertTrue($options->has(':param2'));
+		$this->assertEqual($options->value(':param1'), 'test1');
+		$this->assertEqual($options->value(':param2'), 'test2');
+	}
+
+	public function testMultipleRecurringParamsAreGreedy()
+	{
+		$options = new Options(array('x.php', 'test1', 'test2'));
+		$options->define(array(':param1+', ':param2'));
+
+		$this->assertTrue($options->has(':param1'));
+		$this->assertFalse($options->has(':param2'));
+		$this->assertEqual($options->values(':param1'), array('test1', 'test2'));
+		$this->assertEqual($options->values(':param2'), array());
+	}
 }
+

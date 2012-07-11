@@ -291,7 +291,10 @@ class Options
 	{
 		foreach($this->_options as $option)
 		{
-			if($option->name{0} == ':' && !isset($this->_parsed[$option->name]))
+			$recurring = $option->recurrance == '+' || $option->recurrance == '*';
+			$optional = $option->recurrance == '?';
+
+			if($option->type == 'param' && ($recurring || ($optional && !$this->has($option->name))))
 				return $option->name;
 		}
 
