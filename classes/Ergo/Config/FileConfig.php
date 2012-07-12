@@ -59,9 +59,10 @@ class FileConfig implements \Ergo\Config
 	 * @param string the name of the file to load
 	 * @param bool whether the file is optional
 	 * @param mixed the name of the variable to save as the data
+	 * @param bool whether the config should merge recursively
 	 * @chainable
 	 */
-	function loadFile($file, $optional=false, $varname=false)
+	function loadFile($file, $optional=false, $varname=false, $recursive=false)
 	{
 		if (!is_file($file))
 		{
@@ -79,7 +80,12 @@ class FileConfig implements \Ergo\Config
 		if(!is_array($newConfig) && !$optional)
 			throw new Exception("Config file '$file' doesn't contain a config");
 		else if(is_array($newConfig))
-			$this->_data = array_merge($this->_data, $newConfig);
+		{
+			if ($recursive)
+				$this->_data = array_merge_recursive($this->_data, $newConfig);
+			else
+				$this->_data = array_merge($this->_data, $newConfig);
+		}
 
 		return $this;
 	}
