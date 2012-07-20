@@ -63,20 +63,11 @@ class RequestFactory implements \Ergo\SingletonFactory
 	private function _getUrl()
 	{
 		return new Url(sprintf(
-			'%s://%s:%d%s',
+			'%s://%s%s',
 			$this->_getScheme(),
-			$this->_server['SERVER_NAME'],
-			$this->_getPort(),
+			$this->_server['HTTP_HOST'],
 			$this->_uriRelativeToHost($this->_server['REQUEST_URI'])
 		));
-	}
-
-	private function _getPort()
-	{
-		return $this->_getSchemeHeader() == 'https'
-			? '443'
-			: $this->_server['SERVER_PORT']
-			;
 	}
 
 	private function _getSchemeHeader()
