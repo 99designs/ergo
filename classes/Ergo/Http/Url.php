@@ -359,11 +359,11 @@ class Url
 	{
 		$newUrl = clone $this;
 
-		parse_str($newUrl->_fragments['query'], $existingParams);
-		$mergedParams = array_merge($existingParams, $queryParameters);
+		$querystring = new QueryString($newUrl->_fragments['query']);
+		$querystring->addParameters($queryParameters);
 
-		$newUrl->_fragments['query'] = http_build_query($mergedParams);
-		$newUrl->_inputString = $newUrl->__toString();
+		$newUrl->_fragments['query'] = (string)$querystring;
+		$newUrl->_inputString = (string)$newUrl;
 
 		return $newUrl;
 	}
