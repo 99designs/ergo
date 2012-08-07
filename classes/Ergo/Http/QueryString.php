@@ -35,6 +35,15 @@ class QueryString
 	}
 
 	/**
+	 * Adds params
+	 * @param array $newParams
+	 */
+	function addParameters($newParams)
+	{
+		$this->_params = array_merge($this->_params, $newParams);
+	}
+
+	/**
 	 * Returns a particular key, with a specific default value
 	 */
 	function value($key,$default=false)

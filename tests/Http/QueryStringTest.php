@@ -23,4 +23,13 @@ class QueryStringTest extends \UnitTestCase
 		$qs = new Http\QueryString($source);
 		$this->assertEqual($qs->key1,1);
 	}
+
+	public function testAddParameters()
+	{
+		$source = "key1=1&key2=2";
+		$qs = new Http\QueryString($source);
+		$qs->addParameters(array('key2' => 3, 'key3' => 2));
+		$this->assertEqual($qs->key2, 3);
+		$this->assertEqual("key1=1&key2=3&key3=2", $qs->__toString());
+	}
 }
