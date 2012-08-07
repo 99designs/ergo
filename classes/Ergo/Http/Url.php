@@ -351,6 +351,22 @@ class Url
 		return $newUrl;
 	}
 
+	/**
+	 * Builds a URL with added/merged query parameters
+	 * @param array $queryParameters
+	 */
+	public function getUrlForMergedParameters($queryParameters)
+	{
+		$newUrl = clone $this;
+
+		parse_str($newUrl->_fragments['query'], $existingParams);
+		$mergedParams = array_merge($existingParams, $queryParameters);
+
+		$newUrl->_fragments['query'] = http_build_query($mergedParams);
+		$newUrl->_inputString = $newUrl->__toString();
+
+		return $newUrl;
+	}
 
 	/**
 	 * @see getUrlForRelativePath($path)
