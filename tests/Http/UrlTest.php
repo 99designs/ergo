@@ -279,6 +279,19 @@ class UrlTest extends \UnitTestCase
 		$this->assertEqual('http://example.org/?key1=val1&key2=XXX&key3=&key4=val4', (string)$newurl);
 	}
 
+	public function testGetUrlForMergedParametersWithEmptyQuery()
+	{
+		// url without a fragment currently
+		$url = new Http\Url('http://example.org/');
+		$newurl = $url->getUrlForMergedParameters(array(
+			"key2" => "XXX",
+			"key4" => "val4")
+		);
+		$this->assertEqual('http://example.org/?key2=XXX&key4=val4', (string)$newurl);
+	}
+
+
+
 	// ----------------------------------------
 
 	private function _assertExpectedValues($url, $custom = array())

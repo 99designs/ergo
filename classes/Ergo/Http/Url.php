@@ -357,15 +357,14 @@ class Url
 	 */
 	public function getUrlForMergedParameters($queryParameters)
 	{
-		$newUrl = clone $this;
+		if ($this->hasQueryString())
+		{
+			$querystring = new QueryString($this->getQueryString());
+			$querystring->addParameters($queryParameters);
+			$queryParameters = $querystring->toArray();
+		}
 
-		$querystring = new QueryString($newUrl->_fragments['query']);
-		$querystring->addParameters($queryParameters);
-
-		$newUrl->_fragments['query'] = (string)$querystring;
-		$newUrl->_inputString = (string)$newUrl;
-
-		return $newUrl;
+		return $this->getUrlForParameters($queryParameters);
 	}
 
 	/**
