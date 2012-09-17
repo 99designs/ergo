@@ -5,6 +5,7 @@ namespace Ergo\Http;
 class Transport
 {
 	private $_timeout = 10;
+	private $_connectTimeoutMs = 1000;
 	private $_proxy;
 	private $_auth;
 
@@ -28,6 +29,11 @@ class Transport
 	public function setTimeout($seconds)
 	{
 		$this->_timeout = $seconds;
+	}
+
+	public function setConnectTimeoutMs($milliseconds)
+	{
+		$this->_connectTimeoutMs = $milliseconds;
 	}
 
 	public function setHttpProxy($url)
@@ -63,6 +69,7 @@ class Transport
 		curl_setopt($curl, CURLOPT_HEADER, true);
 		curl_setopt($curl, CURLOPT_VERBOSE, false);
 		curl_setopt($curl, CURLOPT_TIMEOUT, $this->_timeout);
+		curl_setopt($curl, CURLOPT_CONNECTTIMEOUT_MS, $this->_connectTimeoutMs);
 		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
 

@@ -83,12 +83,22 @@ class Client
 	}
 
 	/**
-	 * Sets the connection timeout in seconds
+	 * Sets the total timeout in seconds
 	 * @chainable
 	 */
 	public function setTimeout($seconds)
 	{
 		self::transport()->setTimeout($seconds);
+		return $this;
+	}
+
+	/**
+	 * Sets the connection timeout in milliseconds
+	 * @chainable
+	 */
+	public function setConnectTimeoutMs($milliseconds)
+	{
+		self::transport()->setConnectTimeoutMs($milliseconds);
 		return $this;
 	}
 
