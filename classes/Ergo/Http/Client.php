@@ -103,6 +103,15 @@ class Client
 	}
 
 	/**
+	 * Return the base url this Client was instanciated with
+	 * @return \Ergo\Http\Url
+	 */
+	public function getBaseUrl()
+	{
+		return $this->_url;
+	}
+
+	/**
 	 * Sends a POST request
 	 * @return Response
 	 */
