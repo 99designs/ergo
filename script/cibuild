@@ -1,0 +1,5 @@
+#!/bin/sh -e
+
+composer install --dev
+
+php runtests.php
