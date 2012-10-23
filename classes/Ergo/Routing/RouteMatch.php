@@ -60,7 +60,7 @@ class RouteMatch implements \IteratorAggregate
 	 */
 	public function parameter($key,$default=false)
 	{
-		return isset($this[$key]) ? $this[$key] : $default;
+		return isset($this->$key) ? $this->$key : $default;
 	}
 
 	/*
