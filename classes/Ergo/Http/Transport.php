@@ -68,7 +68,7 @@ class Transport
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curl, CURLOPT_HEADER, true);
 		curl_setopt($curl, CURLOPT_VERBOSE, false);
-		curl_setopt($curl, CURLOPT_TIMEOUT, $this->_timeout);
+		curl_setopt($curl, CURLOPT_TIMEOUT_MS, $this->_timeout * 1000);
 		curl_setopt($curl, CURLOPT_CONNECTTIMEOUT_MS, $this->_connectTimeoutMs);
 		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
