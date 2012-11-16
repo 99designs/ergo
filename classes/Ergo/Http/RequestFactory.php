@@ -119,11 +119,24 @@ class RequestFactory implements \Ergo\SingletonFactory
 	 */
 	private function _getHeaders()
 	{
-		if (!function_exists('apache_request_headers')) return array();
-
 		$headers = array();
-		foreach (apache_request_headers() as $name => $value)
-			$headers []= new HeaderField($name, $value);
+
+		foreach ($_SERVER as $name => $value)
+		{
+			if (substr($name, 0, 5) == 'HTTP_')
+			{
+				$name = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))));
+				$headers []= new HeaderField($name, $value);
+			}
+			else if ($name == "CONTENT_TYPE")
+			{
+				$headers []= new HeaderField('Content-Type', $value);
+			}
+			else if ($name == "CONTENT_LENGTH")
+			{
+				$headers []= new HeaderField('Content-Length', $value);
+			}
+		}
 
 		return $headers;
 	}
