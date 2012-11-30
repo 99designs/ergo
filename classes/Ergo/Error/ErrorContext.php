@@ -26,6 +26,11 @@ class ErrorContext
 		unset($this->_context[$key]);
 	}
 
+	public function get($key, $default = null)
+	{
+		return isset($this->_context[$key]) ? $this->_context[$key] : $default;
+	}
+
 	protected function _consoleContext()
 	{
 		$user = isset($_SERVER['USER']) ? $_SERVER['USER'] : 'unknown';
