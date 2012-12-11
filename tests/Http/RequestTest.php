@@ -77,7 +77,7 @@ class RequestTest extends \UnitTestCase
 
 		$factory = new Http\RequestFactory($server);
 		$request = $factory->create();
-    $this->assertIsA($request, "Ergo\\Http\\NullRequest");
+    $this->assertIsA($request, 'Ergo\Http\NullRequest');
   }
 
 	public function testRequestFactorySchemeHeader()
