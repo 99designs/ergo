@@ -71,6 +71,15 @@ class RequestTest extends \UnitTestCase
 		);
 	}
 
+  public function testRequestFactoryWithoutRequestMethod()
+  {
+    $server = array();
+
+		$factory = new Http\RequestFactory($server);
+		$request = $factory->create();
+    $this->assertIsA($request, "Ergo\\Http\\NullRequest");
+  }
+
 	public function testRequestFactorySchemeHeader()
 	{
 		$server = array(
