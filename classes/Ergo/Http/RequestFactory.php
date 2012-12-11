@@ -27,12 +27,19 @@ class RequestFactory implements \Ergo\SingletonFactory
 	{
 		if(!isset($this->_instance))
 		{
-			$this->_instance = new Request(
-				$this->_getRequestMethod(),
-				$this->_getUrl(),
-				$this->_getHeaders(),
-				$this->_getBody()
-			);
+      if($this->_hasRequestMethod())
+      {
+        $this->_instance = new Request(
+          $this->_getRequestMethod(),
+          $this->_getUrl(),
+          $this->_getHeaders(),
+          $this->_getBody()
+        );
+      }
+      else
+      {
+        $this->_instance = new NullRequest(null, null);
+      }
 		}
 
 		return $this->_instance;
@@ -105,6 +112,14 @@ class RequestFactory implements \Ergo\SingletonFactory
 				;
 		}
 	}
+
+  /**
+   * @return boolean
+   */
+  private function _hasRequestMethod()
+  {
+    return isset($this->_server['REQUEST_METHOD']);
+  }
 
 	/**
 	 * @return string
