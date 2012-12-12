@@ -101,4 +101,38 @@ class RouterTest extends \UnitTestCase
 		$this->assertEqual($response->getStatus()->getCode(), $status);
 		$this->assertEqual($response->getBody(), $body);
 	}
+
+	public function testUniquenessIsDisabledByDefault()
+	{
+		$router = new Router();
+		$router->connect('/path', 'controller.action');
+		$router->connect('/path', 'othercontroller.action');
+	}
+
+	public function testTemplateUniqueness()
+	{
+		$this->expectException('InvalidArgumentException');
+
+		$router = new Router(null, true);
+		$router->connect('/path', 'controller.action');
+		$router->connect('/path', 'othercontroller.action');
+	}
+
+	public function testTemplateUniqueness_ignoreTokenName()
+	{
+		$this->expectException('InvalidArgumentException');
+
+		$router = new Router(null, true);
+		$router->connect('/path/{token}/and/{otherToken}', 'controller.action');
+		$router->connect('/path/{differentToken}/and/{differentOtherToken}', 'othercontroller.action');
+	}
+
+	public function testNameUniqueness()
+	{
+		$this->expectException('InvalidArgumentException');
+
+		$router = new Router(null, true);
+		$router->connect('/path1', 'controller.action');
+		$router->connect('/path2', 'controller.action');
+	}
 }
