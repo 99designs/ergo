@@ -14,14 +14,17 @@ class Router implements Controller
 	private $_metadata = array();
 	private $_resolver;
 	private $_baseUrl;
+	private $_templates = array();
+	private $_checkUniqueness;
 
 	/**
 	 * Constructor
 	 * @param ControllerResolver
 	 */
-	public function __construct($resolver=null)
+	public function __construct($resolver=null, $checkUniqueness=false)
 	{
 		$this->_resolver = $resolver;
+		$this->_checkUniqueness = $checkUniqueness;
 	}
 
 	/**
@@ -62,6 +65,9 @@ class Router implements Controller
 	 */
 	public function connect($template, $name, $controller=null, $metadata=array())
 	{
+		if ($this->_checkUniqueness)
+			$this->_checkUniqueness($template, $name);
+
 		if($template instanceof Route)
 			$this->_customRoutes[$name] = $template;
 		else
@@ -199,5 +205,28 @@ class Router implements Controller
 				return $match;
 		}
 		return false;
+	}
+
+	private function _checkUniqueness($template, $name)
+	{
+		$normalizedTemplate = preg_replace('/\{[\w]+\}/', '{}', $template);
+		if (isset($this->_templates[$normalizedTemplate]))
+		{
+			throw new \InvalidArgumentException(sprintf(
+				'Duplicate template %s for routes %s and %s',
+				$template,
+				$this->_templates[$normalizedTemplate],
+				$name
+			));
+		}
+		$this->_templates[$normalizedTemplate] = $name;
+
+		if (isset($this->_routes[$name]))
+		{
+			throw new \InvalidArgumentException(sprintf(
+				'Duplicate route name %s',
+				$name
+			));
+		}
 	}
 }
