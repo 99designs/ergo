@@ -207,19 +207,30 @@ class Router implements Controller
 		return false;
 	}
 
+	/**
+	 * Check that the given route doesn't conflict with a previously registred route
+	 *
+	 * @param string|object $template
+	 * @param string $name
+	 * @throws \InvalidArgumentException
+	 */
 	private function _checkUniqueness($template, $name)
 	{
-		$normalizedTemplate = preg_replace('/\{[\w]+\}/', '{}', $template);
-		if (isset($this->_templates[$normalizedTemplate]))
+		if (is_string($template))
 		{
-			throw new \InvalidArgumentException(sprintf(
-				'Duplicate template %s for routes %s and %s',
-				$template,
-				$this->_templates[$normalizedTemplate],
-				$name
-			));
+			// normalize /path/{token}/page to /path/{}/page
+			$normalizedTemplate = preg_replace('/\{[\w]+\}/', '{}', $template);
+			if (isset($this->_templates[$normalizedTemplate]))
+			{
+				throw new \InvalidArgumentException(sprintf(
+					'Duplicate template %s for routes %s and %s',
+					$template,
+					$this->_templates[$normalizedTemplate],
+					$name
+				));
+			}
+			$this->_templates[$normalizedTemplate] = $name;
 		}
-		$this->_templates[$normalizedTemplate] = $name;
 
 		if (isset($this->_routes[$name]))
 		{
