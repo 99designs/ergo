@@ -2,13 +2,11 @@
 
 namespace Ergo\Http;
 
-\Mock::generate('Ergo\Http\Transport', 'MockTransport');
-
-class ClientTest extends \UnitTestCase
+class ClientTest extends \PHPUnit_Framework_TestCase
 {
 	public function transport()
 	{
-		$transport = new \MockTransport();
+		$transport = \Mockery::mock();
 		return Client::transport($transport);
 	}
 
@@ -23,14 +21,13 @@ class ClientTest extends \UnitTestCase
 		foreach ($methods as $method)
 		{
 			$transport = $this->transport();
-			$transport->expectOnce(
-				'send',
-				array(new \IsAExpectation('\Ergo\Http\Request')),
-				"Expect $method to delegate to send with Request: %s"
-			);
-			$transport->setReturnValue(
-				'send', new Response(200, array())
-			);
+			$transport
+				->shouldReceive('send')
+				->with(\Mockery::type('\Ergo\Http\Request'))
+				->andReturn(new Response(200, array()))
+				->once()
+				;
+
 			$client = new Client('http://example.org');
 			$this->client()->$method('/hello', 'content');
 		}
@@ -38,30 +35,30 @@ class ClientTest extends \UnitTestCase
 
 	public function testInternalServerErrorStatusCodeThrowsException()
 	{
-		$this->transport()->setReturnValue('send', new Response(500, array()));
+		$this->transport()->shouldReceive('send')->andReturn(new Response(500, array()));
 
-		$this->expectException('Ergo\Http\Error');
+		$this->setExpectedException('Ergo\Http\Error');
 
 		$this->client()->get('/hello');
 	}
 
 	public function testSetTimeoutDelegatesToTransport()
 	{
-		$this->transport()->expectOnce('setTimeout', array(4));
+		$this->transport()->shouldReceive('setTimeout')->with(4)->once();
 
 		$this->client()->setTimeout(4);
 	}
 
 	public function testSetHttpProxyDelegatesToTransport()
 	{
-		$this->transport()->expectOnce('setHttpProxy', array('http://my.proxy.url'));
+		$this->transport()->shouldReceive('setHttpProxy')->with('http://my.proxy.url')->once();
 
 		$this->client()->setHttpProxy('http://my.proxy.url');
 	}
 
 	public function testSetHttpAuthDelegatesToTransport()
 	{
-		$this->transport()->expectOnce('setHttpAuth', array('username', 'password'));
+		$this->transport()->shouldReceive('setHttpAuth')->with('username', 'password')->once();
 
 		$this->client()->setHttpAuth('username', 'password');
 	}

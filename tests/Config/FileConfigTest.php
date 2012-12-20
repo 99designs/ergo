@@ -2,7 +2,7 @@
 
 namespace Ergo\Config;
 
-class FileConfigTest extends \UnitTestCase
+class FileConfigTest extends \PHPUnit_Framework_TestCase
 {
 
 	private $_files = array();
@@ -11,7 +11,7 @@ class FileConfigTest extends \UnitTestCase
 	{
 		$file = $this->_createConfig(array('var' => 'value'));
 		$config = new FileConfig(array($file));
-		$this->assertEqual($config->get('var'), 'value');
+		$this->assertEquals($config->get('var'), 'value');
 	}
 
 	public function testFileConfigOverlaysConfigFilesInOrderTheyAreLoaded()
@@ -23,8 +23,8 @@ class FileConfigTest extends \UnitTestCase
 		$config->loadFile($one);
 		$config->loadFile($two);
 
-		$this->assertEqual($config->get('red'), 'red');
-		$this->assertEqual($config->get('blue'), 'yellow');
+		$this->assertEquals($config->get('red'), 'red');
+		$this->assertEquals($config->get('blue'), 'yellow');
 	}
 
 	public function testFileConfigSilentlyIgnoresMissingOptionalConfigFiles()
@@ -33,7 +33,7 @@ class FileConfigTest extends \UnitTestCase
 		$config->loadFile('/some/non/existent/dir/config.php', true, 'config');
 	}
 
-	public function setup()
+	public function setUp()
 	{
 		$this->_files = array();
 	}

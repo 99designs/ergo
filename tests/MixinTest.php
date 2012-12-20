@@ -4,7 +4,7 @@ namespace Ergo\Tests\Mixin;
 
 class MyClass { function test() { return 'blargh'; } }
 
-class MixinTest extends \UnitTestCase
+class MixinTest extends \PHPUnit_Framework_TestCase
 {
 	public function testMixin()
 	{
@@ -14,6 +14,6 @@ class MixinTest extends \UnitTestCase
 		$mixin->addDelegate(new MyClass());
 
 		$this->assertTrue($mixin->isCallable('test'));
-		$this->assertEqual($mixin->test(), 'blargh');
+		$this->assertEquals($mixin->test(), 'blargh');
 	}
 }

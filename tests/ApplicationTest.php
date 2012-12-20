@@ -1,16 +1,14 @@
 <?php
 
-namespace ergo\tests\application;
+namespace Ergo\Application;
 
-\Mock::generate('\Ergo\Plugin','MockPlugin');
-
-class ApplicationTest extends \UnitTestCase
+class ApplicationTest extends \PHPUnit_Framework_TestCase
 {
 	public function testPluginLifeCycle()
 	{
-		$plugin = new \MockPlugin();
-		$plugin->expectOnce('start');
-		$plugin->expectOnce('stop');
+		$plugin = \Mockery::mock('Ergo\Plugin');
+		$plugin->shouldReceive('start')->once();
+		$plugin->shouldReceive('stop')->once();
 
 		$application = new \Ergo\Application();
 		$application->plug($plugin);

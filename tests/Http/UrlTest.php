@@ -9,7 +9,7 @@ use Ergo\Http;
  * @licence http://www.opensource.org/licenses/mit-license.php
  * @see http://github.com/pda/phool
  */
-class UrlTest extends \UnitTestCase
+class UrlTest extends \PHPUnit_Framework_TestCase
 {
 	private $_sampleData = array(
 		'scheme' => 'http',
@@ -24,15 +24,15 @@ class UrlTest extends \UnitTestCase
 	{
 		$url = new Http\Url('http://example.org:80/path?a=b&c=d#fragment');
 		$this->_assertExpectedValues($url);
-		$this->assertEqual($url->getHostRelativeUrl(), '/path?a=b&c=d#fragment');
-		$this->assertEqual($url->getSchemeRelativeUrl(), '//example.org/path?a=b&c=d#fragment');
+		$this->assertEquals($url->getHostRelativeUrl(), '/path?a=b&c=d#fragment');
+		$this->assertEquals($url->getSchemeRelativeUrl(), '//example.org/path?a=b&c=d#fragment');
 	}
 
 	public function testBriefHttpUrlUsage()
 	{
 		$url = new Http\Url('http://example.org/');
-		$this->assertEqual($url->getHostRelativeUrl(), '/');
-		$this->assertEqual($url->getSchemeRelativeUrl(), '//example.org/');
+		$this->assertEquals($url->getHostRelativeUrl(), '/');
+		$this->assertEquals($url->getSchemeRelativeUrl(), '//example.org/');
 	}
 
 	public function testHasMethods()
@@ -62,14 +62,14 @@ class UrlTest extends \UnitTestCase
 			$url->getScheme();
 			$this->fail('getScheme() should throw exception');
 		} catch (Http\UrlException $e) {
-			$this->pass('getScheme() should throw exception');
+			$this->assertTrue(true);
 		}
 
 		try {
 			$url->getHost();
 			$this->fail('getHost() should throw exception');
 		} catch (Http\UrlException $e) {
-			$this->pass('getHost() should throw exception');
+			$this->assertTrue(true);
 		}
 
 	}
@@ -128,7 +128,7 @@ class UrlTest extends \UnitTestCase
 	public function testWithoutPath()
 	{
 		$url = new Http\Url('http://example.org');
-		$this->assertEqual($url->getPath(), '/');
+		$this->assertEquals($url->getPath(), '/');
 	}
 
 	public function testSerializeToString()
@@ -175,7 +175,7 @@ class UrlTest extends \UnitTestCase
 			$expect = isset($pair[1]) ? $pair[1] : $pair[0];
 
 			$url = new Http\Url($in);
-			$this->assertEqual("$url", $expect,
+			$this->assertEquals("$url", $expect,
 				"For input [$in] %s");
 		}
 	}
@@ -184,21 +184,21 @@ class UrlTest extends \UnitTestCase
 	{
 		$url = new Http\Url('http://example.org/');
 		$relative = $url->getUrlForPath('/test/path');
-		$this->assertEqual($relative->__toString(), 'http://example.org/test/path');
+		$this->assertEquals($relative->__toString(), 'http://example.org/test/path');
 	}
 
 	public function testGettingUrlForPathTrimsQueryString()
 	{
 		$url = new Http\Url('http://example.org/my/path?test=1');
 		$relative = $url->getUrlForPath('/test/path');
-		$this->assertEqual($relative->__toString(), 'http://example.org/test/path');
+		$this->assertEquals($relative->__toString(), 'http://example.org/test/path');
 	}
 
 	public function testGetUrlForRelativePath()
 	{
 		$url = new Http\Url('http://example.org/my');
 		$relative = $url->getUrlForRelativePath('/path');
-		$this->assertEqual($relative->__toString(),
+		$this->assertEquals($relative->__toString(),
 			'http://example.org/my/path');
 	}
 
@@ -206,7 +206,7 @@ class UrlTest extends \UnitTestCase
 	{
 		$url = new Http\Url('http://example.org/my/path/?test=1');
 		$relative = $url->getUrlForRelativePath('/sub/path/');
-		$this->assertEqual($relative->__toString(),
+		$this->assertEquals($relative->__toString(),
 			'http://example.org/my/path/sub/path/');
 	}
 
@@ -214,7 +214,7 @@ class UrlTest extends \UnitTestCase
 	{
 		$url = new Http\Url('http://example.org/my/path?test=1');
 		$relative = $url->getUrlForRelativePath('sub/path/');
-		$this->assertEqual($relative->__toString(),
+		$this->assertEquals($relative->__toString(),
 			'http://example.org/my/path/sub/path/');
 	}
 
@@ -222,7 +222,7 @@ class UrlTest extends \UnitTestCase
 	{
 		$url = new Http\Url('http://example.org/test');
 		$relative = $url->getUrlForRelativePath('?blargh=1');
-		$this->assertEqual($relative->__toString(),
+		$this->assertEquals($relative->__toString(),
 			'http://example.org/test?blargh=1');
 	}
 
@@ -230,7 +230,7 @@ class UrlTest extends \UnitTestCase
 	{
 		$url = new Http\Url('http://example.org/test');
 		$relative = $url->getUrlForRelativePath('/');
-		$this->assertEqual($relative->__toString(),
+		$this->assertEquals($relative->__toString(),
 			'http://example.org/test');
 	}
 
@@ -238,7 +238,7 @@ class UrlTest extends \UnitTestCase
 	{
 		$url = new Http\Url('http://example.org/test');
 		$relative = $url->getUrlForParameters(array('a'=>1,'b'=>2,'c'=>'test'));
-		$this->assertEqual($relative->__toString(),
+		$this->assertEquals($relative->__toString(),
 			'http://example.org/test?a=1&b=2&c=test');
 	}
 
@@ -246,26 +246,26 @@ class UrlTest extends \UnitTestCase
 	{
 		// implicit default port
 		$url = new Http\Url('http://example.org');
-		$this->assertEqual('https://example.org/', (string)$url->getUrlForScheme('https'));
+		$this->assertEquals('https://example.org/', (string)$url->getUrlForScheme('https'));
 
 		// explicit default port
 		$url = new Http\Url('http://example.org:80');
-		$this->assertEqual('https://example.org/', (string)$url->getUrlForScheme('https'));
+		$this->assertEquals('https://example.org/', (string)$url->getUrlForScheme('https'));
 
 		// explicit non standard port
 		$url = new Http\Url('http://example.org:123');
-		$this->assertEqual('https://example.org:123/', (string)$url->getUrlForScheme('https'));
+		$this->assertEquals('https://example.org:123/', (string)$url->getUrlForScheme('https'));
 	}
 
 	public function testGetUrlForFragment()
 	{
 		// url without a fragment currently
 		$url = new Http\Url('http://example.org/');
-		$this->assertEqual('http://example.org/#blarg', (string)$url->getUrlForFragment('blarg'));
+		$this->assertEquals('http://example.org/#blarg', (string)$url->getUrlForFragment('blarg'));
 
 		// url with a fragment loses current fragment
 		$url = new Http\Url('http://example.org/#blarg');
-		$this->assertEqual('http://example.org/#gralb', (string)$url->getUrlForFragment('gralb'));
+		$this->assertEquals('http://example.org/#gralb', (string)$url->getUrlForFragment('gralb'));
 	}
 
 	public function testGetUrlForMergedParameters()
@@ -276,7 +276,7 @@ class UrlTest extends \UnitTestCase
 			"key2" => "XXX",
 			"key4" => "val4")
 		);
-		$this->assertEqual('http://example.org/?key1=val1&key2=XXX&key3=&key4=val4', (string)$newurl);
+		$this->assertEquals('http://example.org/?key1=val1&key2=XXX&key3=&key4=val4', (string)$newurl);
 	}
 
 	public function testGetUrlForMergedParametersWithEmptyQuery()
@@ -287,7 +287,7 @@ class UrlTest extends \UnitTestCase
 			"key2" => "XXX",
 			"key4" => "val4")
 		);
-		$this->assertEqual('http://example.org/?key2=XXX&key4=val4', (string)$newurl);
+		$this->assertEquals('http://example.org/?key2=XXX&key4=val4', (string)$newurl);
 	}
 
 
@@ -298,12 +298,12 @@ class UrlTest extends \UnitTestCase
 	{
 		$expected = array_merge($this->_sampleData, $custom);
 
-		$this->assertEqual($url->getScheme(), $expected['scheme']);
-		$this->assertEqual($url->getHost(), $expected['host']);
-		$this->assertEqual($url->getPath(), $expected['path']);
-		$this->assertEqual($url->getQueryString(), $expected['querystring']);
-		$this->assertEqual($url->getFragmentString(), $expected['fragment']);
-		$this->assertEqual($url->getPort(), $expected['port']);
+		$this->assertEquals($url->getScheme(), $expected['scheme']);
+		$this->assertEquals($url->getHost(), $expected['host']);
+		$this->assertEquals($url->getPath(), $expected['path']);
+		$this->assertEquals($url->getQueryString(), $expected['querystring']);
+		$this->assertEquals($url->getFragmentString(), $expected['fragment']);
+		$this->assertEquals($url->getPort(), $expected['port']);
 	}
 
 }

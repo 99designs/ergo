@@ -6,10 +6,7 @@ use Ergo\Routing;
 use Ergo\Routing\Router;
 use Ergo\Http;
 
-\Mock::generate('\Ergo\Routing\ControllerResolver', 'MockControllerResolver');
-\Mock::generate('\Ergo\Routing\Route', 'MockRoute');
-
-class RouterTest extends \UnitTestCase
+class RouterTest extends \PHPUnit_Framework_TestCase
 {
 	public function testConnectingAClosureAsARoute()
 	{
@@ -32,9 +29,12 @@ class RouterTest extends \UnitTestCase
 				->build();
 		});
 
-		$resolver = new \MockControllerResolver();
-		$resolver->expectOnce('resolve');
-		$resolver->setReturnReference('resolve', $controller, array('User.view'));
+		$resolver = \Mockery::mock();
+		$resolver
+			->shouldReceive('resolve')
+			->andReturn($controller, array('User.view'))
+			->once()
+			;
 
 		$router = new Router($resolver);
 		$router->connect('/user/{userid}', 'User.view');
@@ -51,7 +51,7 @@ class RouterTest extends \UnitTestCase
 
 		$response = $router->execute(new Http\Request('GET','/user/alias/24'));
 		$this->assertResponse($response, NULL, 302);
-		$this->assertEqual($response->getHeaders()->value('Location'), '/user/24');
+		$this->assertEquals($response->getHeaders()->value('Location'), '/user/24');
 	}
 
 	public function testConnectingAnAliasRoute()
@@ -78,27 +78,33 @@ class RouterTest extends \UnitTestCase
 			;
 
 		$route = $router->lookup('/user/24');
-		$this->assertEqual($route->getMetadata(), array('https'=>true));
+		$this->assertEquals($route->getMetadata(), array('https'=>true));
 	}
 
 	public function testCustomRoute()
 	{
 		$urlPath = '/user/24';
 
-		$mockRoute = new \MockRoute();
-		$mockRoute->setReturnValue('getMatch',true);
-		$mockRoute->expectOnce('getMatch',array($urlPath,array()));
+		$mockRoute = \Mockery::mock('Erg\Routing\Route');
+		$mockRoute
+			->shouldReceive('getMatch')
+			->with($urlPath, array())
+			->once()
+			->andReturn(new \Ergo\Routing\RouteMatch('user', array()))
+			->shouldReceive('getName')
+			->andReturn('user')
+			;
 
 		$router = new Router();
 		$router->connect($mockRoute, 'Custom.view');
 
-		$this->assertEqual($mockRoute,$router->lookup($urlPath));
+		$this->assertEquals($router->lookup($urlPath)->getName(), 'user');
 	}
 
 	private function assertResponse($response, $body, $status=200)
 	{
-		$this->assertIsA($response, '\Ergo\Http\Response');
-		$this->assertEqual($response->getStatus()->getCode(), $status);
-		$this->assertEqual($response->getBody(), $body);
+		$this->assertInstanceOf('\Ergo\Http\Response', $response);
+		$this->assertEquals($response->getStatus()->getCode(), $status);
+		$this->assertEquals($response->getBody(), $body);
 	}
 }

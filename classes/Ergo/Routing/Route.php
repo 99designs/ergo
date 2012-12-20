@@ -202,6 +202,9 @@ class Route
 	 */
 	private function _getParameterNames($template)
 	{
+		if(!is_string($template))
+			throw new \InvalidArgumentException("Template is not a string");
+
 		preg_match_all(self::REGEX_PARAM, $template, $matches);
 		return $matches[1];
 	}
