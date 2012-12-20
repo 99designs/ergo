@@ -5,7 +5,7 @@ namespace Ergo\Tests\Http;
 use Ergo\Http;
 use Ergo\Http\Request;
 
-class RequestTest extends \UnitTestCase
+class RequestTest extends \PHPUnit_Framework_TestCase
 {
 	public function testSimpleUsage()
 	{
@@ -20,10 +20,10 @@ class RequestTest extends \UnitTestCase
 			'test data'
 		);
 
-		$this->assertEqual($request->getRequestMethod(), 'GET');
-		$this->assertEqual($request->getUrl()->getPath(), '/test/123');
-		$this->assertEqual($request->getBody(), 'test data');
-		$this->assertEqual($request->getHeaders()->toArray(false), array(
+		$this->assertEquals($request->getRequestMethod(), 'GET');
+		$this->assertEquals($request->getUrl()->getPath(), '/test/123');
+		$this->assertEquals($request->getBody(), 'test data');
+		$this->assertEquals($request->getHeaders()->toArray(false), array(
 			'Content-Length: 9'
 			));
 	}
@@ -37,7 +37,7 @@ class RequestTest extends \UnitTestCase
 			'test data'
 		);
 
-		$this->assertEqual(
+		$this->assertEquals(
 			$request->export(),
 			array(
 				'GET',
@@ -64,7 +64,7 @@ class RequestTest extends \UnitTestCase
 		// I'm not sure exactly what the URL should be, but
 		// there's currently a bug which is definitely less correct
 		// than a URL that matches this pattern...
-		$this->assertPattern(
+		$this->assertRegExp(
 			'#https?://example.com(:80)?/#',
 			$request->getUrl()->__toString(),
 			'url: %s'
@@ -77,7 +77,7 @@ class RequestTest extends \UnitTestCase
 
 		$factory = new Http\RequestFactory($server);
 		$request = $factory->create();
-    $this->assertIsA($request, 'Ergo\Http\NullRequest');
+    $this->assertInstanceOf('Ergo\Http\NullRequest', $request);
   }
 
 	public function testRequestFactorySchemeHeader()
@@ -95,8 +95,8 @@ class RequestTest extends \UnitTestCase
 		$factory->setSchemeHeader('X-Forwarded-Proto');
 		$request = $factory->create();
 
-		$this->assertEqual($request->getRequestMethod(), 'GET');
-		$this->assertEqual((string) $request->getUrl(), 'https://example.com/');
-		$this->assertEqual($request->getUrl()->getScheme(), 'https');
+		$this->assertEquals($request->getRequestMethod(), 'GET');
+		$this->assertEquals((string) $request->getUrl(), 'https://example.com/');
+		$this->assertEquals($request->getUrl()->getScheme(), 'https');
 	}
 }

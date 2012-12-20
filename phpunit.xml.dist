@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+  verbose="true"
+  bootstrap="vendor/autoload.php"
+  colors="true"
+>
+
+  <!-- Test suites to be run -->
+  <testsuites>
+    <testsuite name="ergo">
+      <directory suffix="Test.php">tests</directory>
+    </testsuite>
+  </testsuites>
+
+  <!-- Filters for code coverage reporting -->
+  <filter>
+    <whitelist>
+      <directory>./</directory>
+      <exclude>
+        <directory>./tests</directory>
+        <directory>./vendor</directory>
+      </exclude>
+    </whitelist>
+  </filter>
+
+  <!-- Test listeners -->
+  <listeners>
+    <listener class="\Mockery\Adapter\Phpunit\TestListener" file="vendor/mockery/mockery/library/Mockery/Adapter/Phpunit/TestListener.php"></listener>
+  </listeners>
+
+</phpunit>

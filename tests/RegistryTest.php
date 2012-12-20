@@ -4,9 +4,7 @@ namespace ergo\tests\registry;
 
 use \Ergo\Registry;
 
-\Mock::generate('\Ergo\Factory', 'MockFactory');
-
-class RegistryTest extends \UnitTestCase
+class RegistryTest extends \PHPUnit_Framework_TestCase
 {
 	public function testRegisteringObjects()
 	{
@@ -38,15 +36,14 @@ class RegistryTest extends \UnitTestCase
 		});
 
 		$this->assertTrue($registry->isRegistered('my_key'));
-		$this->assertEqual($object->test, 'blargh');
+		$this->assertEquals($object->test, 'blargh');
 	}
 
 	public function testRegisteringAFactory()
 	{
 		$object = (object) array('test'=>'blargh');
-		$factory = new \MockFactory();
-		$factory->setReturnReference('create', $object);
-		$factory->expectOnce('create');
+		$factory = \Mockery::mock('Ergo\Factory');
+		$factory->shouldReceive('create')->andReturn($object)->once();
 
 		$registry = new Registry();
 		$registry->factory('my_key', $factory);
@@ -63,7 +60,7 @@ class RegistryTest extends \UnitTestCase
 		});
 
 		$this->assertTrue($registry->isRegistered('my_key'));
-		$this->assertEqual($registry->lookup('my_key')->test, 'blargh');
+		$this->assertEquals($registry->lookup('my_key')->test, 'blargh');
 	}
 
 	public function testTriggerOnMissWithClosure()
@@ -75,12 +72,12 @@ class RegistryTest extends \UnitTestCase
 			$callcount++;
 		});
 
-		$this->assertEqual($callcount, 0);
+		$this->assertEquals($callcount, 0);
 		$this->assertFalse($registry->isRegistered('my_key'));
-		$this->assertEqual($registry->lookup('my_key')->test, 'blargh');
-		$this->assertEqual($callcount, 1);
-		$this->assertEqual($registry->lookup('my_key')->test, 'blargh');
-		$this->assertEqual($callcount, 1);
+		$this->assertEquals($registry->lookup('my_key')->test, 'blargh');
+		$this->assertEquals($callcount, 1);
+		$this->assertEquals($registry->lookup('my_key')->test, 'blargh');
+		$this->assertEquals($callcount, 1);
 	}
 
 	public function testTriggerTrumpsClosureOnMiss()
@@ -94,6 +91,6 @@ class RegistryTest extends \UnitTestCase
 			return (object) array('source'=>'closure');
 		});
 
-		$this->assertEqual($result->source, 'trigger');
+		$this->assertEquals($result->source, 'trigger');
 	}
 }

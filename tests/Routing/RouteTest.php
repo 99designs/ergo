@@ -5,7 +5,7 @@ namespace Ergo\Tests\Routing;
 use Ergo\Http;
 use Ergo\Routing;
 
-class RouteTest extends \UnitTestCase
+class RouteTest extends \PHPUnit_Framework_TestCase
 {
 	private $_exampleRoutes = array(
 		'/fruits' => 'fruits',
@@ -46,17 +46,17 @@ class RouteTest extends \UnitTestCase
 		$router = new Routing\Router();
 		foreach($this->_exampleRoutes as $template=>$name) $router->connect($template, $name);
 
-		$this->assertEqual(
+		$this->assertEquals(
 			$router->buildUrl('fruits'),
 			'/fruits'
 		);
 
-		$this->assertEqual(
+		$this->assertEquals(
 			$router->buildUrl('fruit', array('fruitid' => 234)),
 			'/fruits/234'
 		);
 
-		$this->assertEqual(
+		$this->assertEquals(
 			$router->buildUrl('flavour', array('fruitid' => 234, 'flavourid' => 456)),
 			'/fruits/234/flavours/456'
 		);
@@ -66,7 +66,7 @@ class RouteTest extends \UnitTestCase
 	{
 		$router = new Routing\Router();
 		foreach($this->_exampleRoutes as $template=>$name) $router->connect($template, $name);
-		$this->expectException('\Ergo\Routing\LookupException');
+		$this->setExpectedException('\Ergo\Routing\LookupException');
 		$router->lookup('/blarg');
 	}
 
@@ -74,7 +74,7 @@ class RouteTest extends \UnitTestCase
 	{
 		$router = new Routing\Router();
 		foreach($this->_exampleRoutes as $template=>$name) $router->connect($template, $name);
-		$this->expectException('\Ergo\Routing\LookupException');
+		$this->setExpectedException('\Ergo\Routing\LookupException');
 		$router->lookup('/fruits//flavours/');
 	}
 
@@ -82,7 +82,7 @@ class RouteTest extends \UnitTestCase
 	{
 		$router = new Routing\Router();
 		foreach($this->_exampleRoutes as $template=>$name) $router->connect($template, $name);
-		$this->expectException('\Ergo\Routing\BuildException');
+		$this->setExpectedException('\Ergo\Routing\BuildException');
 		$router->buildUrl('fruits', array('test' => 123));
 	}
 
@@ -90,14 +90,14 @@ class RouteTest extends \UnitTestCase
 	{
 		$router = new Routing\Router();
 		foreach($this->_exampleRoutes as $template=>$name) $router->connect($template, $name);
-		$this->expectException('\Ergo\Routing\LookupException');
+		$this->setExpectedException('\Ergo\Routing\LookupException');
 		$router->buildUrl('flavours');
 	}
 
 	public function testRouteMatchGetterInterface()
 	{
 		$match = new Routing\RouteMatch('test', array('a' => 'b'));
-		$this->assertEqual($match->a, 'b');
+		$this->assertEquals($match->a, 'b');
 	}
 
 	public function testRoutesWithStringTypes()
@@ -172,7 +172,7 @@ class RouteTest extends \UnitTestCase
 		$router = new Routing\Router();
 		$router->connect('/{fruit}/*','fruit');
 
-		$this->expectException();
+		$this->setExpectedException('Ergo\Routing\Exception');
 		$router->buildUrl('fruit', array('fruit' =>'apple'));
 	}
 
@@ -181,8 +181,8 @@ class RouteTest extends \UnitTestCase
 	private function _assertRoute($connect, $template, $name, $parameters=false)
 	{
 		$match = $connect->lookup($template);
-		$this->assertEqual($match->getName(), $name);
-		if($parameters) $this->assertEqual($match->getParameters(), $parameters);
+		$this->assertEquals($match->getName(), $name);
+		if($parameters) $this->assertEquals($match->getParameters(), $parameters);
 	}
 
 	private function _assertNoRoute($connect, $template)

@@ -2,7 +2,7 @@
 
 namespace Ergo\Tests\View;
 
-class ViewTest extends \UnitTestCase
+class ViewTest extends \PHPUnit_Framework_TestCase
 {
 	public function setUp()
 	{
@@ -35,7 +35,7 @@ class ViewTest extends \UnitTestCase
 			->file('test.php')
 			;
 
-		$this->assertEqual($view->output(), 'test');
+		$this->assertEquals($view->output(), 'test');
 	}
 
 	public function testExceptionInView()
@@ -45,7 +45,7 @@ class ViewTest extends \UnitTestCase
 		$view = new \Ergo\View\Template();
 		$view->file($tpl);
 
-		$this->expectException();
+		$this->setExpectedException('Exception');
 		$view->output();
 	}
 
@@ -60,7 +60,7 @@ class ViewTest extends \UnitTestCase
 			;
 
 		$view['myvar'] = 'test';
-		$this->assertEqual($view->output(), 'test');
+		$this->assertEquals($view->output(), 'test');
 	}
 
 	public function testPartials()
@@ -77,7 +77,7 @@ class ViewTest extends \UnitTestCase
 			->file('test1.php')
 			;
 
-		$this->assertEqual($view->output(), 'hello world');
+		$this->assertEquals($view->output(), 'hello world');
 	}
 
 	public function testTemplateAsStream()
@@ -90,7 +90,7 @@ class ViewTest extends \UnitTestCase
 			->file($tpl)
 			;
 
-		$this->assertEqual(stream_get_contents($view->stream()),
+		$this->assertEquals(stream_get_contents($view->stream()),
 			'hello world');
 	}
 
@@ -98,7 +98,7 @@ class ViewTest extends \UnitTestCase
 	{
 		$view = new \Ergo\View\String('hello world');
 
-		$this->assertEqual(stream_get_contents($view->stream()),'hello world');
-		$this->assertEqual($view->output(),'hello world');
+		$this->assertEquals(stream_get_contents($view->stream()),'hello world');
+		$this->assertEquals($view->output(),'hello world');
 	}
 }

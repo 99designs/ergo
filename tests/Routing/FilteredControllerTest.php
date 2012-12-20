@@ -4,9 +4,7 @@ namespace Ergo\Tests\Routing;
 
 use \Ergo\Http;
 
-\Mock::generate('\Ergo\Routing\Controller', 'MockController');
-
-class FilteredControllerTest extends \UnitTestCase
+class FilteredControllerTest extends \PHPUnit_Framework_TestCase
 {
 	public function testRequestFilters()
 	{
@@ -22,13 +20,13 @@ class FilteredControllerTest extends \UnitTestCase
 		});
 
 		$response = $filtered->execute(new Http\Request('GET','/some/url'));
-		$this->assertEqual($response->getBody(), '/user/blargh');
+		$this->assertEquals($response->getBody(), '/user/blargh');
 	}
 
 	public function testResponseFilters()
 	{
-		$delegate = new \MockController();
-		$delegate->setReturnReference('execute', new Http\Response(200, array(), 'left blank'));
+		$delegate = \Mockery::mock();
+		$delegate->shouldReceive('execute')->andReturn(new Http\Response(200, array(), 'left blank'));
 
 		$filtered = new \Ergo\Routing\FilteredController($delegate);
 		$filtered->addResponseFilter(function($response) {
@@ -36,6 +34,6 @@ class FilteredControllerTest extends \UnitTestCase
 		});
 
 		$response = $filtered->execute(new Http\Request('GET','/some/url'));
-		$this->assertEqual($response->getBody(), 'left blank, blargh');
+		$this->assertEquals($response->getBody(), 'left blank, blargh');
 	}
 }

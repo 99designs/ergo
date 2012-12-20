@@ -6,9 +6,7 @@ use Ergo\Routing;
 use Ergo\Routing\Router;
 use Ergo\Http;
 
-\Mock::generate('\Ergo\Routing\ControllerResolver', 'MockControllerResolver');
-
-class ControllerDirectoryTest extends \UnitTestCase
+class ControllerDirectoryTest extends \PHPUnit_Framework_TestCase
 {
 	public function testControllerDirectory()
 	{
@@ -27,15 +25,15 @@ class ControllerDirectoryTest extends \UnitTestCase
 
 		$controller = $directory->resolve('LlamaController');
 
-		$this->assertEqual($controller->file, '/fake/path/LlamaController.php');
-		$this->assertEqual($controller->controller, 'LlamaController');
+		$this->assertEquals($controller->file, '/fake/path/LlamaController.php');
+		$this->assertEquals($controller->controller, 'LlamaController');
 	}
 
 	public function testFailureToResolve()
 	{
 		$directory = new Routing\ControllerDirectory(new \ArrayIterator(array()));
 
-		$this->expectException('\Ergo\Exception');
+		$this->setExpectedException('\Ergo\Exception');
 		$directory->resolve('LlamaController');
 	}
 }

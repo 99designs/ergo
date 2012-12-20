@@ -4,14 +4,14 @@ namespace Ergo\Tests\Http;
 
 use Ergo\Http;
 
-class ResponseTest extends \UnitTestCase
+class ResponseTest extends \PHPUnit_Framework_TestCase
 {
 	public function testEmptyOkResponse()
 	{
 		$response = new Http\Response(200, array(), null);
 
-		$this->assertEqual($response->getStatus()->getCode(), 200);
-		$this->assertEqual($response->getHeaders()->toArray(), array());
+		$this->assertEquals($response->getStatus()->getCode(), 200);
+		$this->assertEquals($response->getHeaders()->toArray(), array());
 		$this->assertFalse($response->hasBody());
 	}
 
@@ -24,11 +24,11 @@ class ResponseTest extends \UnitTestCase
 
 		$response = new Http\Response(200, $headers, 'abcdef');
 
-		$this->assertEqual($response->getStatus()->getCode(), 200);
-		$this->assertEqual($response->getHeaders()->value('Content-Length'), 6);
-		$this->assertEqual($response->getHeaders()->value('Content-Type'), 'text/plain');
+		$this->assertEquals($response->getStatus()->getCode(), 200);
+		$this->assertEquals($response->getHeaders()->value('Content-Length'), 6);
+		$this->assertEquals($response->getHeaders()->value('Content-Type'), 'text/plain');
 		$this->assertTrue($response->hasBody());
-		$this->assertEqual($response->getBody(), 'abcdef');
+		$this->assertEquals($response->getBody(), 'abcdef');
 	}
 
 	public function testGettingAResponseHeader()
@@ -39,7 +39,7 @@ class ResponseTest extends \UnitTestCase
 		);
 
 		$response = new Http\Response(200, $headers, 'abcdef');
-		$this->assertEqual($response->getHeaders()->value('Content-Length'),6);
+		$this->assertEquals($response->getHeaders()->value('Content-Length'),6);
 	}
 
 	public function testExport()
@@ -48,7 +48,7 @@ class ResponseTest extends \UnitTestCase
 			200, array('Content-Type: text/html'), 'Food goes in here'
 		);
 
-		$this->assertEqual(
+		$this->assertEquals(
 			$response->export(),
 			array(
 				200,
