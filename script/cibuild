@@ -2,4 +2,4 @@
 
 composer install --dev
 
-php runtests.php
+phpunit
