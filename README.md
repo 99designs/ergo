@@ -45,9 +45,17 @@ To install dependancies via Composer:
 
 Run the test suite:
 
-	$ ./runtests.php
-	OK
-	Test cases run: 14/14, Passes: 206, Failures: 0, Exceptions: 0
+	$ phpunit
+	PHPUnit 3.7.10 by Sebastian Bergmann.
+
+	Configuration read from /home/vagrant/ergo/phpunit.xml.dist
+
+	...............................................................  63 / 100 ( 63%)
+	.....................................
+
+	Time: 0 seconds, Memory: 11.25Mb
+
+	OK (100 tests, 269 assertions)
 
 Status
 -------
