@@ -36,6 +36,16 @@ class Transport
 		$this->_connectTimeoutMs = $milliseconds;
 	}
 
+  public function setIPFamily($family)
+  {
+    if ($family = "ipv4")
+      curl_setopt($curl, CURL_SETOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+    else if ($family = "ipv6")
+      curl_setopt($curl, CURL_SETOPT_IPRESOLVE, CURL_IPRESOLVE_V6);
+    else
+      throw new Exception("Invalid address family specified");
+  }
+
 	public function setHttpProxy($url)
 	{
 		$this->_proxy = $url;
