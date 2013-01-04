@@ -4,10 +4,14 @@ namespace Ergo\Http;
 
 class Transport
 {
+	const IPFAMILY_IPV4 = CURL_IPRESOLVE_V4;
+	const IPFAMILY_IPV6 = CURL_IPRESOLVE_V6;
+
 	private $_timeout = 10;
 	private $_connectTimeoutMs = 1000;
 	private $_proxy;
 	private $_auth;
+	private $_ipFamily;
 
 	public function send($request)
 	{
@@ -34,6 +38,18 @@ class Transport
 	public function setConnectTimeoutMs($milliseconds)
 	{
 		$this->_connectTimeoutMs = $milliseconds;
+	}
+
+	public function setIPFamily($family)
+	{
+		if (in_array($family, array(self::IPFAMILY_IPV4, self::IPFAMILY_IPV6)))
+		{
+			$this->_ipFamily = $family;
+		}
+		else
+		{
+			throw new \Exception("'$family' is not a valid address family");
+		}
 	}
 
 	public function setHttpProxy($url)
@@ -72,6 +88,11 @@ class Transport
 		curl_setopt($curl, CURLOPT_CONNECTTIMEOUT_MS, $this->_connectTimeoutMs);
 		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+
+		if (isset($this->$_ipFamily))
+		{
+			curl_setopt($curl, CURL_SETOPT_IPRESOLVE, $this->_ipFamily);
+		}
 
 		// enable proxy support
 		if(isset($this->_proxy))
