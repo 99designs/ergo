@@ -103,6 +103,15 @@ class Client
 	}
 
 	/**
+	 * Sets the IP Family to use when making requests.
+	 * Defaults to negotiating with the other end
+	 */
+	public function setIPFamily($family)
+	{
+		self::transport()->setIPFamily($family);
+	}
+
+	/**
 	 * Return the base url this Client was instanciated with
 	 * @return \Ergo\Http\Url
 	 */
