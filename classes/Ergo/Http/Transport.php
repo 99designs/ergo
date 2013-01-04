@@ -89,7 +89,7 @@ class Transport
 		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
 
-		if (isset($this->$_ipFamily))
+		if (isset($this->_ipFamily))
 		{
 			curl_setopt($curl, CURL_SETOPT_IPRESOLVE, $this->_ipFamily);
 		}
