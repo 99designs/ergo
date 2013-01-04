@@ -91,7 +91,7 @@ class Transport
 
 		if (isset($this->_ipFamily))
 		{
-			curl_setopt($curl, CURL_SETOPT_IPRESOLVE, $this->_ipFamily);
+			curl_setopt($curl, CURLOPT_IPRESOLVE, $this->_ipFamily);
 		}
 
 		// enable proxy support
