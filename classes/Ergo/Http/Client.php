@@ -252,6 +252,8 @@ class Ergo_Http_Client
 		curl_setopt($curl, CURLOPT_TIMEOUT, $this->_timeout);
 		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+		curl_setopt($curl, CURLOPT_PROTOCOLS, (CURLPROTO_HTTP | CURLPROTO_HTTPS));
+		curl_setopt($curl, CURLOPT_REDIR_PROTOCOLS, (CURLPROTO_HTTP | CURLPROTO_HTTPS));
 
 		// enable proxy support
 		if(isset($this->_proxy))
