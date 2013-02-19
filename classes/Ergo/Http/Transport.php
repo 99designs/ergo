@@ -17,10 +17,18 @@ class Transport
 	{
 		// prepare and send the curl request
 		$curl = $this->_curlConnection($request);
-		if(($curlResponse = curl_exec($curl)) === false)
+		$start = microtime(true);
+		$curlResponse = curl_exec($curl);
+		$total = microtime(true) - $start;
+		if ($curlResponse === false)
 		{
-			throw new Error('Curl error: ' . curl_error($curl),
-				curl_errno($curl));
+			throw new Error(sprintf(
+				'Curl error [errno: %d, url: %s, time: %.3fs): %s',
+				curl_errno($curl),
+				$request->getUrl(),
+				$total,
+				curl_error($curl)
+			));
 		}
 
 		$response = $this->_buildResponse($curlResponse);
