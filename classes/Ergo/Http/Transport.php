@@ -98,6 +98,8 @@ class Transport
 		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
 		curl_setopt($curl, CURLOPT_PROTOCOLS, (CURLPROTO_HTTP | CURLPROTO_HTTPS));
 		curl_setopt($curl, CURLOPT_REDIR_PROTOCOLS, (CURLPROTO_HTTP | CURLPROTO_HTTPS));
+		// Prevents issues with curl timing out much faster than the specified timeout
+		curl_setopt($curl, CURLOPT_NOSIGNAL, 1);
 
 		if (isset($this->_ipFamily))
 		{
