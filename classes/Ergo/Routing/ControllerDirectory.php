@@ -32,8 +32,8 @@ class ControllerDirectory implements ControllerResolver
 	public function resolve($name)
 	{
 		foreach($this->_iterator as $file)
-			if($file->getFilename() == "$name.php")
-				return call_user_func($this->_callback, (string) $file, $name);
+			if($file->getFilename() == "{$name}Controller.php")
+				return call_user_func($this->_callback, (string) $file, $name.'Controller');
 
 		throw new \Ergo\Exception("Unable to find a file for controller $name");
 	}
