@@ -20,6 +20,7 @@ class Route
 	const TYPE_STRING = '([\w-_]+)';
 	const TYPE_INTEGER = '(\d+)';
 	const TYPE_DECIMAL = '([\d]+(?:\.\d+))';
+	const TYPE_GREEDY = '(.+?)';
 
 	private $_name;
 	private $_template;
@@ -162,6 +163,8 @@ class Route
 			case 'decimal':
 			case 'dec':
 				return self::TYPE_DECIMAL;
+			case 'greedy':
+				return self::TYPE_GREEDY;
 		}
 
 		// try the enumeration type

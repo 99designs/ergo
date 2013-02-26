@@ -176,6 +176,18 @@ class RouteTest extends \PHPUnit_Framework_TestCase
 		$router->buildUrl('fruit', array('fruit' =>'apple'));
 	}
 
+	public function testGreedyParametersInRoutes()
+	{
+		$router = new Routing\Router();
+		$router->connect('/fruits/{fruitid}/{blah:greedy}','fruit');
+
+		$this->_assertRoute($router,'/fruits/5/this/is/a/test','fruit',array(
+			'fruitid'=>5,
+			'blah'=>'this/is/a/test',
+			));
+		$this->_assertNoRoute($router,'/blargh');
+	}
+
 	// ----------------------------------------
 
 	private function _assertRoute($connect, $template, $name, $parameters=false)
