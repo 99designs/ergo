@@ -14,6 +14,7 @@ class ControllerDirectory implements ControllerResolver
 	/**
 	 * @param mixed either a directory path, or an iterator
 	 * @param callback returns an instance of a controller, given file and controller name
+	 * @param suffix match filenames that have a suffix
 	 */
 	public function __construct($directoryIterator, $callback=null, $suffix='')
 	{
