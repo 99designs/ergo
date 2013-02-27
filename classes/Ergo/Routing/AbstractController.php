@@ -7,28 +7,19 @@ use Ergo\Http;
 abstract class AbstractController implements Controller
 {
 	private $_router;
-	private $_filterChain;
 
 	public function __construct()
 	{
-		$this->_filterChain = new RequestFilterChain();
 	}
 
-	/**
-	 * Adds an {@link Ergo\Routing\RequestFilter} to the controller
-	 */
-	public function addRequestFilter(RequestFilter $filter)
+	public function setRouter($router)
 	{
-		$this->_filterChain->addFilter($filter);
-		return $this;
+		$this->_router = $router;
 	}
 
-	/**
-	 * Filters a request through the internal filter chain
-	 */
-	public function filterRequest($request)
+	public function urlFor($name, $parameters = array())
 	{
-		return $this->_filterChain->filter($request);
+		return $this->_router->buildUrl($name, $parameters);
 	}
 
 	/**

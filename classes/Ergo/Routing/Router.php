@@ -163,10 +163,13 @@ class Router implements Controller
 	{
 		if(isset($this->_controllers[$name]) && ($controller = $this->_controllers[$name]))
 		{
-			return is_callable($controller)
+			$name = is_callable($controller)
 				? new CallbackController($controller)
 				: $controller
 				;
+
+			if(is_object($name))
+				return $name;
 		}
 
 		if($this->_resolver)
