@@ -48,7 +48,7 @@ foreach($dirs as $dir)
 // write an include path
 $classloader->export();
 
-require_once('autorun.php');
+require_once('lib/simpletest/autorun.php');
 $suite = new TestSuite('Tests');
 
 if ($testFiles)
