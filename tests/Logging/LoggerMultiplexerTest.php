@@ -14,7 +14,7 @@ class LoggerMultiplexerTest extends \PHPUnit_Framework_TestCase
 		$logger2->shouldReceive('log')->once();
 
 		$multiplexer = new Logging\LoggerMultiplexer(array($logger1, $logger2));
-		$multiplexer->log('test');
+		$multiplexer->info('test');
 	}
 
 	public function testLoggerBuiltIncrementally()
@@ -28,6 +28,6 @@ class LoggerMultiplexerTest extends \PHPUnit_Framework_TestCase
 		$multiplexer->addLoggers($logger1);
 		$multiplexer->addLoggers(array($logger2));
 		$multiplexer->addLoggers(array(null));
-		$multiplexer->log('test');
+		$multiplexer->info('test');
 	}
 }
