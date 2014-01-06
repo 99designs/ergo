@@ -2,6 +2,8 @@
 
 namespace Ergo\Logging;
 
+use \Psr\Log\LoggerInterface;
+
 /**
  * A logger factory that can have implementations registered
  */
@@ -13,7 +15,7 @@ class LoggerRegistry implements LoggerFactory
 	/**
 	 * Constructor
 	 */
-	function __construct(\Ergo\Logger $defaultLogger)
+	function __construct(LoggerInterface $defaultLogger)
 	{
 		$this->_default = $defaultLogger;
 	}
@@ -40,7 +42,7 @@ class LoggerRegistry implements LoggerFactory
 	 * Register a logger for a specific class name, at present this classname
 	 * must match exactly
 	 */
-	function registerLogger($class, \Ergo\Logger $defaultLogger)
+	function registerLogger($class, LoggerInterface $defaultLogger)
 	{
 		throw new \BadMethodCallException("Not implemented");
 	}

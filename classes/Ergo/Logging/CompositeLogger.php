@@ -5,7 +5,7 @@ namespace Ergo\Logging;
 /**
  * A logger that is composed of other loggers
  */
-interface CompositeLogger extends \Ergo\Logger
+interface CompositeLogger extends \Psr\Log\LoggerInterface
 {
 	/**
 	 * Adds either a single logger, an array of loggers or multiple logger

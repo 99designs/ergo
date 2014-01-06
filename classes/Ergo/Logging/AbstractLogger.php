@@ -2,7 +2,8 @@
 
 namespace Ergo\Logging;
 
-use \Ergo\Logger;
+use \Psr\Log\LogLevel;
+
 
 /**
  * An abstract logger that provides named logging methods and basic level
@@ -10,22 +11,19 @@ use \Ergo\Logger;
  *
  * @author Lachlan Donald <lachlan@99designs.com>
  */
-abstract class AbstractLogger implements Logger
+abstract class AbstractLogger extends \Psr\Log\AbstractLogger
 {
 	private $_loglevel;
 
 	/**
 	 * Construct a logger with a default level of trace
 	 */
-	public function __construct($level=Logger::INFO)
+	public function __construct($level=LogLevel::INFO)
 	{
 		$this->_loglevel = $level;
 	}
 
-	/* (non-phpdoc)
-	 * @see Logger::logException()
-	 */
-	function logException($exception, $level=Logger::ERROR)
+	function logException($exception, $level=LogLevel::ERROR)
 	{
 		$this->log(sprintf(
 			"%s '%s' in %s:%d",
@@ -36,8 +34,8 @@ abstract class AbstractLogger implements Logger
 			), $level);
 	}
 
-	/* (non-phpdoc)
-	 * @see Logger::setLogLevel()
+	/**
+	 * Sets the current log level
 	 */
 	function setLogLevel($level)
 	{
@@ -60,11 +58,14 @@ abstract class AbstractLogger implements Logger
 	{
 		switch($level)
 		{
-			case Logger::TRACE: return 1;
-			case Logger::INFO: return 2;
-			case Logger::WARN: return 3;
-			case Logger::ERROR: return 4;
-			case Logger::FATAL: return 5;
+			case LogLevel::DEBUG: return 1;
+			case LogLevel::INFO: return 2;
+			case LogLevel::NOTICE: return 3;
+			case LogLevel::WARNING: return 4;
+			case LogLevel::ERROR: return 5;
+			case LogLevel::CRITICAL: return 6;
+			case LogLevel::ALERT: return 7;
+			case LogLevel::EMERGENCY: return 8;
 		}
 	}
 
@@ -78,63 +79,6 @@ abstract class AbstractLogger implements Logger
 			$this->_getLevelInteger($this->getLogLevel());
 	}
 
-	// --------------------------------------------------------------------
-	// helpers to make logging more pleasant
-
-	/**
-	 * Logs a message of level INFO
-	 */
-	function info($message)
-	{
-		$args = func_get_args();
-		$message = (count($args) > 1) ? call_user_func_array('sprintf',$args) : $message;
-		$this->log($message, Logger::INFO);
-		return $this;
-	}
-
-	/**
-	 * Logs a message of level TRACE
-	 */
-	function trace($message)
-	{
-		$args = func_get_args();
-		$message = (count($args) > 1) ? call_user_func_array('sprintf',$args) : $message;
-		$this->log($message, Logger::TRACE);
-		return $this;
-	}
-
-	/**
-	 * Logs a message of level WARN
-	 */
-	function warn($message)
-	{
-		$args = func_get_args();
-		$message = (count($args) > 1) ? call_user_func_array('sprintf',$args) : $message;
-		$this->log($message, Logger::WARN);
-		return $this;
-	}
-
-	/**
-	 * Logs a message of level ERROR
-	 */
-	function error($message)
-	{
-		$args = func_get_args();
-		$message = (count($args) > 1) ? call_user_func_array('sprintf',$args) : $message;
-		$this->log($message, Logger::ERROR);
-		return $this;
-	}
-
-	/**
-	 * Logs a message of level FATAL
-	 */
-	function fatal($message)
-	{
-		$args = func_get_args();
-		$message = (count($args) > 1) ? call_user_func_array('sprintf',$args) : $message;
-		$this->log($message, Logger::FATAL);
-		return $this;
-	}
 
 	// --------------------------------------------------------------------
 	// helpers to interact with php error handling
