@@ -48,8 +48,7 @@ class WebErrorHandler extends AbstractErrorHandler
 	 */
 	public function handle($e)
 	{
-		$logger = $this->logger();
-		$logger->logException($e);
+		$this->logger()->error($e->getMessage(), array('exception' => $e));
 
 		if ($this->isExceptionHalting($e))
 		{
