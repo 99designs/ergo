@@ -2,6 +2,9 @@
 
 namespace Ergo\Logging;
 
+use \Psr\Log\LoggerInterface;
+use \Psr\Log\AbstractLogger;
+
 /**
  * A basic implementation of a composite logger that multiplexes log messages to many loggers
  * @author Lachlan Donald <lachlan@99designs.com>
@@ -13,9 +16,8 @@ class LoggerMultiplexer extends AbstractLogger implements CompositeLogger
 	/**
 	 * Constructor
 	 */
-	function __construct($loggers=array(), $level=\Psr\Log\LogLevel::INFO)
+	function __construct($loggers=array())
 	{
-		parent::__construct($level);
 		$this->addLoggers($loggers);
 	}
 

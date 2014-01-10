@@ -62,4 +62,24 @@ abstract class AbstractErrorHandler implements ErrorHandler
 	{
 		return true;
 	}
+
+	public function logPhpError($errno, $errstr, $errfile, $errline)
+	{
+		$error = new Logging\Error($errno);
+		$this->logger()->error("PHP Error $error: $errstr in $errfile:$errline");
+	}
+
+	public function logException($exception)
+	{
+		$this->logger()->error(
+			sprintf(
+				"Exception '%s' with message '%s' in %s:%d",
+				get_class($exception),
+				$exception->getMessage(),
+				$exception->getFile(),
+				$exception->getLine()
+			),
+			array('exception' => $exception)
+		);
+	}
 }
