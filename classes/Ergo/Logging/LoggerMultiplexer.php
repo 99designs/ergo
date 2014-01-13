@@ -2,6 +2,9 @@
 
 namespace Ergo\Logging;
 
+use \Psr\Log\LoggerInterface;
+use \Psr\Log\AbstractLogger;
+
 /**
  * A basic implementation of a composite logger that multiplexes log messages to many loggers
  * @author Lachlan Donald <lachlan@99designs.com>
@@ -13,9 +16,8 @@ class LoggerMultiplexer extends AbstractLogger implements CompositeLogger
 	/**
 	 * Constructor
 	 */
-	function __construct($loggers=array(), $level=\Ergo\Logger::INFO)
+	function __construct($loggers=array())
 	{
-		parent::__construct($level);
 		$this->addLoggers($loggers);
 	}
 
@@ -52,38 +54,14 @@ class LoggerMultiplexer extends AbstractLogger implements CompositeLogger
 	}
 
 	/* (non-phpdoc)
-	 * @see \Ergo\Logger::log()
+	 * @see \Psr\Log\LoggerInterface::log()
 	 */
-	function log($message,$level=\Ergo\Logger::INFO)
+	function log($level, $message, array $context = array())
 	{
 		foreach($this->_loggers as $logger)
-			$logger->log($message, $level);
+			$logger->log($level, $message, $context);
 
 		return $this;
-	}
-
-	/* (non-phpdoc)
-	 * @see \Ergo\Logger::logException()
-	 */
-	function logException($exception,$level=\Ergo\Logger::ERROR)
-	{
-		foreach($this->_loggers as $logger)
-			$logger->logException($exception,$level);
-
-		return $this;
-	}
-
-	/* (non-phpdoc)
-	 * @see \Ergo\Logger::setLogLevel()
-	 */
-	function setLogLevel($level)
-	{
-		parent::setLogLevel($level);
-
-		foreach($this->_loggers as &$logger)
-		{
-			$logger->setLogLevel($level);
-		}
 	}
 
 	/**

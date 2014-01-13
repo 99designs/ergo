@@ -27,8 +27,7 @@ class ConsoleErrorHandler extends AbstractErrorHandler
 	 */
 	public function handle($e)
 	{
-		$logger = $this->logger();
-		$logger->logException($e);
+		$this->logException($e);
 
 		if ($this->isExceptionHalting($e))
 		{

@@ -2,4 +2,4 @@
 
 composer install --dev
 
-phpunit
+./vendor/bin/phpunit

@@ -9,7 +9,7 @@ interface LoggerFactory
 {
 	/**
 	 * Creates a logger instance for a class
-	 * @return object \Ergo\Logger
+	 * @return object \Psr\Log\LoggerInterface
 	 */
 	function createLogger($class);
 }
