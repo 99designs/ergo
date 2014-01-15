@@ -260,6 +260,10 @@ class Application implements Plugin
 	 */
 	public function errorHandler()
 	{
+		if (is_callable($this->_errorHandler)) {
+			$this->_errorHandler = call_user_func($this->_errorHandler);
+		}
+
 		return $this->_errorHandler;
 	}
 
