@@ -5,7 +5,7 @@ namespace Ergo\Routing;
 /**
  * A match result from a lookup against a {@link Router}
  */
-class RouteMatch implements \IteratorAggregate
+class RouteMatch extends \ArrayIterator
 {
 	private $_name;
 	private $_parameters;
@@ -21,6 +21,7 @@ class RouteMatch implements \IteratorAggregate
 		$this->_name = $name;
 		$this->_parameters = $parameters;
 		$this->_metadata = $metadata;
+		parent::__construct($parameters);
 	}
 
 	/**
