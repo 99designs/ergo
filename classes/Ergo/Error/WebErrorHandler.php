@@ -59,11 +59,13 @@ class WebErrorHandler extends AbstractErrorHandler
 				exit(0);
 			}
 
+			while (ob_get_level() > 0)
+				ob_end_clean();
+
 			// send it off
 			$sender = new Http\ResponseSender($this->buildResponse($e));
 			$sender->send();
 
-			if (ob_get_level() > 0) ob_flush();
 			exit(self::EXIT_CODE);
 		}
 	}
