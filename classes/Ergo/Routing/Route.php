@@ -36,7 +36,7 @@ class Route
 	{
 		$this->_name = $name;
 		$this->_template = $template;
-		$this->_parameters = $this->_getParameterNames($template);
+		$this->_parameters = $this->_extractParameterNames($template);
 		$this->_pattern = $this->_getParameterPattern($template);
 	}
 
@@ -104,6 +104,15 @@ class Route
 	{
 		return $this->_name;
 	}
+
+    /**
+     * Returns the names of the replaceable parameters defined in this route
+     * @return array
+     */
+    public function getParameterNames()
+    {
+        return $this->_parameters;
+    }
 
 	// ----------------------------------------
 
@@ -203,7 +212,7 @@ class Route
 	 * @param string $template
 	 * @return array list of parameter names contained in the template.
 	 */
-	private function _getParameterNames($template)
+	private function _extractParameterNames($template)
 	{
 		if(!is_string($template))
 			throw new \InvalidArgumentException("Template is not a string");
