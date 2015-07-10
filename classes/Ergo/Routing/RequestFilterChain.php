@@ -21,7 +21,7 @@ class Ergo_Routing_RequestFilterChain
 		return $request;
 	}
 
-	public function addFilter(Ergo_Routing_RequestFilter $filter)
+	public function addFilter($filter)
 	{
 		$this->_filters[] = $filter;
 		return $this;
