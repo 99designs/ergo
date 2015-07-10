@@ -32,7 +32,7 @@ class Ergo_Http_Client
 	 * Adds an HTTP header to all requests
 	 * @chainable
 	 */
-	public function addFilter(Ergo_Http_ClientFilter $filter)
+	public function addFilter($filter)
 	{
 		$this->_filters[] = $filter;
 		return $this;
