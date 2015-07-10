@@ -22,7 +22,7 @@ class RequestFilterChain
 		return $request;
 	}
 
-	public function addFilter(RequestFilter $filter)
+	public function addFilter($filter)
 	{
 		$this->_filters[] = $filter;
 		return $this;

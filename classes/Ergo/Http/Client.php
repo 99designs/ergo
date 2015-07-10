@@ -46,7 +46,7 @@ class Client
 	 * Adds an HTTP header to all requests
 	 * @chainable
 	 */
-	public function addFilter(ClientFilter $filter)
+	public function addFilter($filter)
 	{
 		$this->_filters[] = $filter;
 		return $this;
